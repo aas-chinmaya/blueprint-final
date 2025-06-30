@@ -13,6 +13,17 @@ import {
   Clock,
   User,
 } from "lucide-react";
+import {
+  IconDashboard,
+  IconPhoneCall,
+  IconCalendarEvent,
+  IconUser,
+  IconFolder,
+  IconChecklist,
+  IconUsers,
+  IconBug,
+  IconReportAnalytics,
+} from "@tabler/icons-react";
 
 import { NavMain } from "@/components/nav-main";
 import { TeamSwitcher } from "@/components/team-switcher";
@@ -32,53 +43,86 @@ const fullNavData = [
     icon: LayoutDashboard,
   },
   {
-    title: "Blog",
-    url: "/blog",
-    icon: Phone,
-  },
-  {
-    title: "Services",
-    url: "/service",
-    icon: Briefcase,
-  },
-  {
-    title: "User",
-    url: "/user",
-    icon: UserRound,
+    title: "Contact",
+    url: "/contact",
+    icon: IconPhoneCall,
   },
  
+  {
+    title: "Meeting",
+    url: "#",
+    icon: IconCalendarEvent,
+    items: [
+     {
+        title: "All Meetings",
+        url: "/meetings/all",
+      },
+      {
+        title: "Calendar",
+        url: "/meetings/calendar",
+      },
+      {
+        title: "Scheduled",
+        url: "/meetings/scheduled",
+      },
+     
+    ],
+  },
+    {
+    title: "Quotation ",
+    url: "/quotation",
+    icon: IconPhoneCall,
+  },
   {
     title: "Master",
     url: "#",
     icon: FolderClosed,
     items: [
       {
-        title: "Tags",
-        url: "/master/tag",
-        icon: Tags,
+        title: "Service",
+        url: "/master/services",
       },
       {
-        title: "Industries",
-        url: "/master/service-categories",
-        icon: Layers,
+        title: "Industry",
+        url: "/master/industry",
       },
       {
-        title: "Blog Categories",
-        url: "/master/blog-categories",
-        icon: FolderClosed,
-      },
-      {
-        title: "Service Technologies",
-        url: "/master/service-technology",
-        icon: Briefcase,
+        title: "Meeting Slots",
+        url: "/master/slots",
       },
      
     ],
   },
-   {
-    title: "Profile",
-    url: "/profile",
-    icon:  Settings,
+     {
+    title: "Client",
+    url: "/client",
+    icon: IconUser,
+  },
+  {
+    title: "Project",
+    url: "/project",
+    icon: IconFolder,
+  },
+  {
+    title: "Team",
+    url: "/team",
+    icon: IconUsers,
+  },
+  {
+    title: "Task",
+    url: "/task",
+    icon: IconChecklist,
+  },
+   // Optional future sections:
+  {
+    title: "Bug",
+    url: "/bug",
+    icon: IconBug,
+  },
+  {
+    title: "Report",
+    url: "/report",
+    icon: IconReportAnalytics,
   },
 ];
 

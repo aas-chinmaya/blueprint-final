@@ -1,973 +1,216 @@
-// "use client";
-
-// import React, { useState, useEffect } from "react";
-// import { useRouter } from "next/navigation";
-// import { useDispatch, useSelector } from "react-redux";
-// import { login, verifyOtp, checkAuth } from "@/store/features/authSlice";
-// import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
-// import { Alert, AlertDescription } from "@/components/ui/alert";
-// import { Eye, EyeOff, AlertCircle } from "lucide-react";
-// import { toast } from "@/components/ui/use-toast";
-
-// export default function AdminLoginPage() {
-//   const [mode, setMode] = useState("login");
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [error, setError] = useState("");
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [otp, setOtp] = useState(Array(6).fill(""));
-//   const [otpError, setOtpError] = useState("");
-//   const [otpSent, setOtpSent] = useState(false);
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [timer, setTimer] = useState(60);
-//   const [isResendDisabled, setIsResendDisabled] = useState(true);
-//   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-//   const router = useRouter();
-//   const dispatch = useDispatch();
-//   const { isAuthenticated, isTokenChecked } = useSelector((state) => state.auth);
-
-//   useEffect(() => {
-//     const checkAuthStatus = async () => {
-//       try {
-//         await dispatch(checkAuth()).unwrap();
-//       } catch (error) {
-//         console.error("Auth check failed:", error);
-//       } finally {
-//         setIsCheckingAuth(false);
-//       }
-//     };
-//     checkAuthStatus();
-//   }, [dispatch]);
-
-//   useEffect(() => {
-//     if (isTokenChecked && isAuthenticated) {
-//       router.push("/admin/dashboard");
-//     }
-//   }, [isTokenChecked, isAuthenticated, router]);
-
-//   useEffect(() => {
-//     let countdown;
-//     if (mode === "otp" && otpSent) {
-//       setTimer(60);
-//       setIsResendDisabled(true);
-//       countdown = setInterval(() => {
-//         setTimer((prev) => {
-//           if (prev <= 1) {
-//             clearInterval(countdown);
-//             setIsResendDisabled(false);
-//             return 0;
-//           }
-//           return prev - 1;
-//         });
-//       }, 1000);
-//     }
-//     return () => clearInterval(countdown);
-//   }, [mode, otpSent]);
-
-//   const validateEmail = (email) => {
-//     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-//     return emailRegex.test(email);
-//   };
-
-//   const handleLoginSubmit = async (e) => {
-//     e.preventDefault();
-//     if (!validateEmail(email) || !password) {
-//       setError("Please enter a valid email and password");
-//       return;
-//     }
-//     setIsLoading(true);
-//     try {
-//       const response = await dispatch(login({ email, password })).unwrap();
-//       if (response.message === "OTP sent successfully") {
-//         setError("");
-//         setOtpSent(true);
-//         setMode("otp");
-//         setOtp(Array(6).fill(""));
-//         setOtpError("");
-//       } else {
-//         setError(response.message || "Login failed");
-//       }
-//     } catch (err) {
-//       setError(err?.message || "Authentication failed");
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   const handleOtpSubmit = async () => {
-//     const otpValue = otp.join("");
-//     if (otpValue.length !== 6) {
-//       setOtpError("Please enter a 6-digit OTP");
-//       return;
-//     }
-//     setIsLoading(true);
-//     try {
-//       const response = await dispatch(verifyOtp({ email, otp: otpValue })).unwrap();
-//       if (response.message === "Login successful") {
-//         toast({ title: "Success", description: "Login successful!" });
-//         setMode("login");
-//         router.push("/admin/dashboard");
-//       } else {
-//         setOtpError("Invalid OTP. Please try again.");
-//         setOtp(Array(6).fill(""));
-//       }
-//     } catch (err) {
-//       setOtpError(err?.message || "Invalid OTP. Please try again.");
-//       setOtp(Array(6).fill(""));
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   const handleResendOtp = async () => {
-//     if (isResendDisabled) return;
-//     setOtp(Array(6).fill(""));
-//     setOtpError("");
-//     setIsLoading(true);
-//     try {
-//       const response = await dispatch(login({ email, password })).unwrap();
-//       if (response.message === "OTP sent successfully") {
-//         setOtpSent(true);
-//         setTimer(60);
-//         setIsResendDisabled(true);
-//       } else {
-//         setOtpError("Failed to resend OTP");
-//       }
-//     } catch {
-//       setOtpError("Error resending OTP");
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   const handleOtpChange = (e, index) => {
-//     const val = e.target.value;
-//     if (/^\d$/.test(val) || val === "") {
-//       const newOtp = [...otp];
-//       newOtp[index] = val;
-//       setOtp(newOtp);
-//       if (otpError) setOtpError("");
-//       if (val && index < 5) {
-//         document.getElementById(`otp-input-${index + 1}`).focus();
-//       }
-//     }
-//   };
-
-//   const handleOtpKeyDown = (e, index) => {
-//     if (e.key === "Backspace") {
-//       const newOtp = [...otp];
-//       newOtp[index] = "";
-//       setOtp(newOtp);
-//       if (index > 0) {
-//         document.getElementById(`otp-input-${index - 1}`).focus();
-//       }
-//     }
-//     if (e.key === "Enter") {
-//       handleOtpSubmit();
-//     }
-//   };
-
-//   const maskEmail = (email) => {
-//     if (!email) return "";
-//     const [name, domain] = email.split("@");
-//     const maskedName =
-//       name.length > 4
-//         ? `${name.slice(0, 3)}${"*".repeat(name.length - 3)}`
-//         : `${name.charAt(0)}${"*".repeat(name.length - 1)}`;
-//     return `${maskedName}@${domain}`;
-//   };
-
-//   const renderOtpInputs = (otpArray, handleChange, handleKeyDown, idPrefix) => (
-//     <div className="flex justify-center space-x-2 mb-6">
-//       {otpArray.map((digit, index) => (
-//         <Input
-//           key={index}
-//           id={`${idPrefix}-input-${index}`}
-//           type="text"
-//           inputMode="numeric"
-//           maxLength={1}
-//           value={digit}
-//           onChange={(e) => handleChange(e, index)}
-//           onKeyDown={(e) => handleKeyDown(e, index)}
-//           className="w-12 h-12 text-center text-xl font-semibold border-2 rounded-md focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white"
-//           autoFocus={index === 0}
-//         />
-//       ))}
-//     </div>
-//   );
-
-//   if (isCheckingAuth || (isTokenChecked && isAuthenticated)) {
-//     return (
-//       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-//         <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
-//       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 sm:p-8">
-//         {mode === "login" && (
-//           <>
-//             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Admin Panel</h2>
-//             <p className="text-gray-500 mb-6">Sign in to manage your platform</p>
-
-//             {error && (
-//               <Alert variant="destructive" className="mb-6">
-//                 <AlertCircle className="w-5 h-5" />
-//                 <AlertDescription>{error}</AlertDescription>
-//               </Alert>
-//             )}
-
-//             <form onSubmit={handleLoginSubmit} className="space-y-5">
-//               <div className="space-y-2">
-//                 <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
-//                   Email
-//                 </Label>
-//                 <Input
-//                   id="email"
-//                   type="email"
-//                   value={email}
-//                   onChange={(e) => setEmail(e.target.value)}
-//                   placeholder="Enter your email"
-//                   className="h-10 rounded-md border-gray-200 focus:ring-2 focus:ring-primary/20"
-//                 />
-//               </div>
-//               <div className="space-y-2 relative">
-//                 <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
-//                   Password
-//                 </Label>
-//                 <Input
-//                   id="password"
-//                   type={showPassword ? "text" : "password"}
-//                   value={password}
-//                   onChange={(e) => setPassword(e.target.value)}
-//                   placeholder="Enter your password"
-//                   className="h-10 rounded-md border-gray-200 focus:ring-2 focus:ring-primary/20 pr-10"
-//                 />
-//                 <button
-//                   type="button"
-//                   onClick={() => setShowPassword(!showPassword)}
-//                   className="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
-//                   aria-label={showPassword ? "Hide password" : "Show password"}
-//                 >
-//                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-//                 </button>
-//               </div>
-//               <Button
-//                 type="submit"
-//                 disabled={isLoading}
-//                 className="w-full h-10 font-semibold"
-//               >
-//                 {isLoading ? (
-//                   <div className="flex items-center gap-2">
-//                     <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-//                     Sending OTP...
-//                   </div>
-//                 ) : (
-//                   "Sign In"
-//                 )}
-//               </Button>
-//             </form>
-//           </>
-//         )}
-
-//         {mode === "otp" && (
-//           <>
-//             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Verify OTP</h2>
-//             <p className="text-gray-500 mb-4">
-//               Enter the 6-digit code sent to{" "}
-//               <span className="font-semibold text-primary">{maskEmail(email)}</span>
-//             </p>
-
-//             {otpError && (
-//               <Alert variant="destructive" className="mb-6">
-//                 <AlertCircle className="w-5 h-5" />
-//                 <AlertDescription>{otpError}</AlertDescription>
-//               </Alert>
-//             )}
-
-//             {renderOtpInputs(otp, handleOtpChange, handleOtpKeyDown, "otp")}
-
-//             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-//               <Button
-//                 variant="outline"
-//                 disabled={isResendDisabled}
-//                 onClick={handleResendOtp}
-//                 className="w-full sm:w-auto"
-//               >
-//                 {isResendDisabled ? `Resend OTP in ${timer}s` : "Resend OTP"}
-//               </Button>
-//               <Button
-//                 onClick={handleOtpSubmit}
-//                 disabled={isLoading}
-//                 className="w-full sm:w-auto"
-//               >
-//                 {isLoading ? (
-//                   <div className="flex items-center gap-2">
-//                     <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-//                     Verifying...
-//                   </div>
-//                 ) : (
-//                   "Verify OTP"
-//                 )}
-//               </Button>
-//             </div>
-//             <button
-//               onClick={() => setMode("login")}
-//               className="mt-4 text-primary hover:underline text-sm"
-//             >
-//               Back to Sign In
-//             </button>
-//           </>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
-
-"use client";
-
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { login, verifyOtp, checkAuth } from "@/store/features/authSlice";
+"use client"
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Eye, EyeOff, AlertCircle } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
-import Image from "next/image";
+import {
+  ArrowRight,
+  CheckCircle,
+  ClipboardList,
+  Users,
+  BarChart3,
+  FileText,
+  Briefcase,
+  Workflow,
+  Sparkles,
+  Zap
+} from "lucide-react";
 
-export default function AdminLoginPage() {
-  const [mode, setMode] = useState("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [otp, setOtp] = useState(Array(6).fill(""));
-  const [otpError, setOtpError] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [timer, setTimer] = useState(60);
-  const [isResendDisabled, setIsResendDisabled] = useState(true);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const { isAuthenticated, isTokenChecked } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        await dispatch(checkAuth()).unwrap();
-      } catch (error) {
-        console.error("Auth check failed:", error);
-      } finally {
-        setIsCheckingAuth(false);
-      }
-    };
-    checkAuthStatus();
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (isTokenChecked && isAuthenticated) {
-      router.push("/admin/dashboard");
-    }
-  }, [isTokenChecked, isAuthenticated, router]);
-
-  useEffect(() => {
-    let countdown;
-    if ((mode === "otp" || mode === "reset-otp") && otpSent) {
-      setTimer(60);
-      setIsResendDisabled(true);
-      countdown = setInterval(() => {
-        setTimer((prev) => {
-          if (prev <= 1) {
-            clearInterval(countdown);
-            setIsResendDisabled(false);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(countdown);
-  }, [mode, otpSent]);
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-  };
-
-  const handleLoginSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateEmail(email) || !password) {
-      setError("Please enter a valid email and password");
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const response = await dispatch(login({ email, password })).unwrap();
-      if (response.message === "OTP sent successfully") {
-        setError("");
-        setOtpSent(true);
-        setMode("otp");
-        setOtp(Array(6).fill(""));
-        setOtpError("");
-      } else {
-        setError(response.message || "Login failed");
-      }
-    } catch (err) {
-      setError(err?.message || "Authentication failed");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleResetEmailSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email");
-      return;
-    }
-    setIsLoading(true);
-    try {
-      // Hypothetical Redux action for sending reset OTP
-      const response = await dispatch({ type: "auth/requestResetOtp", payload: { email } }).unwrap();
-      if (response.message === "OTP sent successfully") {
-        setError("");
-        setOtpSent(true);
-        setMode("reset-otp");
-        setOtp(Array(6).fill(""));
-        setOtpError("");
-      } else {
-        setError(response.message || "Failed to send OTP");
-      }
-    } catch (err) {
-      setError(err?.message || "Failed to send OTP");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleOtpSubmit = async () => {
-    const otpValue = otp.join("");
-    if (otpValue.length !== 6) {
-      setOtpError("Please enter a 6-digit OTP");
-      return;
-    }
-    setIsLoading(true);
-    try {
-      if (mode === "otp") {
-        const response = await dispatch(verifyOtp({ email, otp: otpValue })).unwrap();
-        if (response.message === "Login successful") {
-          toast({ title: "Success", description: "Login successful!" });
-          setMode("login");
-          setEmail("");
-          setPassword("");
-          router.push("/admin/dashboard");
-        } else {
-          setOtpError("Invalid OTP. Please try again.");
-          setOtp(Array(6).fill(""));
-        }
-      } else if (mode === "reset-otp") {
-        // Hypothetical Redux action for verifying reset OTP
-        const response = await dispatch({ type: "auth/verifyResetOtp", payload: { email, otp: otpValue } }).unwrap();
-        if (response.message === "OTP verified") {
-          setOtpError("");
-          setMode("reset-password");
-          setOtp(Array(6).fill(""));
-        } else {
-          setOtpError("Invalid OTP. Please try again.");
-          setOtp(Array(6).fill(""));
-        }
-      }
-    } catch (err) {
-      setOtpError(err?.message || "Invalid OTP. Please try again.");
-      setOtp(Array(6).fill(""));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleResendOtp = async () => {
-    if (isResendDisabled) return;
-    setOtp(Array(6).fill(""));
-    setOtpError("");
-    setIsLoading(true);
-    try {
-      const action = mode === "otp" ? login({ email, password }) : { type: "auth/requestResetOtp", payload: { email } };
-      const response = await dispatch(action).unwrap();
-      if (response.message === "OTP sent successfully") {
-        setOtpSent(true);
-        setTimer(60);
-        setIsResendDisabled(true);
-      } else {
-        setOtpError("Failed to resend OTP");
-      }
-    } catch {
-      setOtpError("Error resending OTP");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleResetPasswordSubmit = async (e) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-    if (newPassword.length < 8) {
-      setError("Password must be at least 8 characters long");
-      return;
-    }
-    setIsLoading(true);
-    try {
-      // Hypothetical Redux action for resetting password
-      const response = await dispatch({ type: "auth/resetPassword", payload: { email, password: newPassword } }).unwrap();
-      if (response.message === "Password reset successful") {
-        toast({ title: "Success", description: "Password reset successful!" });
-        setMode("login");
-        setEmail("");
-        setNewPassword("");
-        setConfirmPassword("");
-        setError("");
-      } else {
-        setError(response.message || "Failed to reset password");
-      }
-    } catch (err) {
-      setError(err?.message || "Failed to reset password");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleOtpChange = (e, index) => {
-    const val = e.target.value;
-    if (/^\d$/.test(val) || val === "") {
-      const newOtp = [...otp];
-      newOtp[index] = val;
-      setOtp(newOtp);
-      if (otpError) setOtpError("");
-      if (val && index < 5) {
-        document.getElementById(`otp-input-${index + 1}`).focus();
-      }
-    }
-  };
-
-  const handleOtpKeyDown = (e, index) => {
-    if (e.key === "Backspace") {
-      const newOtp = [...otp];
-      newOtp[index] = "";
-      setOtp(newOtp);
-      if (index > 0) {
-        document.getElementById(`otp-input-${index - 1}`).focus();
-      }
-    }
-    if (e.key === "Enter") {
-      handleOtpSubmit();
-    }
-  };
-
-  const maskEmail = (email) => {
-    if (!email) return "";
-    const [name, domain] = email.split("@");
-    const maskedName =
-      name.length > 4
-        ? `${name.slice(0, 3)}${"*".repeat(name.length - 3)}`
-        : `${name.charAt(0)}${"*".repeat(name.length - 1)}`;
-    return `${maskedName}@${domain}`;
-  };
-
-  const renderOtpInputs = (otpArray, handleChange, handleKeyDown, idPrefix) => (
-    <div className="flex justify-center space-x-2 mb-6">
-      {otpArray.map((digit, index) => (
-        <Input
-          key={index}
-          id={`${idPrefix}-input-${index}`}
-          type="text"
-          inputMode="numeric"
-          maxLength={1}
-          value={digit}
-          onChange={(e) => handleChange(e, index)}
-          onKeyDown={(e) => handleKeyDown(e, index)}
-          className="w-12 h-12 text-center text-xl font-semibold border-2 rounded-md focus:border-primary focus:ring-2 focus:ring-primary/20"
-          autoFocus={index === 0}
-          disabled={isLoading}
-        />
-      ))}
-    </div>
-  );
-
-  if (isCheckingAuth || (isTokenChecked && isAuthenticated)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-      </div>
-    );
-  }
-
+export default function HomePage() {
   return (
-    <div className="flex pb-8 lg:h-screen lg:pb-0">
-      <div className="hidden w-1/2 bg-gray-100 lg:block">
-        <Image
-          src="/images/cover.png"
-          alt="Admin panel visual"
-          fill
-          className="h-full w-full object-cover"
-          priority
-        />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-green-900 to-emerald-900 text-white overflow-hidden">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 opacity-30">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-green-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-emerald-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-lime-400/20 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
 
-      <div className="flex w-full items-center justify-center lg:w-1/2">
-        <div className="w-full max-w-md space-y-8 px-4 sm:px-6">
-          {mode === "login" && (
-            <>
-              <div className="text-center">
-                <h2 className="mt-6 text-3xl font-bold text-gray-900">
-                  Admin Panel
-                </h2>
-                <p className="mt-2 text-sm text-gray-600">
-                  Sign in to manage your platform
-                </p>
-              </div>
-
-              {error && (
-                <Alert variant="destructive" className="mt-6">
-                  <AlertCircle className="w-5 h-5" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              <form onSubmit={handleLoginSubmit} className="mt-8 space-y-6">
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="email" className="sr-only">
-                      Email address
-                    </Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      autoComplete="email"
-                      required
-                      className="w-full h-10 rounded-md border-gray-200 focus:ring-2 focus:ring-primary/20 focus:outline-none"
-                      placeholder="Email address"
-                      disabled={isLoading}
-                    />
-                  </div>
-                  <div className="relative">
-                    <Label htmlFor="password" className="sr-only">
-                      Password
-                    </Label>
-                    <Input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      autoComplete="current-password"
-                      required
-                      className="w-full h-10 rounded-md border-gray-200 focus:ring-2 focus:ring-primary/20 focus:outline-none pr-10"
-                      placeholder="Password"
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                  <div className="text-end">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setError("");
-                        setEmail("");
-                        setPassword("");
-                        setMode("reset-email");
-                      }}
-                      className="ml-auto inline-block text-sm underline text-primary hover:text-primary/80"
-                      disabled={isLoading}
-                    >
-                      Forgot your password?
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full h-10 font-semibold"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                        Sending OTP...
-                      </div>
-                    ) : (
-                      "Sign In"
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </>
-          )}
-
-          {mode === "reset-email" && (
-            <>
-              <div className="text-center">
-                <h2 className="mt-6 text-3xl font-bold text-gray-900">
-                  Reset Password
-                </h2>
-                <p className="mt-2 text-sm text-gray-600">
-                  Enter your email to receive a verification code
-                </p>
-              </div>
-
-              {error && (
-                <Alert variant="destructive" className="mt-6">
-                  <AlertCircle className="w-5 h-5" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              <form onSubmit={handleResetEmailSubmit} className="mt-8 space-y-6">
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="email" className="sr-only">
-                      Email address
-                    </Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      autoComplete="email"
-                      required
-                      className="w-full h-10 rounded-md border-gray-200 focus:ring-2 focus:ring-primary/20 focus:outline-none"
-                      placeholder="Email address"
-                      disabled={isLoading}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full h-10 font-semibold"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                        Sending OTP...
-                      </div>
-                    ) : (
-                      "Send OTP"
-                    )}
-                  </Button>
-                </div>
-              </form>
-              <button
-                onClick={() => {
-                  setError("");
-                  setEmail("");
-                  setMode("login");
-                }}
-                className="mt-4 text-sm text-primary hover:underline"
-                disabled={isLoading}
+      {/* HEADER */}
+      <header className="relative z-50 fixed top-0 w-full border-b border-green-500/20 bg-slate-900/80 backdrop-blur-xl">
+        <div className="container flex h-20 items-center justify-between px-6 max-w-7xl mx-auto">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-500 rounded-lg flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+              BluePrint
+            </span>
+          </div>
+          <nav className="flex items-center gap-4">
+            <Link href="/login">
+              <Button 
+                variant="ghost" 
+                className="text-green-300 hover:text-white hover:bg-green-500/20 border border-green-500/30 transition-all duration-300"
               >
-                Back to Sign In
-              </button>
-            </>
-          )}
-
-          {mode === "reset-otp" && (
-            <>
-              <div className="text-center">
-                <h2 className="mt-6 text-3xl font-bold text-gray-900">
-                  Verify OTP
-                </h2>
-                <p className="mt-2 text-sm text-gray-600">
-                  Enter the 6-digit code sent to{" "}
-                  <span className="font-semibold text-primary">
-                    {maskEmail(email)}
-                  </span>
-                </p>
-              </div>
-
-              {otpError && (
-                <Alert variant="destructive" className="mt-6">
-                  <AlertCircle className="w-5 h-5" />
-                  <AlertDescription>{otpError}</AlertDescription>
-                </Alert>
-              )}
-
-              {renderOtpInputs(otp, handleOtpChange, handleOtpKeyDown, "otp")}
-
-              <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
-                <Button
-                  variant="outline"
-                  disabled={isResendDisabled || isLoading}
-                  onClick={handleResendOtp}
-                  className="w-full sm:w-auto"
-                >
-                  {isResendDisabled ? `Resend OTP in ${timer}s` : "Resend OTP"}
-                </Button>
-                <Button
-                  onClick={handleOtpSubmit}
-                  disabled={isLoading}
-                  className="w-full sm:w-auto"
-                >
-                  {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                      Verifying...
-                    </div>
-                  ) : (
-                    "Verify OTP"
-                  )}
-                </Button>
-              </div>
-              <button
-                onClick={() => {
-                  setError("");
-                  setOtp(Array(6).fill(""));
-                  setOtpError("");
-                  setMode("reset-email");
-                }}
-                className="mt-4 text-sm text-primary hover:underline"
-                disabled={isLoading}
-              >
-                Back
-              </button>
-            </>
-          )}
-
-          {mode === "reset-password" && (
-            <>
-              <div className="text-center">
-                <h2 className="mt-6 text-3xl font-bold text-gray-900">
-                  Set New Password
-                </h2>
-                <p className="mt-2 text-sm text-gray-600">
-                  Enter your new password
-                </p>
-              </div>
-
-              {error && (
-                <Alert variant="destructive" className="mt-6">
-                  <AlertCircle className="w-5 h-5" />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              <form onSubmit={handleResetPasswordSubmit} className="mt-8 space-y-6">
-                <div className="space-y-4">
-                  <div className="relative">
-                    <Label htmlFor="new-password" className="sr-only">
-                      New Password
-                    </Label>
-                    <Input
-                      id="new-password"
-                      name="new-password"
-                      type={showNewPassword ? "text" : "password"}
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      autoComplete="new-password"
-                      required
-                      className="w-full h-10 rounded-md border-gray-200 focus:ring-2 focus:ring-primary/20 focus:outline-none pr-10"
-                      placeholder="New Password"
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                      aria-label={showNewPassword ? "Hide password" : "Show password"}
-                    >
-                      {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                  <div className="relative">
-                    <Label htmlFor="confirm-password" className="sr-only">
-                      Confirm Password
-                    </Label>
-                    <Input
-                      id="confirm-password"
-                      name="confirm-password"
-                      type={showConfirmPassword ? "text" : "password"}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      autoComplete="new-password"
-                      required
-                      className="w-full h-10 rounded-md border-gray-200 focus:ring-2 focus:ring-primary/20 focus:outline-none pr-10"
-                      placeholder="Confirm Password"
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                    >
-                      {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full h-10 font-semibold"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                        Changing Password...
-                      </div>
-                    ) : (
-                      "Change"
-                    )}
-                  </Button>
-                </div>
-              </form>
-              <button
-                onClick={() => {
-                  setError("");
-                  setNewPassword("");
-                  setConfirmPassword("");
-                  setMode("login");
-                }}
-                className="mt-4 text-sm text-primary hover:underline"
-                disabled={isLoading}
-              >
-                Back to Sign In
-              </button>
-            </>
-          )}
+                Login
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg shadow-green-500/25 transition-all duration-300 transform hover:scale-105">
+                Get Started
+              </Button>
+            </Link>
+          </nav>
         </div>
-      </div>
+      </header>
+
+      <main className="relative z-10">
+        {/* HERO SECTION */}
+        <section className="pt-32 pb-20 min-h-screen flex items-center">
+          <div className="container max-w-6xl mx-auto px-6 text-center">
+            <div className="flex flex-col items-center gap-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/20 rounded-full text-green-300 text-sm font-medium">
+                <Zap className="w-4 h-4" />
+                Next-Gen Project Management
+              </div>
+              
+              <h1 className="text-6xl sm:text-7xl md:text-8xl font-black tracking-tight leading-none">
+                <span className="bg-gradient-to-r from-white via-green-200 to-emerald-300 bg-clip-text text-transparent">
+                  Project Management
+                </span>
+                <br />
+                <span className="bg-gradient-to-r from-green-400 via-emerald-400 to-lime-400 bg-clip-text text-transparent">
+                  Reimagined
+                </span>
+              </h1>
+              
+              <p className="max-w-2xl text-xl text-gray-300 leading-relaxed">
+                Transform your workflow with our revolutionary project management platform. 
+                Collaborate seamlessly, deliver faster, and achieve extraordinary results.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-6 mt-8">
+                <Link href="/signup">
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-8 py-4 text-lg font-semibold shadow-2xl shadow-green-500/30 transition-all duration-300 transform hover:scale-105 hover:shadow-green-500/40"
+                  >
+                    Start Your Journey
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="border-green-500/50 text-green-300 hover:bg-green-500/10 hover:text-white px-8 py-4 text-lg font-semibold transition-all duration-300"
+                  >
+                    Watch Demo
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FEATURES SECTION */}
+        <section className="py-24 bg-gradient-to-b from-transparent to-slate-900/50">
+          <div className="container max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-5xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                  Everything You Need
+                </span>
+                <br />
+                <span className="text-white">To Dominate Your Projects</span>
+              </h2>
+              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+                Packed with cutting-edge features designed to supercharge your productivity
+              </p>
+            </div>
+            
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {features.map((feature, index) => (
+                <div
+                  key={index}
+                  className="group relative p-8 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl border border-green-500/20 hover:border-green-400/40 transition-all duration-500 hover:transform hover:scale-105"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  
+                  <div className="relative z-10">
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="p-3 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-xl border border-green-500/30 group-hover:border-green-400/50 transition-colors duration-300">
+                        <div className="text-green-400 group-hover:text-green-300 transition-colors duration-300">
+                          {feature.icon}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-white mb-3 group-hover:text-green-100 transition-colors duration-300">
+                      {feature.title}
+                    </h3>
+                    
+                    <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center mt-16">
+              <Link href="/login">
+                <Button 
+                  size="lg"
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-12 py-4 text-lg font-semibold shadow-2xl shadow-green-500/30 transition-all duration-300 transform hover:scale-105"
+                >
+                  Get Started Now
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* FOOTER */}
+      <footer className="relative z-10 border-t border-green-500/20 bg-slate-900/80 backdrop-blur-xl py-12 mt-24">
+        <div className="container max-w-7xl mx-auto px-6 text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-emerald-500 rounded-lg flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+              BluePrint
+            </span>
+          </div>
+          <p className="text-gray-400">
+            © 2025 BluePrint. Revolutionizing project management worldwide.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
+
+const features = [
+  {
+    title: "Smart Task Management",
+    description: "AI-powered task creation and assignment with intelligent priority detection and automated deadline optimization.",
+    icon: <ClipboardList className="w-6 h-6" />,
+  },
+  {
+    title: "Real-time Collaboration",
+    description: "Seamless team communication with instant updates, live editing, and integrated video conferencing.",
+    icon: <Users className="w-6 h-6" />,
+  },
+  {
+    title: "Advanced Analytics",
+    description: "Deep insights with predictive analytics, performance forecasting, and customizable dashboards.",
+    icon: <BarChart3 className="w-6 h-6" />,
+  },
+  {
+    title: "Client Portal Pro",
+    description: "Branded client spaces with real-time progress sharing, feedback collection, and secure file exchange.",
+    icon: <FileText className="w-6 h-6" />,
+  },
+  {
+    title: "Resource Optimization",
+    description: "Intelligent resource allocation with capacity planning, bottleneck detection, and workload balancing.",
+    icon: <Briefcase className="w-6 h-6" />,
+  },
+  {
+    title: "Custom Workflows",
+    description: "Drag-and-drop workflow builder with automation rules, conditional logic, and integration capabilities.",
+    icon: <Workflow className="w-6 h-6" />,
+  },
+];
