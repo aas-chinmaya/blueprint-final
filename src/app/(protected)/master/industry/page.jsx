@@ -1,5 +1,7 @@
 "use client";
 
+import Industry from "@/components/modules/master/IndustryMaster";
+
 
 
 export default function page() {
@@ -8,7 +10,7 @@ export default function page() {
   return (
     <>
   
-      Quotation 
+      <Industry/> 
     </>
   );
 }

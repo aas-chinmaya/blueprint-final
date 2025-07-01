@@ -25,10 +25,12 @@ import taskReducer from './features/TaskSlice';
 // import teamMembersReducer from './features/teamMembersSlice';
 // import viewTeamByProjectIdReducer from './features/viewTeamByProjectIdSlice';
 // import dashReducer from './features/dashSlice';
-// import slotReducer from './features/master/slotMasterSlice';
 // import slotReducer from './features/calender/slotSlice';
 
-// import serviceReducer from './features/master/serviceMasterSlice';
+//master table
+import slotReducer from './features/master/slotMasterSlice';
+import serviceReducer from './features/master/serviceMasterSlice';
+import industriesReducer from './features/master/industriesMasterSlice';
 const rootReducer = combineReducers({
 
   //shared reducers
@@ -56,8 +58,9 @@ const rootReducer = combineReducers({
   
   
   //master table reducers
-  // slots: slotReducer,
-  // services: serviceReducer,
+  slots: slotReducer,
+  services: serviceReducer,
+  industries:industriesReducer
 
 
 

@@ -22,11 +22,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      cz-shortcut-listen="true"  className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
          <Providers>
             {children}
-            <Toaster />
+            <Toaster position="top-right" richColors closeButton/>
           </Providers>
       </body>
     </html>

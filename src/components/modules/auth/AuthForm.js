@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, AlertCircle, Home, Leaf, Shield } from "lucide-react";
-import { toast } from "@/components/ui/use-toast"; // ✅ Call the toast method
+import { toast } from "@/components/ui/sonner"; // ✅ Call the toast method
 
 const Login = () => {
   const [mode, setMode] = useState("login");

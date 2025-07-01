@@ -1,5 +1,7 @@
 "use client";
 
+import Service from "@/components/modules/master/ServiceMaster";
+
 
 
 export default function page() {
@@ -8,7 +10,7 @@ export default function page() {
   return (
     <>
   
-      Quotation 
+      <Service/> 
     </>
   );
 }

@@ -3,8 +3,6 @@ import "../globals.css";
 import { AppSidebar } from "@/components/app-sidebar";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useToast } from "@/components/ui/use-toast";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -26,8 +24,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useRouter, usePathname } from "next/navigation";
 import { Providers } from "@/store/providers";
-import { Toaster } from "@/components/ui/sonner";
-import ProfileDrawer, { SiteHeader } from "@/components/ProfileDrawer";
+import ProfileDrawer, { SiteHeader } from "@/components/ProfileSheet";
 import { Button } from "@headlessui/react";
 import { AppShell } from "@/components/ui/app-shell";
 export default function RootLayout({ children }) {
@@ -35,7 +32,6 @@ export default function RootLayout({ children }) {
   const dispatch = useDispatch();
   const router = useRouter();
   const pathname = usePathname();
-  const { toast } = useToast();
   const { user, email } = useSelector((state) => state.auth) || {};
   const {
     userData,
@@ -66,18 +62,16 @@ export default function RootLayout({ children }) {
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap();
-      toast({
-        title: "Logged Out",
-        description: "You have been successfully logged out.",
-      });
+      toast(
+        "You have been successfully logged out."
+      );
       router.push("/");
     } catch (error) {
-      console.error("Logout failed:", error);
-      toast({
-        title: "Error",
-        description: "Failed to log out. Please try again.",
-        variant: "destructive",
-      });
+ 
+      toast.error(
+        error|| "Failed to log out. Please try again."
+        
+      );
     }
   };
   return (
@@ -104,7 +98,7 @@ export default function RootLayout({ children }) {
             </div>
 
             {/* RIGHT SECTION: Notification + Profile */}
-            <div className="flex items-center gap-4 ml-auto">
+            <div className="flex items-center gap-4 ml-auto ">
               <NotificationsPopover recipientId={recipientId} />
               <Button
                 variant="ghost"
@@ -127,6 +121,7 @@ export default function RootLayout({ children }) {
               onClose={() => setShowProfile(false)}
             />
           </header>
+<div className="bg-muted/50 h-full">
 
           <AppShell className="">
           {/* <div className="flex flex-1 flex-col gap-4 m-2 rounded-md  pt-0  bg-muted/50 px-2"> */}
@@ -136,9 +131,9 @@ export default function RootLayout({ children }) {
             <div className="bg-muted/50 aspect-video rounded-xl" />
           </div>
           <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" /> */}
-            <Toaster />
             {children}
           </AppShell>
+</div>
         </SidebarInset>
       </SidebarProvider>
     </Providers>

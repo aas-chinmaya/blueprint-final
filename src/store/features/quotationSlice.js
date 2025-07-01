@@ -1,7 +1,6 @@
-// src/redux/slices/quotationSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '@/lib/axiosInstance';
-
+ 
 // Initial State
 const initialState = {
   quotations: [],
@@ -9,9 +8,9 @@ const initialState = {
   loading: false,
   error: null,
 };
-
+ 
 // Thunks
-
+ 
 export const createQuotation = createAsyncThunk(
   'quotation/createQuotation',
   async (quotationData, { rejectWithValue }) => {
@@ -23,19 +22,19 @@ export const createQuotation = createAsyncThunk(
     }
   }
 );
-
+ 
 export const getQuotations = createAsyncThunk(
   'quotation/getQuotations',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get('/quotations/getquotations');
+      const res = await axiosInstance.get('/quotation/getquotations');
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
-
+ 
 export const getQuotationById = createAsyncThunk(
   'quotations/getQuotationById',
   async (quotationNumber, { rejectWithValue }) => {
@@ -47,7 +46,7 @@ export const getQuotationById = createAsyncThunk(
     }
   }
 );
-
+ 
 export const updateQuotation = createAsyncThunk(
   'quotation/updateQuotation',
   async ({ quotationNumber, updatedData }, { rejectWithValue }) => {
@@ -59,7 +58,7 @@ export const updateQuotation = createAsyncThunk(
     }
   }
 );
-
+ 
 export const updateQuotationStatus = createAsyncThunk(
   'quotation/updateQuotationStatus',
   async ({ quotationNumber, statusData }, { rejectWithValue }) => {
@@ -71,19 +70,19 @@ export const updateQuotationStatus = createAsyncThunk(
     }
   }
 );
-
+ 
 export const deleteQuotation = createAsyncThunk(
   'quotation/deleteQuotation',
   async (quotationNumber, { rejectWithValue }) => {
     try {
-      await axiosInstance.delete(`/quotation/deletequotation/${quotationNumber}`);
+      await axiosInstance.delete(`/quotation/${quotationNumber}`);
       return quotationNumber;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
-
+ 
 // Slice
 const quotationSlice = createSlice({
   name: 'quotation',
@@ -109,7 +108,7 @@ const quotationSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
+ 
       // Get All
       .addCase(getQuotations.pending, (state) => {
         state.loading = true;
@@ -122,7 +121,7 @@ const quotationSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
+ 
       // Get by ID
       .addCase(getQuotationById.pending, (state) => {
         state.loading = true;
@@ -136,7 +135,7 @@ const quotationSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
+ 
       // Update
       .addCase(updateQuotation.pending, (state) => {
         state.loading = true;
@@ -152,7 +151,7 @@ const quotationSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
+ 
       // Update Status
       .addCase(updateQuotationStatus.pending, (state) => {
         state.loading = true;
@@ -169,7 +168,7 @@ const quotationSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
+ 
       // Delete
       .addCase(deleteQuotation.pending, (state) => {
         state.loading = true;
@@ -186,7 +185,7 @@ const quotationSlice = createSlice({
       });
   },
 });
-
+ 
 // Export Actions & Reducer
 export const { clearQuotationState } = quotationSlice.actions;
 export default quotationSlice.reducer;

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosInstance4 from '@/lib/axiosInstance4'; 
+import axiosInstance from '@/lib/axiosInstance'; 
 
 // Thunks
 
@@ -8,7 +8,7 @@ export const fetchServices = createAsyncThunk(
   'services/fetchServices',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance4.get('/service/getservice');
+      const response = await axiosInstance.get('/service/getservice');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch services');
@@ -21,7 +21,7 @@ export const addService = createAsyncThunk(
   'services/addService',
   async (serviceData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance4.post('/service/createservice', serviceData);
+      const response = await axiosInstance.post('/service/createservice', serviceData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to add service');
@@ -34,7 +34,7 @@ export const updateService = createAsyncThunk(
   'services/updateService',
   async (serviceData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance4.put(`/service/updateservice/${serviceData.id}`, serviceData);
+      const response = await axiosInstance.put(`/service/updateservice/${serviceData.id}`, serviceData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to update service');
@@ -47,7 +47,7 @@ export const deleteService = createAsyncThunk(
   'services/deleteService',
   async (serviceId, { rejectWithValue }) => {
     try {
-      await axiosInstance4.delete(`/service/deleteservice/${serviceId}`);
+      await axiosInstance.delete(`/service/deleteservice/${serviceId}`);
       return serviceId;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to delete service');
@@ -60,7 +60,7 @@ export const getServiceById = createAsyncThunk(
   'services/getServiceById',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance4.get(`/service/getServiceById/${id}`);
+      const response = await axiosInstance.get(`/service/getServiceById/${id}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch service');

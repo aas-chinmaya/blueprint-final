@@ -1,5 +1,7 @@
 "use client";
 
+import SlotMaster from "@/components/modules/master/SlotMaster";
+
 
 
 export default function page() {
@@ -8,7 +10,7 @@ export default function page() {
   return (
     <>
   
-      Quotation 
+      <SlotMaster/> 
     </>
   );
 }

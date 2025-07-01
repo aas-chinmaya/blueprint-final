@@ -1,24 +1,33 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { Toaster as Sonner } from 'sonner';
+import { Toaster as SonnerToaster, toast as sonnerToast } from 'sonner';
 
 const Toaster = ({ ...props }) => {
   const { theme = 'system' } = useTheme();
 
   return (
-    <Sonner
+    <SonnerToaster
       theme={theme}
+      position="top-right"
+      closeButton
+      duration={3000} // ✅ Auto close after 3s
+      visibleToasts={5}
       className="toaster group"
       toastOptions={{
+        style: {
+          padding: '16px',
+          borderRadius: '8px',
+          border: '1px solid var(--border)',
+        },
         classNames: {
           toast:
-            'group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg',
+            'group toast justify-between group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg relative',
           description: 'group-[.toast]:text-muted-foreground',
           actionButton:
             'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',
           cancelButton:
-            'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground',
+            'absolute right-2 top-2 text-sm text-muted-foreground hover:text-foreground',
         },
       }}
       {...props}
@@ -26,4 +35,4 @@ const Toaster = ({ ...props }) => {
   );
 };
 
-export { Toaster };
+export { Toaster, sonnerToast as toast };
