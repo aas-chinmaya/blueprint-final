@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosInstance from '@/lib/axiosInstance'; // Adjust path as needed
+import axiosInstance from '@/lib/axiosInstance3'; // Adjust path as needed
 
 // Async thunks for API calls
 export const fetchMeetings = createAsyncThunk(

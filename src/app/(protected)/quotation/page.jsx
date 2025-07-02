@@ -1,5 +1,7 @@
 "use client";
 
+import QuotationList from "@/components/modules/quotation/QuotationList";
+
 
 
 export default function page() {
@@ -8,7 +10,7 @@ export default function page() {
   return (
     <>
   
-      Quotation 
+      <QuotationList/> 
     </>
   );
 }

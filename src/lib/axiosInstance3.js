@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const axiosInstance3 = axios.create({
+const axiosInstance2 = axios.create({
   // baseURL: process.env.NEXT_PUBLIC_API_URL || "https://bluapi.aas.technology/api",
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
   headers: {
@@ -9,5 +9,5 @@ const axiosInstance3 = axios.create({
  
 });
 
-export default axiosInstance3;
+export default axiosInstance2;
 

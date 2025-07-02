@@ -9,7 +9,6 @@ const initialState = {
   error: null,
 };
  
-// Thunks
  
 export const createQuotation = createAsyncThunk(
   'quotation/createQuotation',
@@ -82,6 +81,20 @@ export const deleteQuotation = createAsyncThunk(
     }
   }
 );
+
+// pdf view thunks
+export const getPdfById = createAsyncThunk(
+  'quotations/getPdfById',
+  async (quotationNumber, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get(`/quotation/getPdfById/${quotationNumber}`);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
+    }
+  }
+);
+ 
  
 // Slice
 const quotationSlice = createSlice({
@@ -180,6 +193,20 @@ const quotationSlice = createSlice({
         );
       })
       .addCase(deleteQuotation.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+       // Get PDF by ID
+      .addCase(getPdfById.pending, (state) => {
+        state.loading = true;
+        state.quotation = null;
+      })
+      .addCase(getPdfById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.quotation = action.payload;
+      })
+      .addCase(getPdfById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
