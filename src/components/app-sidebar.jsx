@@ -91,6 +91,10 @@ const fullNavData = [
         title: "Meeting Slots",
         url: "/master/slots",
       },
+       {
+        title: "Mom Cause",
+        url: "/meetings/cause",
+      },
      
     ],
   },

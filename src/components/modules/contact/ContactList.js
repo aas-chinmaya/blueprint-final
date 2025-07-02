@@ -204,7 +204,7 @@ const ContactsList = () => {
 
   return (
     <>
-      <Card className="border-green-300 shadow-2xl rounded-2xl overflow-hidden">
+      <Card className="h-[90vh] border-green-300 shadow-2xl rounded-2xl overflow-hidden">
         <CardHeader className="">
           <CardTitle className="text-3xl font-bold text-green-800 flex items-center">
             <User className="h-6 w-6 mr-2" />
