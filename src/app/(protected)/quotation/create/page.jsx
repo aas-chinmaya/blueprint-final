@@ -7,7 +7,7 @@ export default function CreateQuotationPage() {
   const searchParams = useSearchParams();
   const [meetingId, setMeetingId] = useState(null);
   const [contactId, setContactId] = useState(null);
-
+// http://localhost:3000/quotation/create?meetingId=123&contactId=456
   useEffect(() => {
     setMeetingId(searchParams.get('meetingId'));
     setContactId(searchParams.get('contactId'));

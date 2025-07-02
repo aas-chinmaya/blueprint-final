@@ -27,7 +27,7 @@ import { Providers } from "@/store/providers";
 import ProfileDrawer, { SiteHeader } from "@/components/ProfileSheet";
 import { Button } from "@headlessui/react";
 import { AppShell } from "@/components/ui/app-shell";
-export default function RootLayout({ children }) {
+export default function ProtectedLayout({ children }) {
   const [showProfile, setShowProfile] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -62,7 +62,7 @@ export default function RootLayout({ children }) {
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap();
-      toast(
+      toast.sucess(
         "You have been successfully logged out."
       );
       router.push("/");

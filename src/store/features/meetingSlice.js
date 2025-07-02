@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosInstance3 from '@/lib/axiosInstance3'; // Adjust path as needed
+import axiosInstance from '@/lib/axiosInstance'; // Adjust path as needed
 
 // Async thunks for API calls
 export const fetchMeetings = createAsyncThunk(
   'meetings/fetchMeetings',
   async (email, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance3.get(`/meetings/upcoming/${email}`);
+      const response = await axiosInstance.get(`/meetings/upcoming/${email}`);
       console.log('Fetched meetings:', response.data);
       return response.data.events;
     } catch (error) {
@@ -19,7 +19,7 @@ export const createMeeting = createAsyncThunk(
   'meetings/createMeeting',
   async (meetingData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance3.post('/create-meeting', meetingData);
+      const response = await axiosInstance.post('/create-meeting', meetingData);
 
       
       // console.log("User not authorized",response.data);
@@ -37,7 +37,7 @@ export const updateMeeting = createAsyncThunk(
   'meetings/updateMeeting',
   async ( meetingData , { rejectWithValue }) => {
     try {
-      const response = await axiosInstance3.post(`/meeting/update`, meetingData);
+      const response = await axiosInstance.post(`/meeting/update`, meetingData);
       console.log(response)
       return response.data;
     } catch (error) {
@@ -50,7 +50,7 @@ export const deleteMeeting = createAsyncThunk(
   'meetings/deleteMeeting',
   async ({id,email}, { rejectWithValue }) => {
     try {
-      await axiosInstance3.delete(`/meeting/${email}/${id}`);
+      await axiosInstance.delete(`/meeting/${email}/${id}`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to delete meeting');
@@ -62,7 +62,7 @@ export const getMeetingById = createAsyncThunk(
   'meetings/getMeetingById',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance3.get(`/meeting/${id}`);
+      const response = await axiosInstance.get(`/meeting/${id}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch meeting');
@@ -76,7 +76,7 @@ export const fetchMeetingsByContactId = createAsyncThunk(
   'meetings/fetchMeetingsByContactId',
   async (contactId, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance3.get(`/meetings/contact/${contactId}`);
+      const response = await axiosInstance.get(`/meetings/contact/${contactId}`);
       // console.log("Fetched contact meetings:", response.data);
       return response.data;
     } catch (error) {

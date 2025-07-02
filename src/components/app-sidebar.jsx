@@ -34,6 +34,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { useSelector } from "react-redux";
 
 // ✅ Cleaned nav config
 const fullNavData = [
@@ -114,16 +115,16 @@ const fullNavData = [
     icon: IconChecklist,
   },
    // Optional future sections:
-  {
-    title: "Bug",
-    url: "/bug",
-    icon: IconBug,
-  },
-  {
-    title: "Report",
-    url: "/report",
-    icon: IconReportAnalytics,
-  },
+  // {
+  //   title: "Bug",
+  //   url: "/bug",
+  //   icon: IconBug,
+  // },
+  // {
+  //   title: "Report",
+  //   url: "/report",
+  //   icon: IconReportAnalytics,
+  // },
 ];
 
 // ✅ Teams dropdown (team-switcher)
@@ -136,6 +137,16 @@ const teams = [
 ];
 
 export function AppSidebar(props) {
+    const { employeeData } = useSelector((state) => state.user) || {};
+  const userRole = employeeData?.designation;
+
+  // Role-based filtering
+  const navdata =
+    userRole === "CPC"
+      ? fullNavData
+      : fullNavData.filter((item) =>
+          ["Dashboard", "Project", "Task", "Team"].includes(item.title)
+        );
   return (
     <Sidebar 
 
@@ -144,7 +155,7 @@ export function AppSidebar(props) {
         <TeamSwitcher teams={teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={fullNavData} />
+        <NavMain items={navdata} />
       </SidebarContent>
       <SidebarRail />
     </Sidebar>

@@ -272,7 +272,7 @@ export default function Service() {
               <div className="space-y-3">
                 {currentServices.map((service) => (
                   <Card
-                    key={service.serviceId}
+                    key={service._id}
                     className="bg-green-50 border-green-200 hover:bg-green-100 transition"
                   >
                     <CardContent className="flex items-center justify-between p-4">
@@ -540,19 +540,16 @@ export default function Service() {
                   dispatch(deleteService(serviceToDelete))
                     .unwrap()
                     .then(() => {
-                      toast({
-                        title: 'Deleted',
-                        description: 'Service deleted successfully.',
-                      });
+                      toast.success('Service deleted successfully.'
+                      );
                       dispatch(fetchServices());
                       setCurrentPage(1); // Reset to first page after deletion
                     })
                     .catch((err) => {
-                      toast({
-                        title: 'Error',
-                        description: err?.message || 'Failed to delete service',
-                        variant: 'destructive',
-                      });
+                      toast.error(
+                       err?.message || 'Failed to delete service'
+                       
+                      );
                     })
                     .finally(() => {
                       setOpenDelete(false);

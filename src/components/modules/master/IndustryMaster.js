@@ -458,19 +458,16 @@ export default function Industry() {
                   dispatch(deleteIndustry(industryToDelete))
                     .unwrap()
                     .then(() => {
-                      toast({
-                        title: "Deleted",
-                        description: "Industry deleted successfully.",
-                      });
+                      toast.success("Industry deleted successfully."
+                      );
                       dispatch(fetchIndustries());
                       setCurrentPage(1); // Reset to first page after deletion
                     })
                     .catch((err) => {
-                      toast({
-                        title: "Error",
-                        description: err?.message || "Failed to delete industry",
-                        variant: "destructive",
-                      });
+                      toast.error(
+                         err?.message || "Failed to delete industry",
+                 
+                      );
                     })
                     .finally(() => {
                       setIsDeleteConfirmOpen(false);

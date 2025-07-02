@@ -10,24 +10,23 @@ const Toaster = ({ ...props }) => {
     <SonnerToaster
       theme={theme}
       position="top-right"
-      closeButton
-      duration={3000} // ✅ Auto close after 3s
+      closeButton // ✅ enables the close button
+      duration={3000}
       visibleToasts={5}
-      className="toaster group"
       toastOptions={{
         style: {
           padding: '16px',
           borderRadius: '8px',
           border: '1px solid var(--border)',
+          position: 'relative', // ✅ Ensure child positioning works
         },
         classNames: {
           toast:
-            'group toast justify-between group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg relative',
-          description: 'group-[.toast]:text-muted-foreground',
-          actionButton:
-            'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',
+            'relative group toast justify-between bg-background text-foreground border-border shadow-lg',
+          description: 'text-muted-foreground',
+          actionButton: 'bg-primary text-primary-foreground',
           cancelButton:
-            'absolute right-2 top-2 text-sm text-muted-foreground hover:text-foreground',
+            'absolute top-2 right-2 text-muted-foreground hover:text-foreground', // ✅ Close icon in top-right
         },
       }}
       {...props}
