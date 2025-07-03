@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Search,
   ArrowUpDown,
@@ -23,21 +24,26 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-
+ 
 const ContactMeetingsManager = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { Approvedcontacts, status } = useSelector((state) => state.contact);
-
+ 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState("fullName");
   const [sortOrder, setSortOrder] = useState("asc");
-
+ 
+   const [currentPage, setCurrentPage] = useState(1);
+    const [meetingsPerPage, setMeetingsPerPage] = useState(8);
+    const [goToPage, setGoToPage] = useState('');
+ 
+ 
   // Fetch contacts on component mount
   useEffect(() => {
     dispatch(getAllApprovedContacts());
   }, [dispatch]);
-
+ 
   // Handle sort
   const handleSort = (field) => {
     if (sortField === field) {
@@ -47,14 +53,19 @@ const ContactMeetingsManager = () => {
       setSortOrder("asc");
     }
   };
-
+ 
+ 
+  // Reset to first page when meetingsPerPage changes
+    useEffect(() => {
+      setCurrentPage(1);
+    }, [meetingsPerPage]);
   // Filter and sort contacts
   const filteredAndSortedContacts = useMemo(() => {
     let result = [...Approvedcontacts];
-
+ 
     // Filter out deleted contacts
     result = result.filter((contact) => !contact.isDeleted);
-
+ 
     // Search
     if (searchTerm) {
       result = result.filter(
@@ -65,7 +76,7 @@ const ContactMeetingsManager = () => {
           (contact.companyName || "").toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
+ 
     // Sort
     result.sort((a, b) => {
       const fieldA = a[sortField] || "";
@@ -74,15 +85,42 @@ const ContactMeetingsManager = () => {
         ? String(fieldA).localeCompare(String(fieldB))
         : String(fieldB).localeCompare(String(fieldA));
     });
-
+ 
     return result;
   }, [Approvedcontacts, searchTerm, sortField, sortOrder]);
-
+ 
   // Handle view meetings
   const handleViewMeetings = (contactId) => {
     router.push(`/meetings/${contactId}`);
   };
-
+ 
+ // Pagination logic
+const indexOfLastMeeting = currentPage * meetingsPerPage;
+const indexOfFirstMeeting = indexOfLastMeeting - meetingsPerPage;
+const totalPages = Math.ceil(filteredAndSortedContacts.length / meetingsPerPage);
+const currentMeetings = filteredAndSortedContacts.slice(indexOfFirstMeeting, indexOfLastMeeting);
+ 
+ 
+ 
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+ 
+  const handleGoToPage = (e) => {
+    e.preventDefault();
+    const page = parseInt(goToPage, 10);
+    if (!isNaN(page) && page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      setGoToPage('');
+    } else {
+      toast.info( `Please enter a page number between 1 and ${totalPages}.`
+     
+      );
+    }
+  };
+ 
   return (
     <div className="min-h-screen p-6">
       <Card className="border-green-300 shadow-2xl rounded-2xl overflow-hidden">
@@ -103,7 +141,7 @@ const ContactMeetingsManager = () => {
               className="pl-10 border-green-300 focus:ring-green-500 text-green-900 rounded-lg"
             />
           </div>
-
+ 
           {/* Table */}
           <div className="overflow-x-auto rounded-lg border border-green-200">
             <Table>
@@ -165,7 +203,7 @@ const ContactMeetingsManager = () => {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredAndSortedContacts.map((contact) => (
+                  currentMeetings.map((contact) => (
                     <TableRow key={contact._id} className="hover:bg-green-50">
                       <TableCell>{contact.contactId || "N/A"}</TableCell>
                       <TableCell>{contact.fullName || "N/A"}</TableCell>
@@ -203,10 +241,88 @@ const ContactMeetingsManager = () => {
               </TableBody>
             </Table>
           </div>
+ 
+ {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 mt-4">
+              {/* Items per page selector */}
+              <div className="flex items-center space-x-2">
+                <Label htmlFor="meetingsPerPage" className="text-green-700">Meetings per page:</Label>
+                <Select
+                  value={meetingsPerPage.toString()}
+                  onValueChange={(value) => setMeetingsPerPage(Number(value))}
+                >
+                  <SelectTrigger className="w-24 border-green-400 focus:ring-green-500">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="8">8</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+ 
+       
+               {/* Pagination controls */}
+                            <div className="flex items-center space-x-2">
+                              <Button
+                                variant="outline"
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="text-green-600 hover:bg-green-100"
+                              >
+                                Previous
+                              </Button>
+                              {[...Array(totalPages).keys()].map((page) => (
+                                <Button
+                                  key={page + 1}
+                                  variant={currentPage === page + 1 ? 'default' : 'outline'}
+                                  onClick={() => handlePageChange(page + 1)}
+                                  className={
+                                    currentPage === page + 1
+                                      ? 'bg-green-600 text-white hover:bg-green-700'
+                                      : 'text-green-600 hover:bg-green-100'
+                                  }
+                                >
+                                  {page + 1}
+                                </Button>
+                              ))}
+                              <Button
+                                variant="outline"
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="text-green-600 hover:bg-green-100"
+                              >
+                                Next
+                              </Button>
+                            </div>
+ 
+              {/* Go to page input */}
+              <div className="flex items-center space-x-2">
+                <Label htmlFor="goToPage" className="text-green-700">Go to page:</Label>
+                <Input
+                  id="goToPage"
+                  type="number"
+                  value={goToPage}
+                  onChange={(e) => setGoToPage(e.target.value)}
+                  className="w-20 border-green-400 focus:ring-green-500"
+                  placeholder="Page"
+                />
+                <Button
+                  onClick={handleGoToPage}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  Go
+                </Button>
+              </div>
+            </div>
+          )}
+ 
         </CardContent>
       </Card>
     </div>
   );
 };
-
+ 
 export default ContactMeetingsManager;

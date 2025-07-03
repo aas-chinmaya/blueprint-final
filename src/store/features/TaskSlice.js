@@ -1,4 +1,8 @@
 
+
+
+
+
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '@/lib/axiosInstance';
 
@@ -48,7 +52,6 @@ export const fetchTasks = createAsyncThunk(
       }
 
       const activeTasks = response.data.tasks.filter((task) => !task.isDeleted);
-     
       return activeTasks;
     } catch (error) {
       console.error('Fetch Tasks Error:', error);
@@ -106,11 +109,15 @@ export const fetchTasksByProjectId = createAsyncThunk(
         throw new Error('No tasks received from server');
       }
 
-      // Ensure we're working with an array of tasks
-      const tasksArray = Array.isArray(response.data) ? response.data :
-                        Array.isArray(response.data.tasks) ? response.data.tasks :
-                        response.data.data ? (Array.isArray(response.data.data) ? response.data.data : [response.data.data]) :
-                        [];
+      const tasksArray = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response.data.tasks)
+        ? response.data.tasks
+        : response.data.data
+        ? Array.isArray(response.data.data)
+          ? response.data.data
+          : [response.data.data]
+        : [];
 
       const activeTasks = tasksArray.filter((task) => !task.isDeleted);
       console.log('Tasks for project received:', activeTasks);
@@ -166,11 +173,15 @@ export const updateTaskStatus = createAsyncThunk(
   'task/updateTaskStatus',
   async ({ task_id, status, feedback }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.put(`/task/update/${task_id}`, { status, feedback }, {
-        headers: { 'Content-Type': 'application/json' },
-        timeout: 5000,
-        validateStatus: (status) => status >= 200 && status < 500,
-      });
+      const response = await axiosInstance.put(
+        `/task/update/${task_id}`,
+        { status, feedback },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 5000,
+          validateStatus: (status) => status >= 200 && status < 500,
+        }
+      );
 
       if (!response.data || !response.data.task) {
         throw new Error('Failed to update task status');
@@ -221,7 +232,8 @@ export const deleteTask = createAsyncThunk(
     }
   }
 );
-// Get all task list (example: may include deleted or archived tasks for admin view)
+
+// Get all task list (for admin view)
 export const getAllTaskList = createAsyncThunk(
   'task/getAllTaskList',
   async (_, { rejectWithValue }) => {
@@ -235,8 +247,6 @@ export const getAllTaskList = createAsyncThunk(
         throw new Error('No task list received from server');
       }
 
-     
-      // return response;
       return response.data.tasks;
     } catch (error) {
       console.error('Get All Task List Error:', error);
@@ -252,7 +262,8 @@ export const getAllTaskList = createAsyncThunk(
     }
   }
 );
-// Get all task list (example: may include deleted or archived tasks for employee view)
+
+// Get all tasks by employee ID
 export const getAllTaskByEmployeeId = createAsyncThunk(
   'task/getAllTaskByEmployeeId',
   async (employeeId, { rejectWithValue }) => {
@@ -262,7 +273,7 @@ export const getAllTaskByEmployeeId = createAsyncThunk(
         validateStatus: (status) => status >= 200 && status < 500,
       });
 
-      if (!response.data ) {
+      if (!response.data) {
         throw new Error('No tasks found for the employee');
       }
 
@@ -281,15 +292,16 @@ export const getAllTaskByEmployeeId = createAsyncThunk(
     }
   }
 );
+
 const initialState = {
   tasks: [], // All tasks
   currentTask: null, // Single task for viewing/editing
   projectTasks: {}, // Tasks grouped by projectId
   status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null, // Error message if any
-  allTaskList: [],
-   employeeTasks: [],
-  
+  allTaskList: [], // All tasks (including deleted/archived for admin)
+  employeeTasks: [], // Tasks for a specific employee
+  isLoading: false, // Added to handle loading state for employee tasks
 };
 
 const taskSlice = createSlice({
@@ -314,7 +326,6 @@ const taskSlice = createSlice({
       .addCase(createTask.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.tasks.push(action.payload);
-        // Add to projectTasks if projectId exists
         if (action.payload.projectId) {
           state.projectTasks[action.payload.projectId] = [
             ...(state.projectTasks[action.payload.projectId] || []),
@@ -334,7 +345,6 @@ const taskSlice = createSlice({
       .addCase(fetchTasks.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.tasks = action.payload;
-        // Group tasks by projectId for projectTasks
         state.projectTasks = action.payload.reduce((acc, task) => {
           if (task.projectId) {
             acc[task.projectId] = [...(acc[task.projectId] || []), task];
@@ -380,14 +390,11 @@ const taskSlice = createSlice({
       })
       .addCase(updateTask.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        // Update tasks array
         const index = state.tasks.findIndex((task) => task.task_id === action.payload.task_id);
         if (index !== -1) {
           state.tasks[index] = action.payload;
         }
-        // Update currentTask
         state.currentTask = action.payload;
-        // Update projectTasks
         if (action.payload.projectId) {
           const projectTasks = state.projectTasks[action.payload.projectId] || [];
           const taskIndex = projectTasks.findIndex((task) => task.task_id === action.payload.task_id);
@@ -402,8 +409,6 @@ const taskSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-
-
       // Update Task Status
       .addCase(updateTaskStatus.pending, (state) => {
         state.status = 'loading';
@@ -411,16 +416,13 @@ const taskSlice = createSlice({
       })
       .addCase(updateTaskStatus.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        // Update tasks array
         const index = state.tasks.findIndex((task) => task.task_id === action.payload.task_id);
         if (index !== -1) {
           state.tasks[index] = action.payload;
         }
-        // Update currentTask if it matches
         if (state.currentTask && state.currentTask.task_id === action.payload.task_id) {
           state.currentTask = action.payload;
         }
-        // Update projectTasks
         if (action.payload.projectId) {
           const projectTasks = state.projectTasks[action.payload.projectId] || [];
           const taskIndex = projectTasks.findIndex((task) => task.task_id === action.payload.task_id);
@@ -435,8 +437,6 @@ const taskSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-
-
       // Delete Task
       .addCase(deleteTask.pending, (state) => {
         state.status = 'loading';
@@ -446,24 +446,20 @@ const taskSlice = createSlice({
         state.status = 'succeeded';
         state.tasks = state.tasks.filter((task) => task.task_id !== action.payload);
         state.currentTask = null;
-        // Remove from projectTasks
         Object.keys(state.projectTasks).forEach((projectId) => {
           state.projectTasks[projectId] = state.projectTasks[projectId].filter(
             (task) => task.task_id !== action.payload
           );
-          // Clean up empty projectTasks entries
           if (state.projectTasks[projectId].length === 0) {
             delete state.projectTasks[projectId];
           }
         });
       })
-
-
       .addCase(deleteTask.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       })
-            // Get All Task List
+      // Get All Task List
       .addCase(getAllTaskList.pending, (state) => {
         state.status = 'loading';
         state.error = null;
@@ -471,29 +467,24 @@ const taskSlice = createSlice({
       .addCase(getAllTaskList.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.allTaskList = action.payload;
-    
-        
       })
       .addCase(getAllTaskList.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       })
-
-
       // Get All Task By Employee ID
       .addCase(getAllTaskByEmployeeId.pending, (state) => {
-    state.isLoading = true;
-    state.error = null;
-  })
-  .addCase(getAllTaskByEmployeeId.fulfilled, (state, action) => {
-    state.isLoading = false;
-    state.employeeTasks = action.payload;
-  })
-  .addCase(getAllTaskByEmployeeId.rejected, (state, action) => {
-    state.isLoading = false;
-    state.error = action.payload;
-  });
-;
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getAllTaskByEmployeeId.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.employeeTasks = action.payload;
+      })
+      .addCase(getAllTaskByEmployeeId.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 
@@ -503,7 +494,7 @@ export const selectTaskError = (state) => state.task.error;
 export const selectTasksByProjectId = (state, projectId) => state.task.projectTasks[projectId] || [];
 export const selectAllTasks = (state) => state.task.tasks;
 export const selectCurrentTask = (state) => state.task.currentTask;
-export const selectAllTaskList = (state) => state.task.allTaskList;   
-export const selectAllTaskListByEmployeeId = (state) => state.task.employeeTasks;   
+export const selectAllTaskList = (state) => state.task.allTaskList;
+export const selectAllTaskListByEmployeeId = (state) => state.task.employeeTasks;
 
 export default taskSlice.reducer;

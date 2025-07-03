@@ -13,23 +13,18 @@ import quotationReducer from './features/quotationSlice';
 import clientReducer from './features/clientSlice';
 
 // Import your client slice
-// import projectReducer from './features/projectSlice';
-// import teamReducer from './features/teamSlice';
+import projectReducer from './features/projectSlice';
+import teamReducer from './features/teamSlice';
 import taskReducer from './features/TaskSlice';
-// import bugReducer from './features/bugSlice';
+import bugReducer from './features/bugSlice';
 import causeReducer from './features/causeSlice';
 
 
-// import viewAllTeamReducer from './features/viewallteamSlice';
-// import projectOnboardingReducer from './features/projectonboardingSlice';
-// import fetchallProjectsReducer from './features/fetchallProjectsSlice'; 
-// import viewProjectsByIdReducer from './features/viewProjectsByIdSlice';
-// import dashboardReducer from './features/dashboardSlice';
+import dashboardReducer from './features/dashboardSlice';
 
-// import teamMembersReducer from './features/teamMembersSlice';
-// import viewTeamByProjectIdReducer from './features/viewTeamByProjectIdSlice';
-// import dashReducer from './features/dashSlice';
-// import slotReducer from './features/calender/slotSlice';
+import teamMembersReducer from './features/teamMembersSlice';
+import viewTeamByProjectIdReducer from './features/viewTeamByProjectIdSlice';
+import dashReducer from './features/dashSlice';
 
 //master table
 import slotReducer from './features/master/slotMasterSlice';
@@ -51,33 +46,26 @@ const rootReducer = combineReducers({
   mom: momReducer,
   quotation : quotationReducer,
   client:clientReducer,
-  // project:projectReducer,
-  // task:taskReducer,
-  // team: teamReducer,
-  // bugs: bugReducer,
-  // report: reportReducer,
+  project:projectReducer,
+  task:taskReducer,
+  team: teamReducer,
+  bugs: bugReducer,
+
   cause: causeReducer,
   //dashboard
-  // dash: dashReducer,
+  dash: dashReducer,
+  dashboard:dashboardReducer,
   
   
   //master table reducers
   slots: slotReducer,
   services: serviceReducer,
-  industries:industriesReducer
+  industries:industriesReducer,
 
 
 
-
-  //to be change or deleted
-  // viewAllTeam: viewAllTeamReducer,
-  // projectOnboarding: projectOnboardingReducer,
-  // fetchallProjects: fetchallProjectsReducer,
-  // projectView: viewProjectsByIdReducer,
-  // dashboard:dashboardReducer,
-
-  // teamMembers: teamMembersReducer,
-  // projectTeam: viewTeamByProjectIdReducer,
+  teamMembers: teamMembersReducer,
+  projectTeam: viewTeamByProjectIdReducer,
 
 
 
