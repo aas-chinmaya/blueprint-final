@@ -93,11 +93,26 @@ export default function TaskList() {
   const [viewTask, setViewTask] = useState(null);
   const [editTask, setEditTask] = useState(null);
 
+
+const [currentPage, setCurrentPage] = useState(1);
+const [tasksPerPage, setTasksPerPage] = useState(8);
+const [goToPage, setGoToPage] = useState('');
+
+
+  
+
   useEffect(() => {
     if (status === 'idle') {
       dispatch(getAllTaskList());
     }
   }, [status, dispatch]);
+
+
+// Reset to first page when tasksPerPage changes
+    useEffect(() => {
+  setCurrentPage(1);
+}, [searchTerm, selectedStatus, selectedPriority, sortField, sortDirection]);
+
 
   // Calculate task statistics
   const taskStats = tasks
@@ -154,7 +169,37 @@ export default function TaskList() {
     });
   };
 
-  const sortedTasks = filteredAndSortedTasks();
+
+ // Pagination logic
+const sortedTasks = filteredAndSortedTasks();
+const totalPages = Math.ceil(sortedTasks.length / tasksPerPage);
+const indexOfLastTask = currentPage * tasksPerPage;
+const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+const currentTasks = sortedTasks.slice(indexOfFirstTask, indexOfLastTask);
+
+
+
+const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const handleGoToPage = (e) => {
+    e.preventDefault();
+    const page = parseInt(goToPage, 10);
+    if (!isNaN(page) && page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      setGoToPage('');
+    } else {
+      toast.info( `Please enter a page number between 1 and ${totalPages}.`
+      
+      );
+    }
+  };
+
+
+
 
   const handleRetry = () => {
     dispatch(clearError());
@@ -427,7 +472,7 @@ export default function TaskList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedTasks.map((task) => (
+              {currentTasks.map((task) => (
                 <TableRow key={task.task_id} className="hover:bg-green-50">
                   <TableCell className="font-medium text-green-900">{task.task_id}</TableCell>
                   <TableCell className="text-green-900">{task.title || 'Untitled Task'}</TableCell>
@@ -461,9 +506,93 @@ export default function TaskList() {
               ))}
             </TableBody>
           </Table>
+
+{/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 mt-4 mb-10">
+              {/* Items per page selector */}
+              <div className="flex items-center space-x-2">
+                <Label htmlFor="tasksPerPage" className="text-green-700 ml-4">Tasks per page:</Label>
+                <Select
+                  value={tasksPerPage.toString()}
+                  onValueChange={(value) => setTasksPerPage(Number(value))}
+                >
+                  <SelectTrigger className="w-24 border-green-400 focus:ring-green-500">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="8">8</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+        
+               {/* Pagination controls */}
+                            <div className="flex items-center space-x-2">
+                              <Button
+                                variant="outline"
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="text-green-600 hover:bg-green-100"
+                              >
+                                Previous
+                              </Button>
+                              {[...Array(totalPages).keys()].map((page) => (
+                                <Button
+                                  key={page + 1}
+                                  variant={currentPage === page + 1 ? 'default' : 'outline'}
+                                  onClick={() => handlePageChange(page + 1)}
+                                  className={
+                                    currentPage === page + 1
+                                      ? 'bg-green-600 text-white hover:bg-green-700'
+                                      : 'text-green-600 hover:bg-green-100'
+                                  }
+                                >
+                                  {page + 1}
+                                </Button>
+                              ))}
+                              <Button
+                                variant="outline"
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="text-green-600 hover:bg-green-100"
+                              >
+                                Next
+                              </Button>
+                            </div>
+
+              {/* Go to page input */}
+              <div className="flex items-center space-x-2">
+                <Label htmlFor="goToPage" className="text-green-700">Go to page:</Label>
+                <Input
+                  id="goToPage"
+                  type="number"
+                  value={goToPage}
+                  onChange={(e) => setGoToPage(e.target.value)}
+                  className="w-20 border-green-400 focus:ring-green-500"
+                  placeholder="Page"
+                />
+                <Button
+                  onClick={handleGoToPage}
+                  className="bg-green-600 hover:bg-green-700 text-white mr-4"
+                >
+                  Go
+                </Button>
+              </div>
+            </div>
+          )}
+
+
+
+
+
         </div>
+
       )}
 
+      
       {/* View Task Modal */}
       {viewTask && (
         <Dialog open={!!viewTask} onOpenChange={() => setViewTask(null)}>

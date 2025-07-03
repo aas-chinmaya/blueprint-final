@@ -66,6 +66,10 @@ const fullNavData = [
         title: "Scheduled",
         url: "/meetings/scheduled",
       },
+         {
+        title: "Mom Cause",
+        url: "/meetings/cause",
+      },
      
     ],
   },
@@ -91,10 +95,7 @@ const fullNavData = [
         title: "Meeting Slots",
         url: "/master/slots",
       },
-       {
-        title: "Mom Cause",
-        url: "/meetings/cause",
-      },
+    
      
     ],
   },

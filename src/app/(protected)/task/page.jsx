@@ -3,9 +3,8 @@ import AllTaskListByRole from "@/components/modules/TaskModules/AllTaskListByRol
 export default function Page() {
   return (
     <>
-      <div className="px-4 lg:px-6">
         <AllTaskListByRole/>
-      </div>
+   
     </>
   );
 }

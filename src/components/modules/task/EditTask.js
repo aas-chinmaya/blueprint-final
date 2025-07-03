@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useRouter } from 'next/navigation';
 import { fetchTaskById, updateTask } from '@/store/features/TaskSlice';
 import { ArrowLeft, FileText, User, Flag, Calendar, CheckCircle, Edit } from 'lucide-react';
-import { toast } from "react-toastify";
+import { toast } from "@/components/ui/sonner";
 
 const EditTask = () => {
   const dispatch = useDispatch();

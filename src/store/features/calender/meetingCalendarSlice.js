@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosInstance3 from '@/lib/axiosInstance'; // Make sure this is correctly configured
+import axiosInstance3 from '@/lib/axiosInstance3'; // Make sure this is correctly configured
 
 // Async thunk to fetch all meetings
 export const fetchAllMeetings = createAsyncThunk(

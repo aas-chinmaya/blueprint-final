@@ -41,30 +41,12 @@ const AllTaskList = ({ projectId }) => {
 
 
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   const handleViewTask = (task_id) => {
-    router.push(`/tasks/${task_id}`);
+    router.push(`/task/${task_id}`);
   };
 
   const handleEditTask = (task_id) => {
-    router.push(`/tasks/edit/${task_id}`);
+    router.push(`/task/edit/${task_id}`);
   };
 
   const handleDeleteTask = async () => {
