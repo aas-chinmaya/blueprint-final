@@ -71,19 +71,20 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import axiosInstance from '@/lib/axiosInstance';
 
 function MeetingAccessGate({ onPaymentSuccess, onCancel }) {
   const [paymentLink, setPaymentLink] = useState('');
   const [isSending, setIsSending] = useState(false);
 
   // Hypothetical API endpoint
-  const PAYMENT_API_URL = 'https://api.example.com/v1/payment/send';
+  // const PAYMENT_API_URL = axiosInstance;
 
   // API call to send payment link
   const sendPaymentLink = async (link) => {
     console.log('[MeetingAccessGate] Sending payment link:', link);
     try {
-      const response = await axios.post(PAYMENT_API_URL, {
+      const response = await axiosInstance.post(PAYMENT_API_URL, {
         paymentLink: link,
       }, {
         headers: {
