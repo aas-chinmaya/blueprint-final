@@ -21,7 +21,7 @@ const currentUser = {
 };
   return (
     <div className="">
-      {!currentUser.role === "cpc" ? (
+      {currentUser.role === "cpc" ? (
         <CpcTaskList  currentUser={currentUser} />
       ) : (
         <EmployeeTaskList  currentUser={currentUser} />

@@ -103,7 +103,8 @@ const AllTasksList = () => {
 
 
 
-  const tasks = employeeTasks?.data || [];
+  const tasks = employeeTasks || [];
+  
 
   // Calculate task statistics
   const taskStats = {
