@@ -1,152 +1,160 @@
 
+
+
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import gsap from 'gsap'
-import { Button } from '@/components/ui/button'
-import { CheckCircle } from 'lucide-react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useSearchParams } from 'next/navigation'
+import { getPaymentLinkDetailsByContactId, sendStatusCode, verifyStatusCode } from '@/store/features/meeting/paymentSlice'
 
-const PaymentComponent = () => {
-  const router = useRouter()
-
-  const [status, setStatus] = useState('idle')
-  const [countdown, setCountdown] = useState(5)
-  const [statusCode, setStatusCode] = useState('')
-
-  const [paymentDetails, setPaymentDetails] = useState({
-    contactId: 'cont_demo123',
-    meetingId: 'meet_demo456',
-    email: 'demo.user@example.com',
-    statusCode: ''
-  })
-
-  const qrRef = useRef(null)
-  const cardRef = useRef(null)
-  const containerRef = useRef(null)
-  const successRef = useRef(null)
-
-  // Animate on mount
+const PaymentWithRedirect = () => {
+  const dispatch = useDispatch()
+  const searchParams = useSearchParams()
+  const contactIdFromURL = searchParams.get('contactId')
+const { paymentLinkRecord, getPaymentLinkStatus, error } = useSelector(
+    (state) => state.payment
+  )
   useEffect(() => {
-    const tl = gsap.timeline()
-    tl.fromTo(containerRef.current, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.6 })
-      .fromTo(qrRef.current, { opacity: 0, x: -100 }, { opacity: 1, x: 0, duration: 0.6 }, '-=0.4')
-      .fromTo(cardRef.current, { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 0.6 }, '-=0.6')
-    return () => tl.kill()
-  }, [])
-
-  useEffect(() => {
-    let timer
-    if (status === 'success') {
-      timer = setInterval(() => {
-        setCountdown(prev => {
-          if (prev <= 1) {
-            clearInterval(timer)
-            router.push(`/payment/status?status=success`)
-            return 0
-          }
-          return prev - 1
-        })
-      }, 1000)
+    if (contactIdFromURL) {
+      dispatch(getPaymentLinkDetailsByContactId(contactIdFromURL))
     }
-    return () => clearInterval(timer)
-  }, [status, router])
+  }, [contactIdFromURL, dispatch])
 
-  const sendPaymentConfirmation = async (payload) => {
-    console.log('📦 Payload to backend:', payload)
+  console.log("fgWER",paymentLinkRecord)
+  const paymentUrl = paymentLinkRecord?.paymentLink
+  // const paymentUrl = 'https://razorpay.com/payment-link/plink_Qoz7ihYPAxNcQY/test'
 
-    // Force fake successful backend response
-    setTimeout(() => {
-      console.log('✅ Simulated backend success!')
-    }, 500)
+  // ✅ Access status from Redux store
+  const currentStatus = useSelector((state) => state.payment.paymentDetails.status)
 
-    return true
-  }
+  // ✅ Periodically check payment status
+  useEffect(() => {
+    if (!contactIdFromURL) return
 
-  const handlePay = async () => {
-    setStatus('processing')
+    const interval = setInterval(() => {
+      dispatch(verifyStatusCode(contactIdFromURL))
+    }, 4000) // check every 4 seconds
 
-    const generatedStatusCode = Array.from({ length: 15 }, () => Math.floor(Math.random() * 10)).join('')
-    setStatusCode(generatedStatusCode)
+    return () => clearInterval(interval)
+  }, [contactIdFromURL, dispatch])
 
-    const finalPayload = {
-      ...paymentDetails,
-      statusCode: generatedStatusCode,
-      status: 'completed'
+  const handlePaymentClick = async () => {
+    const match = paymentUrl.match(/plink_([a-zA-Z0-9]+)/)
+    const paymentCode = match ? match[1] : null
+
+    if (!paymentCode || !contactIdFromURL) {
+      console.error('❌ Invalid Razorpay link or missing contactId')
+      return
     }
 
-    gsap.to(cardRef.current, {
-      scale: 0.95,
-      duration: 0.4,
-      ease: 'power2.in',
-      onComplete: async () => {
-        await sendPaymentConfirmation(finalPayload)
-        setPaymentDetails(prev => ({ ...prev, statusCode: generatedStatusCode }))
-        setStatus('success')
 
-        gsap.to(successRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: 'back.out(1.7)'
-        })
+    const screenWidth = window.innerWidth
+    const screenHeight = window.innerHeight
+    const width = Math.min(800, screenWidth * 0.9)
+    const height = Math.min(800, screenHeight * 0.9)
+    const left = window.screenX + (screenWidth - width) / 2
+    const top = window.screenY + (screenHeight - height) / 2
 
-        gsap.to(cardRef.current, {
-          scale: 1,
-          backgroundColor: '#ecfdf5',
-          duration: 0.6
+    const popup = window.open(
+      paymentUrl,
+      'RazorpayPopup',
+      `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no`
+    )
+
+    if (popup) {
+      popup.focus()
+
+      dispatch(sendStatusCode({
+        contactId: contactIdFromURL,
+        statusCode: paymentCode,
+        email: 'pujarini@example.com'
+      }))
+        .unwrap()
+        .then(() => {
+          const closeInterval = setInterval(() => {
+            if (popup.closed) {
+              clearInterval(closeInterval)
+              console.log('✅ Popup closed by user')
+            } else {
+              popup.close()
+              clearInterval(closeInterval)
+              console.log('✅ Popup auto-closed after status code dispatch')
+            }
+          }, 3000)
         })
-      }
-    })
+        .catch((error) => {
+          console.error('❌ Failed to send status code:', error)
+        })
+    } else {
+      alert('Popup blocked! Please allow popups for this site.')
+    }
   }
 
   return (
     <div
-      ref={containerRef}
-      className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mt-10 border rounded-2xl shadow-md p-6 bg-white"
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#f0fff4',
+        fontFamily: 'Arial, sans-serif',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '40px',
+      }}
     >
-      {/* Left: QR Placeholder */}
-      <div ref={qrRef} className="flex items-center justify-center">
-        <div className="w-48 h-48 bg-gray-200 rounded-xl flex items-center justify-center text-gray-500">
-          QR CODE
-        </div>
+      {/* Customer Info */}
+      <div
+        style={{
+          backgroundColor: '#ffffff',
+          border: '1px solid #c6f6d5',
+          borderRadius: '12px',
+          padding: '24px',
+          width: '100%',
+          maxWidth: '600px',
+          marginBottom: '30px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+        }}
+      >
+        <h2 style={{ color: '#2f855a', fontSize: '24px', marginBottom: '16px' }}>
+          🧾 Customer Details
+        </h2>
+        <p><strong>Name:</strong> Pujarini Panda</p>
+        <p><strong>Email:</strong> pujarini@example.com</p>
+        <p><strong>Contact ID:</strong> CId-june-25-001</p>
+        <p><strong>Amount:</strong> ₹3000</p>
+<p><strong>Status:</strong> {
+  currentStatus === 'completed' || currentStatus === 'unknown' ? '✅ Paid'
+  : currentStatus === 'unpaid' ? '❌ Unpaid'
+  : currentStatus === 'failed' ? '❌ Failed'
+  : '⏳ Checking...'
+}</p>
       </div>
 
-      {/* Right: Payment Details + Button */}
-      <div ref={cardRef} className="space-y-4 transition-all">
-        <h2 className="text-xl font-semibold">Payment Details</h2>
-        <div className="text-sm text-gray-700 space-y-1">
-          <p><strong>Contact ID:</strong> {paymentDetails.contactId}</p>
-          <p><strong>Meeting ID:</strong> {paymentDetails.meetingId}</p>
-          <p><strong>Email:</strong> {paymentDetails.email}</p>
-        </div>
-
-        <Button
-          onClick={handlePay}
-          disabled={status === 'processing' || status === 'success'}
-          className="w-full"
-        >
-          {status === 'processing' ? 'Processing...' : 'Pay ₹299'}
-        </Button>
-
-        {status === 'success' && (
-          <div
-            ref={successRef}
-            className="flex items-center gap-2 text-green-700 bg-green-100 p-3 rounded-xl mt-4"
-          >
-            <CheckCircle className="w-5 h-5" />
-            <div>
-              <p className="font-medium">Payment Successful!</p>
-              <p className="text-sm">Status Code: <strong>{statusCode}</strong></p>
-              <p className="text-xs text-gray-600">Redirecting in {countdown}s...</p>
-            </div>
-          </div>
-        )}
-      </div>
+      {/* Pay Button */}
+      <button
+        onClick={handlePaymentClick}
+        style={{
+          backgroundColor: '#38a169',
+          color: '#fff',
+          padding: '14px 28px',
+          fontSize: '16px',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+        }}
+      >
+        ✅ Pay Now
+      </button>
     </div>
   )
 }
 
-export default PaymentComponent
+export default PaymentWithRedirect
+
+
+
+
+
 
 

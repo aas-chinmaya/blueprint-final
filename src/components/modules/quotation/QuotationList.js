@@ -1,12 +1,14 @@
-"use client";
 
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+
+
+'use client'
+
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   getQuotations,
   getQuotationById,
-} from "@/store/features/quotationSlice";
-
+} from '@/store/features/quotationSlice'
 import {
   Table,
   TableHeader,
@@ -14,76 +16,74 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "@/components/ui/table";
-
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { Eye, ArrowLeft, Download, FileText } from "lucide-react";
+} from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
+import { Eye, ArrowLeft, Download } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 
 export default function QuotationList() {
-  const dispatch = useDispatch();
-  const router = useRouter();
-
-  const { quotations, quotation: selectedQuotation } = useSelector((state) => state.quotation);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [loadingQuotation, setLoadingQuotation] = useState(false);
-  const [showPdf, setShowPdf] = useState(false);
+  const dispatch = useDispatch()
+  const router = useRouter()
+  const { quotations, quotation: selectedQuotation } = useSelector((state) => state.quotation)
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false)
+  const [loadingQuotation, setLoadingQuotation] = useState(false)
+  const [showPdf, setShowPdf] = useState(false)
 
   useEffect(() => {
-    dispatch(getQuotations());
-  }, [dispatch]);
+    dispatch(getQuotations())
+  }, [dispatch])
 
   const handleViewQuotation = async (quotationNumber) => {
-    setShowPdf(false);
-    setLoadingQuotation(true);
-    const result = await dispatch(getQuotationById(quotationNumber));
+    setShowPdf(false)
+    setLoadingQuotation(true)
+    const result = await dispatch(getQuotationById(quotationNumber))
     if (result?.payload) {
-      setIsViewModalOpen(true);
+      setIsViewModalOpen(true)
     }
-    setLoadingQuotation(false);
-  };
+    setLoadingQuotation(false)
+  }
 
   const handleViewPdf = async (quotationNumber) => {
-    setShowPdf(true);
-    setLoadingQuotation(true);
-    const result = await dispatch(getQuotationById(quotationNumber));
+    setShowPdf(true)
+    setLoadingQuotation(true)
+    const result = await dispatch(getQuotationById(quotationNumber))
     if (result?.payload) {
-      setIsViewModalOpen(true);
+      setIsViewModalOpen(true)
     }
-    setLoadingQuotation(false);
-  };
+    setLoadingQuotation(false)
+  }
 
   const formatCurrency = (amount) =>
-    new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
+    new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(amount)
 
   const formatDate = (date) =>
-    new Date(date).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    new Date(date).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    })
 
-  const getPdfUrl = (quotationNumber) => `/api/quotations/pdf/${quotationNumber}`;
+  const getPdfUrl = (quotationNumber) => `/api/quotations/pdf/${quotationNumber}`
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50 ">
       {/* View Modal */}
       <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
         <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <div className="flex justify-between items-center">
               <DialogTitle className="text-green-700 text-xl font-semibold">
-                {showPdf ? "Quotation PDF Preview" : "Quotation Details"}
+                {showPdf ? 'Quotation PDF Preview' : 'Quotation Details'}
               </DialogTitle>
               <div className="flex items-center gap-3">
                 <Button
@@ -91,7 +91,7 @@ export default function QuotationList() {
                   size="sm"
                   onClick={() => setShowPdf((prev) => !prev)}
                 >
-                  {showPdf ? "Back to Details" : "View PDF"}
+                  {showPdf ? 'Back to Details' : 'View PDF'}
                 </Button>
                 {showPdf && selectedQuotation?.quotationNumber && (
                   <a
@@ -126,11 +126,15 @@ export default function QuotationList() {
 
                 <div>
                   <strong>Deliverables:</strong>
-                  <ul className="list-disc ml-5">
-                    {selectedQuotation?.deliverables?.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
+                  {Array.isArray(selectedQuotation?.deliverables) ? (
+                    <ul className="list-disc ml-5">
+                      {selectedQuotation.deliverables.map((item, index) => (
+                        <li key={index}>{item}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>{selectedQuotation?.deliverables || 'No deliverables available'}</p>
+                  )}
                 </div>
 
                 <div>
@@ -200,13 +204,15 @@ export default function QuotationList() {
                     <TableCell className="text-center">{index + 1}</TableCell>
                     <TableCell className="text-center">{quotation.quotationNumber}</TableCell>
                     <TableCell className="text-center">
-                      <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold capitalize
-                        ${quotation.status === "draft" ? "bg-gray-200 text-gray-800" :
-                          quotation.status === "sent" ? "bg-blue-200 text-blue-800" :
-                          quotation.status === "accepted" ? "bg-green-200 text-green-800" :
-                          quotation.status === "rejected" ? "bg-red-200 text-red-800" :
-                          quotation.status === "expired" ? "bg-yellow-200 text-yellow-800" :
-                          "bg-slate-200 text-slate-800"}`}>
+                      <span
+                        className={`inline-block px-2 py-1 rounded-full text-xs font-semibold capitalize
+                        ${quotation.status === 'draft' ? 'bg-gray-200 text-gray-800' :
+                          quotation.status === 'sent' ? 'bg-blue-200 text-blue-800' :
+                          quotation.status === 'accepted' ? 'bg-green-200 text-green-800' :
+                          quotation.status === 'rejected' ? 'bg-red-200 text-red-800' :
+                          quotation.status === 'expired' ? 'bg-yellow-200 text-yellow-800' :
+                          'bg-slate-200 text-slate-800'}`}
+                      >
                         {quotation.status}
                       </span>
                     </TableCell>
@@ -236,5 +242,5 @@ export default function QuotationList() {
         </div>
       </div>
     </div>
-  );
+  )
 }

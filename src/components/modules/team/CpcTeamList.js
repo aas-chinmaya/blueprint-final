@@ -194,7 +194,7 @@ const CpcTeamList = () => {
   });
 
   return (
-    <div className=" ">
+  
       <Card className="shadow-lg border-green-300">
         <CardHeader className="">
           <CardTitle className="text-2xl font-bold text-green-800">
@@ -333,7 +333,7 @@ const CpcTeamList = () => {
           )}
         </CardContent>
       </Card>
-    </div>
+   
   );
 };
 

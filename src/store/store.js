@@ -11,6 +11,7 @@ import meetingCalendarReducer from './features/calender/meetingCalendarSlice';
 import momReducer from './features/momSlice';
 import quotationReducer from './features/quotationSlice';
 import clientReducer from './features/clientSlice';
+import paymentReducer from './features/meeting/paymentSlice'
 
 // Import your client slice
 import projectReducer from './features/projectSlice';
@@ -37,7 +38,7 @@ const rootReducer = combineReducers({
   notifications: notificationReducer,
   user: userReducer,
 
-  
+  payment: paymentReducer,
   //modules reducers
   
   contact: contactReducer,

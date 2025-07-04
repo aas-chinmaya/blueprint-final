@@ -62,7 +62,7 @@ export function ChartAreaInteractive() {
     (state) => state.dashboard.deadlineTasks || {}
   )
   const { projects = [], status: projectStatus } = useSelector(
-    (state) => state.projects
+    (state) => state.project
   )
   const { allTeams = [], status: teamStatus } = useSelector((state) => state.team)
 
@@ -279,10 +279,10 @@ export function ChartAreaInteractiveEmployee() {
     (state) => state.dashboard.deadlineTasks || {}
   )
   const { projects = [], status: projectStatus } = useSelector(
-    (state) => state.fetchallProjects
+    (state) => state.project
   )
    const { employeeProjects, status, error } = useSelector(
-    (state) => state.fetchallProjects
+    (state) => state.project
   );
   const { allTeams = [], status: teamStatus } = useSelector((state) => state.team)
 

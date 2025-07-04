@@ -113,10 +113,10 @@ export function DataTable() {
     (state) => state.dashboard.deadlineTasks
   );
   const { projects = [], status: projectStatus } = useSelector(
-    (state) => state.projects
+    (state) => state.project
   );
   const { allTeams, status: teamStatus } = useSelector((state) => state.team);
-  console.log(projects);
+  console.log("lipsa",projects);
 
   // Fetch data on mount
   useEffect(() => {
@@ -472,7 +472,7 @@ export function DataTable() {
                     ))}
                   </div>
                 )}
-                {projectStatus === "succeeded" && projects.length > 0 ? (
+                {  projects.length > 0 ? (
                   <>
                     {paginate(projects, page.projects).map((project) => (
                       <Dialog

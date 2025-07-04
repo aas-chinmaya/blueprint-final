@@ -434,590 +434,24 @@ function MeetingDetails({ meeting, onClose }) {
   );
 };
 
-// MeetingsPage Component
-// function MeetingsPage({ id }) {
-//   const dispatch = useDispatch();
-//    const router = useRouter();
-//   const contactId = id;
-//   const {
-//     contactMeetings,
-//     contactMeetingsLoading,
-//     contactMeetingsError,
-//     createLoading,
-//     updateLoading,
-//     deleteLoading,
-//     error,
-//   } = useSelector((state) => state.meetings);
-//   const { slots, loading: slotsLoading } = useSelector((state) => state.slots);
-//   const [isModalOpen, setModalOpen] = useState(false);
-//   const [verificationUrl, setVerificationUrl] = useState('');
-//   const [meetingsData, setMeetingsData] = useState([]);
-//   const [selectedMeeting, setSelectedMeeting] = useState(null);
-//   const [modals, setModals] = useState({
-//     isCreateOpen: false,
-//     isEditOpen: false,
-//     isViewOpen: false,
-//     isDeleteConfirmOpen: false,
-//     isViewMomOpen: false,
-//   });
-//   const [searchQuery, setSearchQuery] = useState('');
-//   const [dateRange, setDateRange] = useState({ from: null, to: null });
-//   const [meetingToDelete, setMeetingToDelete] = useState(null);
-//   const TIME_ZONE = 'UTC'; // Adjust as needed
-
-//   useEffect(() => {
-//     if (contactId) {
-//       dispatch(fetchMeetingsByContactId(contactId));
-//     }
-//   }, [contactId, dispatch]);
-
-//   useEffect(() => {
-//     if (contactMeetings.length > 0) {
-//       const mappedMeetings = contactMeetings.map((meeting) => ({
-//         meetingId: meeting.id,
-//         title: meeting.summary || 'Untitled',
-//         date: meeting.start?.dateTime || new Date().toISOString(),
-//         location: meeting.hangoutLink || 'N/A',
-//         attendees: meeting.attendees?.map((attendee) => attendee.email).join(', ') || '',
-//         agenda: meeting.description || '',
-//         mom: meeting.mom || [],
-//         start: meeting.start,
-//         end: meeting.end,
-//         hangoutLink: meeting.hangoutLink,
-//         htmlLink: meeting.htmlLink,
-//         conferenceData: meeting.conferenceData,
-//       }));
-//       setMeetingsData(mappedMeetings);
-//     } else {
-//       setMeetingsData([]);
-//     }
-//   }, [contactMeetings]);
-
-//   const handleCreate = async (newMeeting) => {
-//     try {
-//       const response = await dispatch(createMeeting(newMeeting));
-//       if (response.payload?.response?.data?.message === 'User not authorized') {
-//         setVerificationUrl(response.payload.response.data.url);
-//         setModalOpen(true);
-//         setModals({ ...modals, isCreateOpen: false });
-//       } else {
-//         setModals({ ...modals, isCreateOpen: false });
-//         toast.success('Meeting created successfully!');
-//       }
-//     } catch (error) {
-//       toast.error('Failed to create meeting.');
-//       console.error('Error creating meeting:', error);
-//     }
-//   };
-
-//   const handleEdit = async (updatedMeeting) => {
-//     try {
-//       await dispatch(updateMeeting({ meetingData: updatedMeeting }));
-//       setModals({ ...modals, isEditOpen: false });
-//       setSelectedMeeting(null);
-//       toast.success('Meeting updated successfully!');
-//     } catch (err) {
-//       toast.error('Failed to update meeting.');
-//       console.error('Error updating meeting:', err);
-//     }
-//   };
-
-//   const handleDelete = async (meetingId) => {
-//     setMeetingToDelete(meetingId);
-//     setModals({ ...modals, isDeleteConfirmOpen: true });
-//   };
-
-//   const confirmDelete = async () => {
-//     if (meetingToDelete) {
-//       try {
-//         await dispatch(
-//           deleteMeeting({ id: meetingToDelete, email: 'it_chinmaya@outlook.com' })
-//         ).unwrap();
-//         toast.success('Meeting deleted successfully!');
-//       } catch (err) {
-//         toast.error('Failed to delete meeting.');
-//         console.error('Error deleting meeting:', err);
-//       } finally {
-//         setModals({ ...modals, isDeleteConfirmOpen: false });
-//         setMeetingToDelete(null);
-//       }
-//     }
-//   };
-
-//   const handleView = (meeting) => {
-//     setSelectedMeeting(meeting);
-//     setModals({ ...modals, isViewOpen: true });
-//   };
-
-//   const handleViewMom = (meeting) => {
-//     setSelectedMeeting(meeting);
-//     setModals({ ...modals, isViewMomOpen: true });
-//   };
-
-//   const handleCloseModals = () => {
-//     setModals({
-//       isCreateOpen: false,
-//       isEditOpen: false,
-//       isViewOpen: false,
-//       isDeleteConfirmOpen: false,
-//       isViewMomOpen: false,
-//     });
-//     setSelectedMeeting(null);
-//     dispatch(clearError());
-//   };
-
-//   const resetDateRange = () => {
-//     setDateRange({ from: null, to: null });
-//   };
-
-//   const formatDate = (date) => {
-//     return date ? format(new Date(date), 'PPP') : 'N/A';
-//   };
-
-//   const formatTimes = (dateTime) => {
-//     return dateTime ? format(new Date(dateTime), 'p') : 'N/A';
-//   };
-
-//   const filteredMeetings = meetingsData.filter((meeting) => {
-//     const matchesSearch = meeting.title
-//       ?.toLowerCase()
-//       .includes(searchQuery.toLowerCase());
-//     const meetingDate = meeting.date
-//       ? new Date(meeting.date).toISOString().split('T')[0]
-//       : '';
-//     const matchesDateRange =
-//       !dateRange.from ||
-//       !dateRange.to ||
-//       (meetingDate &&
-//         isWithinInterval(parseISO(meetingDate), {
-//           start: dateRange.from,
-//           end: dateRange.to,
-//         }));
-//     return matchesSearch && matchesDateRange;
-//   });
-
-//   return (
-//     <div className="min-h-screen p-6">
-//       <Card className="mx-auto border-green-200 shadow-lg">
-//         <CardHeader className="border-b border-green-200">
-//           <CardTitle className="flex justify-between items-center text-green-800">
-//             <div className="flex items-center space-x-2">
-//               <CalendarIcon className="h-6 w-6" />
-//               <span className="text-2xl font-bold">Meetings for Contact ID: {id}</span>
-//             </div>
-//             <Button
-//               className="bg-green-700 hover:bg-green-800 text-white"
-//               onClick={() => setModals({ ...modals, isCreateOpen: true })}
-//             >
-//               <Plus className="h-4 w-4 mr-2" />
-//               Schedule Meeting
-//             </Button>
-//           </CardTitle>
-//         </CardHeader>
-//         <CardContent className="p-6">
-//           {contactMeetingsError && (
-//             <Alert variant="destructive" className="mb-6">
-//               <AlertDescription>{contactMeetingsError}</AlertDescription>
-//             </Alert>
-//           )}
-//           <div className="flex flex-col md:flex-row gap-4 mb-6 items-center">
-//             <div className="relative flex-1">
-//               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-green-600" />
-//               <Input
-//                 placeholder="Search by meeting title..."
-//                 value={searchQuery}
-//                 onChange={(e) => setSearchQuery(e.target.value)}
-//                 className="pl-10 border-green-300 focus:ring-green-500 text-green-900 rounded-lg"
-//               />
-//             </div>
-//             <div className="flex items-center gap-2">
-//               <Popover>
-//                 <PopoverTrigger asChild>
-//                   <Button
-//                     variant="outline"
-//                     className="border-green-300 text-green-700 hover:bg-green-50 rounded-lg"
-//                   >
-//                     <CalendarIcon className="h-5 w-5 mr-2" />
-//                     {dateRange.from && dateRange.to
-//                       ? `${format(dateRange.from, 'PPP')} - ${format(dateRange.to, 'PPP')}`
-//                       : 'Select Date Range'}
-//                   </Button>
-//                 </PopoverTrigger>
-//                 <PopoverContent className="w-auto p-0" align="end">
-//                   <CalendarComponent
-//                     mode="range"
-//                     selected={dateRange}
-//                     onSelect={setDateRange}
-//                     initialFocus
-//                   />
-//                 </PopoverContent>
-//               </Popover>
-//               {(dateRange.from || dateRange.to) && (
-//                 <Button
-//                   variant="ghost"
-//                   size="sm"
-//                   onClick={resetDateRange}
-//                   className="text-green-600 hover:text-green-800 hover:bg-green-100"
-//                 >
-//                   <X className="h-4 w-4 mr-1" />
-//                   Reset
-//                 </Button>
-//               )}
-//             </div>
-//           </div>
-//           <div className="bg-white rounded-lg border border-green-200 overflow-hidden">
-//             <Table>
-//               <TableHeader>
-//                 <TableRow className="bg-green-50">
-//                   <TableHead className="text-green-800 font-semibold">Title</TableHead>
-//                   <TableHead className="text-green-800 font-semibold">Date</TableHead>
-//                   <TableHead className="text-green-800 font-semibold">Time</TableHead>
-//                   <TableHead className="text-green-800 font-semibold">Link</TableHead>
-//                   <TableHead className="text-green-800 font-semibold">Attendees</TableHead>
-//                   <TableHead className="text-green-800 font-semibold">Actions</TableHead>
-//                 </TableRow>
-//               </TableHeader>
-//               <TableBody>
-//                 {contactMeetingsLoading ? (
-//                   <TableRow>
-//                     <TableCell colSpan={6} className="text-center py-8">
-//                       <Loader2 className="h-8 w-8 animate-spin text-green-600 mx-auto" />
-//                       <span className="text-green-700">Loading meetings...</span>
-//                     </TableCell>
-//                   </TableRow>
-//                 ) : filteredMeetings.length === 0 ? (
-//                   <TableRow>
-//                     <TableCell colSpan={6} className="text-center py-8">
-//                       <div className="text-green-700">No meetings found.</div>
-//                     </TableCell>
-//                   </TableRow>
-//                 ) : (
-//                   filteredMeetings.map((meeting) => (
-//                     <TableRow key={meeting.meetingId} className="hover:bg-green-50">
-//                       <TableCell className="font-medium text-green-800">{meeting.title}</TableCell>
-//                       <TableCell className="text-green-700">{formatDate(meeting.date)}</TableCell>
-//                       <TableCell className="text-green-700">
-//                         {formatTimes(meeting.start?.dateTime)} - {formatTimes(meeting.end?.dateTime)}
-//                       </TableCell>
-//                       <TableCell className="text-green-700">
-//                         {meeting.hangoutLink ? (
-//                           <a
-//                             href={meeting.hangoutLink}
-//                             target="_blank"
-//                             rel="noopener noreferrer"
-//                             className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition"
-//                           >
-//                             Join Meeting
-//                           </a>
-//                         ) : (
-//                           'Online'
-//                         )}
-//                       </TableCell>
-//                       <TableCell className="text-green-700">
-//                         {meeting.attendees
-//                           ? `${meeting.attendees.split(', ').length} attendees`
-//                           : 'None'}
-//                       </TableCell>
-//                       {/* <TableCell>
-//                         <div className="flex space-x-1">
-//                           <Button
-//                             variant="ghost"
-//                             size="sm"
-//                             onClick={() => handleView(meeting)}
-//                             className="text-green-600 hover:text-green-800 hover:bg-green-100"
-//                           >
-//                             <Eye className="h-4 w-4" />
-//                           </Button>
-//                           <Button
-//                             variant="ghost"
-//                             size="sm"
-//                             onClick={() => {
-//                               setSelectedMeeting(meeting);
-//                               setModals({ ...modals, isEditOpen: true });
-//                             }}
-//                             className="text-green-600 hover:text-green-800 hover:bg-green-100"
-//                           >
-//                             <Pencil className="h-4 w-4" />
-//                           </Button>
-//                           <Button
-//                             variant="ghost"
-//                             size="sm"
-//                             onClick={() => handleDelete(meeting.meetingId)}
-//                             disabled={deleteLoading}
-//                             className="text-red-600 hover:text-red-800 hover:bg-red-100"
-//                           >
-//                             <Trash2 className="h-4 w-4" />
-//                           </Button>
-//                           <Button
-//                             variant="ghost"
-//                             size="sm"
-//                             onClick={() => handleViewMom(meeting)}
-//                             className="text-green-600 hover:text-green-800 hover:bg-green-100"
-//                           >
-//                             <FileText className="h-4 w-4" />
-//                           </Button>
-//                           <Button
-//                             variant="ghost"
-//                             size="sm"
-//                             onClick={() => handleViewMom(meeting)}
-//                             className="text-green-600 hover:text-green-800 hover:bg-green-100"
-//                           >
-//                             <Download className="h-4 w-4" />
-//                           </Button>
-//                         </div>
-   
-//                       </TableCell> */}
-        
-
-// <TableCell>
-//   <div className="flex space-x-2 items-center">
-//     {/* View Meeting */}
-//     <div className="relative group">
-//       <Button
-//         variant="ghost"
-//         size="sm"
-//         onClick={() => handleView(meeting)}
-//         className="text-green-600 hover:text-green-800 hover:bg-green-100"
-//       >
-//         <Eye className="h-4 w-4" />
-//       </Button>
-//       <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition z-50 pointer-events-none">
-//         View Meeting
-//       </div>
-//     </div>
-
-//     {/* Edit Meeting */}
-//     <div className="relative group">
-//       <Button
-//         variant="ghost"
-//         size="sm"
-//         onClick={() => {
-//           setSelectedMeeting(meeting);
-//           setModals({ ...modals, isEditOpen: true });
-//         }}
-//         className="text-yellow-600 hover:text-yellow-800 hover:bg-yellow-100"
-//       >
-//         <Pencil className="h-4 w-4" />
-//       </Button>
-//       <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition z-50 pointer-events-none">
-//         Reschedule
-//       </div>
-//     </div>
-
-//     {/* Delete Meeting */}
-//     <div className="relative group">
-//       <Button
-//         variant="ghost"
-//         size="sm"
-//         onClick={() => handleDelete(meeting.meetingId)}
-//         disabled={deleteLoading}
-//         className="text-red-600 hover:text-red-800 hover:bg-red-100"
-//       >
-//         <Trash2 className="h-4 w-4" />
-//       </Button>
-//       <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition z-50 pointer-events-none">
-//         Delete Meeting
-//       </div>
-//     </div>
-
-//     {/* View MOM */}
-//     <div className="relative group">
-//       <Button
-//         variant="ghost"
-//         size="sm"
-//         onClick={() => handleViewMom(meeting)}
-//         className="text-blue-600 hover:text-blue-800 hover:bg-blue-100"
-//       >
-//         <FileText className="h-4 w-4" />
-//       </Button>
-//       <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition z-50 pointer-events-none">
-//         View MOM
-//       </div>
-//     </div>
-
-//     {/* Create Quotation */}
-//     <div className="relative group">
-//       <Button
-//         variant="ghost"
-//         size="sm"
-//         onClick={() =>
-//           router.push(
-//             // `/quotation/create?meetingId=${meeting?.meetingId}`
-//             `/quotation/create?meetingId=${meeting?.meetingId}&contactId=${contactId}`
-//           )
-//         }
-//         className="text-indigo-600 hover:text-indigo-800 hover:bg-indigo-100"
-//       >
-//         <Plus className="h-4 w-4" />
-//       </Button>
-//       <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition z-50 pointer-events-none">
-//         Create Quotation
-//       </div>
-//     </div>
-//   </div>
-// </TableCell>
-
-//                     </TableRow>
-//                   ))
-//                 )}
-//               </TableBody>
-//             </Table>
-//           </div>
-//           <Dialog
-//             open={modals.isCreateOpen}
-//             onOpenChange={(open) => setModals({ ...modals, isCreateOpen: open })}
-//           >
-//             <DialogContent className="max-w-4xl">
-//               <DialogHeader>
-//                 <DialogTitle className="text-green-800">Create New Meeting</DialogTitle>
-//               </DialogHeader>
-//               <MeetingForm
-//                 onSave={handleCreate}
-//                 onCancel={handleCloseModals}
-//                 loading={createLoading}
-//               />
-//             </DialogContent>
-//           </Dialog>
-//           <Dialog
-//             open={modals.isEditOpen}
-//             onOpenChange={(open) => setModals({ ...modals, isEditOpen: open })}
-//           >
-//             <DialogContent className="max-w-2xl">
-//               <DialogHeader>
-//                 <DialogTitle className="text-green-800">Edit Meeting</DialogTitle>
-//               </DialogHeader>
-//               {selectedMeeting && (
-//                 <MeetingForm
-//                   meeting={selectedMeeting}
-//                   onSave={handleEdit}
-//                   onCancel={handleCloseModals}
-//                   isEditing={true}
-//                   loading={updateLoading}
-//                 />
-//               )}
-//             </DialogContent>
-//           </Dialog>
-//           <Dialog
-//             open={modals.isViewOpen}
-//             onOpenChange={(open) => setModals({ ...modals, isViewOpen: open })}
-//           >
-//             <DialogContent className="max-w-2xl">
-//               <DialogHeader>
-//                 <DialogTitle className="text-green-800">Meeting Details</DialogTitle>
-//               </DialogHeader>
-//               {selectedMeeting && (
-//                 <div className="space-y-4 p-6">
-//                   <p><strong>Title:</strong> {selectedMeeting.title}</p>
-//                   <p><strong>Date:</strong> {formatDate(selectedMeeting.date)}</p>
-//                   <p><strong>Time:</strong> {formatTimes(selectedMeeting.start?.dateTime)} - {formatTimes(selectedMeeting.end?.dateTime)}</p>
-//                   <p><strong>Location:</strong> {selectedMeeting.location}</p>
-//                   <p><strong>Attendees:</strong> {selectedMeeting.attendees || 'None'}</p>
-//                   <p><strong>Agenda:</strong> {selectedMeeting.agenda || 'N/A'}</p>
-//                   <Button
-//                     variant="outline"
-//                     className="border-green-300 text-green-700 hover:bg-green-50"
-//                     onClick={handleCloseModals}
-//                   >
-//                     Close
-//                   </Button>
-//                 </div>
-//               )}
-//             </DialogContent>
-//           </Dialog>
-//           <Dialog
-//             open={modals.isDeleteConfirmOpen}
-//             onOpenChange={(open) => setModals({ ...modals, isDeleteConfirmOpen: open })}
-//           >
-//             <DialogContent>
-//               <DialogHeader>
-//                 <DialogTitle>Confirm Deletion</DialogTitle>
-//                 <DialogDescription>
-//                   Are you sure you want to delete this meeting? This action cannot be undone.
-//                 </DialogDescription>
-//               </DialogHeader>
-//               <DialogFooter>
-//                 <Button
-//                   variant="outline"
-//                   onClick={() => setModals({ ...modals, isDeleteConfirmOpen: false })}
-//                 >
-//                   Cancel
-//                 </Button>
-//                 <Button
-//                   variant="destructive"
-//                   onClick={confirmDelete}
-//                   disabled={deleteLoading}
-//                 >
-//                   {deleteLoading ? 'Deleting...' : 'Delete'}
-//                 </Button>
-//               </DialogFooter>
-//             </DialogContent>
-//           </Dialog>
-
-
-//           <Dialog
-//   open={modals.isViewMomOpen}
-//   onOpenChange={(open) => setModals({ ...modals, isViewMomOpen: open })}
-// >
-//   <DialogContent className="w-[70vw] h-[90vh] max-w-none p-6 overflow-y-auto">
-//     <MeetingDetailsWithMOM
-//       isOpen={modals.isViewMomOpen}
-//       onClose={handleCloseModals}
-//       meeting={selectedMeeting}
-//       TIME_ZONE={TIME_ZONE}
-//     />
-//   </DialogContent>
-// </Dialog>
-
-
-
-//           <CodeVerificationModal
-//             isOpen={isModalOpen}
-//             onClose={() => setModalOpen(false)}
-//             verificationUrl={verificationUrl}
-//             style={{ zIndex: 999999 }}
-//           />
-//         </CardContent>
-//       </Card>
-//     </div>
-//   );
-// }
-
-// export default MeetingsPage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 import MeetingAccessGate from '@/components/modules/meetings/meetingAccessController/MeetingAccessGate'; // Import the new component
+import { email } from "@/utils/constant";
+
+
+
+
+
+import { verifyStatusCode } from '@/store/features/meeting/paymentSlice'; // Import the async thunk
+import { usePaymentStatus } from "@/hooks/usePaymentStatus";
+
 
 
 function MeetingsPage({ id }) {
-  const dispatch = useDispatch();
-  const router = useRouter();
-  const contactId = id;
+  const dispatch = useDispatch()
+  const router = useRouter()
+  const contactId = id
   const {
     contactMeetings,
     contactMeetingsLoading,
@@ -1025,35 +459,40 @@ function MeetingsPage({ id }) {
     createLoading,
     updateLoading,
     deleteLoading,
-    error,
-  } = useSelector((state) => state.meetings);
-  const { slots, loading: slotsLoading } = useSelector((state) => state.slots);
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [verificationUrl, setVerificationUrl] = useState('');
-  const [meetingsData, setMeetingsData] = useState([]);
-  const [selectedMeeting, setSelectedMeeting] = useState(null);
-  const [modals, setModals] = useState({
-    isCreateOpen: false,
-    isEditOpen: false,
-    isViewOpen: false,
-    isDeleteConfirmOpen: false,
-    isViewMomOpen: false,
-    isPaymentGateOpen: false,
-  });
-  const [searchQuery, setSearchQuery] = useState('');
-  const [dateRange, setDateRange] = useState({ from: null, to: null });
-  const [meetingToDelete, setMeetingToDelete] = useState(null);
-  const TIME_ZONE = 'UTC';
-  const FREE_MEETING_LIMIT = 3;
-  const [isPaidUser, setIsPaidUser] = useState(false); // Simulated payment status
-  const [showTooltip, setShowTooltip] = useState(false);
+  } = useSelector((state) => state.meetings)
+  const { paymentStatus, paymentError } = useSelector((state) => state.payment)
+  const [modalState, setModalState] = useState(null)
+  const [meetingsData, setMeetingsData] = useState([])
+  const [selectedMeeting, setSelectedMeeting] = useState(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [dateRange, setDateRange] = useState({ from: null, to: null })
+  const [meetingToDelete, setMeetingToDelete] = useState(null)
+  const paidUser=usePaymentStatus(contactId)
+  const [isPaidUser, setIsPaidUser] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(false)
+  const FREE_MEETING_LIMIT = 3
+  const TIME_ZONE = 'UTC'
 
+  // Verify payment status on mount and when payment gate modal closes
   useEffect(() => {
     if (contactId) {
-      dispatch(fetchMeetingsByContactId(contactId));
+      dispatch(verifyStatusCode(contactId))
     }
-  }, [contactId, dispatch]);
+  }, [contactId, modalState, dispatch])
 
+  // Update isPaidUser based on payment status
+  useEffect(() => {
+    setIsPaidUser(paidUser === 'yes')
+  }, [paidUser])
+
+  // Fetch meetings
+  useEffect(() => {
+    if (contactId) {
+      dispatch(fetchMeetingsByContactId(contactId))
+    }
+  }, [contactId, dispatch])
+
+  // Map meetings data
   useEffect(() => {
     if (contactMeetings.length > 0) {
       const mappedMeetings = contactMeetings.map((meeting) => ({
@@ -1067,122 +506,99 @@ function MeetingsPage({ id }) {
         start: meeting.start,
         end: meeting.end,
         hangoutLink: meeting.hangoutLink,
-        htmlLink: meeting.htmlLink,
-        conferenceData: meeting.conferenceData,
-      }));
-      setMeetingsData(mappedMeetings);
+      }))
+      setMeetingsData(mappedMeetings)
     } else {
-      setMeetingsData([]);
+      setMeetingsData([])
     }
-  }, [contactMeetings]);
+  }, [contactMeetings])
 
   const handleCreate = async (newMeeting) => {
     try {
-      const response = await dispatch(createMeeting(newMeeting));
-      if (response.payload?.response?.data?.message === 'User not authorized') {
-        setVerificationUrl(response.payload.response.data.url);
-        setModalOpen(true);
-        setModals({ ...modals, isCreateOpen: false, isPaymentGateOpen: false });
-      } else {
-        setModals({ ...modals, isCreateOpen: false, isPaymentGateOpen: false });
-        toast.success('Meeting created successfully!');
-      }
+      await dispatch(createMeeting(newMeeting)).unwrap()
+      setModalState(null)
+      toast.success('Meeting created successfully!')
     } catch (error) {
-      toast.error('Failed to create meeting.');
-      console.error('Error creating meeting:', error);
+      if (error?.response?.data?.message === 'User not authorized') {
+        setModalState('paymentGate')
+      } else {
+        toast.error('Failed to create meeting.')
+        console.error('Error creating meeting:', error)
+      }
     }
-  };
+  }
 
   const handleEdit = async (updatedMeeting) => {
     try {
-      await dispatch(updateMeeting({ meetingData: updatedMeeting }));
-      setModals({ ...modals, isEditOpen: false });
-      setSelectedMeeting(null);
-      toast.success('Meeting updated successfully!');
-    } catch (err) {
-      toast.error('Failed to update meeting.');
-      console.error('Error updating meeting:', err);
+      await dispatch(updateMeeting({ meetingData: updatedMeeting })).unwrap()
+      setModalState(null)
+      setSelectedMeeting(null)
+      toast.success('Meeting updated successfully!')
+    } catch (error) {
+      toast.error('Failed to update meeting.')
+      console.error('Error updating meeting:', error)
     }
-  };
+  }
 
   const handleDelete = async (meetingId) => {
-    setMeetingToDelete(meetingId);
-    setModals({ ...modals, isDeleteConfirmOpen: true });
-  };
+    setMeetingToDelete(meetingId)
+    setModalState('deleteConfirm')
+  }
 
   const confirmDelete = async () => {
     if (meetingToDelete) {
       try {
-        await dispatch(
-          deleteMeeting({ id: meetingToDelete, email: 'it_chinmaya@outlook.com' })
-        ).unwrap();
-        toast.success('Meeting deleted successfully!');
-      } catch (err) {
-        toast.error('Failed to delete meeting.');
-        console.error('Error deleting meeting:', err);
+        await dispatch(deleteMeeting({ id: meetingToDelete,email:email })).unwrap()
+        toast.success('Meeting deleted successfully!')
+      } catch (error) {
+        toast.error('Failed to delete meeting.')
+        console.error('Error deleting meeting:', error)
       } finally {
-        setModals({ ...modals, isDeleteConfirmOpen: false });
-        setMeetingToDelete(null);
+        setModalState(null)
+        setMeetingToDelete(null)
       }
     }
-  };
+  }
 
   const handleView = (meeting) => {
-    setSelectedMeeting(meeting);
-    setModals({ ...modals, isViewOpen: true });
-  };
+    setSelectedMeeting(meeting)
+    setModalState('view')
+  }
 
   const handleViewMom = (meeting) => {
-    setSelectedMeeting(meeting);
-    setModals({ ...modals, isViewMomOpen: true });
-  };
+    setSelectedMeeting(meeting)
+    setModalState('viewMom')
+  }
 
   const handleCloseModals = () => {
-    setModals({
-      isCreateOpen: false,
-      isEditOpen: false,
-      isViewOpen: false,
-      isDeleteConfirmOpen: false,
-      isViewMomOpen: false,
-      isPaymentGateOpen: false,
-    });
-    setSelectedMeeting(null);
-    dispatch(clearError());
-  };
+    setModalState(null)
+    setSelectedMeeting(null)
+    dispatch(clearError())
+  }
 
   const handleScheduleClick = () => {
     if (meetingsData.length >= FREE_MEETING_LIMIT && !isPaidUser) {
-      setModals({ ...modals, isPaymentGateOpen: true });
+      setModalState('paymentGate')
     } else {
-      setModals({ ...modals, isCreateOpen: true });
+      setModalState('create')
     }
-  };
-
-  const handlePaymentSuccess = () => {
-    setIsPaidUser(true);
-    setModals({ ...modals, isPaymentGateOpen: false, isCreateOpen: true });
-    toast.success('Payment successful! You can now schedule unlimited meetings.');
-  };
+  }
 
   const resetDateRange = () => {
-    setDateRange({ from: null, to: null });
-  };
+    setDateRange({ from: null, to: null })
+  }
 
   const formatDate = (date) => {
-    return date ? format(new Date(date), 'PPP') : 'N/A';
-  };
+    return date ? format(new Date(date), 'PPP') : 'N/A'
+  }
 
   const formatTimes = (dateTime) => {
-    return dateTime ? format(new Date(dateTime), 'p') : 'N/A';
-  };
+    return dateTime ? format(new Date(dateTime), 'p') : 'N/A'
+  }
 
   const filteredMeetings = meetingsData.filter((meeting) => {
-    const matchesSearch = meeting.title
-      ?.toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const meetingDate = meeting.date
-      ? new Date(meeting.date).toISOString().split('T')[0]
-      : '';
+    const matchesSearch = meeting.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    const meetingDate = meeting.date ? new Date(meeting.date).toISOString().split('T')[0] : ''
     const matchesDateRange =
       !dateRange.from ||
       !dateRange.to ||
@@ -1190,14 +606,14 @@ function MeetingsPage({ id }) {
         isWithinInterval(parseISO(meetingDate), {
           start: dateRange.from,
           end: dateRange.to,
-        }));
-    return matchesSearch && matchesDateRange;
-  });
+        }))
+    return matchesSearch && matchesDateRange
+  })
 
-  const remainingFreeMeetings = Math.max(0, FREE_MEETING_LIMIT - meetingsData.length);
+  const remainingFreeMeetings = Math.max(0, FREE_MEETING_LIMIT - meetingsData.length)
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen">
       <Card className="mx-auto border-green-200 shadow-lg">
         <CardHeader className="border-b border-green-200">
           <CardTitle className="flex justify-between items-center text-green-800">
@@ -1222,9 +638,7 @@ function MeetingsPage({ id }) {
                   }`}
                 >
                   {remainingFreeMeetings > 0
-                    ? `${remainingFreeMeetings} free meeting${
-                        remainingFreeMeetings === 1 ? '' : 's'
-                      } remaining`
+                    ? `${remainingFreeMeetings} free meeting${remainingFreeMeetings === 1 ? '' : 's'} remaining`
                     : 'Free tier limit reached. Upgrade to schedule more.'}
                 </div>
               )}
@@ -1237,6 +651,11 @@ function MeetingsPage({ id }) {
               <AlertDescription>{contactMeetingsError}</AlertDescription>
             </Alert>
           )}
+          {paymentError && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertDescription>{paymentError}</AlertDescription>
+            </Alert>
+          )}
           <div className="flex flex-col md:flex-row gap-4 mb-6 items-center">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-green-600" />
@@ -1244,7 +663,7 @@ function MeetingsPage({ id }) {
                 placeholder="Search by meeting title..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 border-green-300 focus ring-green-500 text-green-900 rounded-lg"
+                className="pl-10 border-green-300 focus:ring-green-500 text-green-900 rounded-lg"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -1355,8 +774,8 @@ function MeetingsPage({ id }) {
                               variant="ghost"
                               size="sm"
                               onClick={() => {
-                                setSelectedMeeting(meeting);
-                                setModals({ ...modals, isEditOpen: true });
+                                setSelectedMeeting(meeting)
+                                setModalState('edit')
                               }}
                               className="text-yellow-600 hover:text-yellow-800 hover:bg-yellow-100"
                             >
@@ -1380,6 +799,7 @@ function MeetingsPage({ id }) {
                               Delete Meeting
                             </div>
                           </div>
+                        
                           <div className="relative group">
                             <Button
                               variant="ghost"
@@ -1418,10 +838,7 @@ function MeetingsPage({ id }) {
               </TableBody>
             </Table>
           </div>
-          <Dialog
-            open={modals.isCreateOpen}
-            onOpenChange={(open) => setModals({ ...modals, isCreateOpen: open })}
-          >
+          <Dialog open={modalState === 'create'} onOpenChange={(open) => setModalState(open ? 'create' : null)}>
             <DialogContent className="max-w-4xl">
               <DialogHeader>
                 <DialogTitle className="text-green-800">Create New Meeting</DialogTitle>
@@ -1433,10 +850,7 @@ function MeetingsPage({ id }) {
               />
             </DialogContent>
           </Dialog>
-          <Dialog
-            open={modals.isEditOpen}
-            onOpenChange={(open) => setModals({ ...modals, isEditOpen: open })}
-          >
+          <Dialog open={modalState === 'edit'} onOpenChange={(open) => setModalState(open ? 'edit' : null)}>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle className="text-green-800">Edit Meeting</DialogTitle>
@@ -1452,10 +866,7 @@ function MeetingsPage({ id }) {
               )}
             </DialogContent>
           </Dialog>
-          <Dialog
-            open={modals.isViewOpen}
-            onOpenChange={(open) => setModals({ ...modals, isViewOpen: open })}
-          >
+          <Dialog open={modalState === 'view'} onOpenChange={(open) => setModalState(open ? 'view' : null)}>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle className="text-green-800">Meeting Details</DialogTitle>
@@ -1479,10 +890,7 @@ function MeetingsPage({ id }) {
               )}
             </DialogContent>
           </Dialog>
-          <Dialog
-            open={modals.isDeleteConfirmOpen}
-            onOpenChange={(open) => setModals({ ...modals, isDeleteConfirmOpen: open })}
-          >
+          <Dialog open={modalState === 'deleteConfirm'} onOpenChange={(open) => setModalState(open ? 'deleteConfirm' : null)}>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Confirm Deletion</DialogTitle>
@@ -1493,7 +901,7 @@ function MeetingsPage({ id }) {
               <DialogFooter>
                 <Button
                   variant="outline"
-                  onClick={() => setModals({ ...modals, isDeleteConfirmOpen: false })}
+                  onClick={() => setModalState(null)}
                 >
                   Cancel
                 </Button>
@@ -1507,23 +915,17 @@ function MeetingsPage({ id }) {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          <Dialog
-            open={modals.isViewMomOpen}
-            onOpenChange={(open) => setModals({ ...modals, isViewMomOpen: open })}
-          >
+          <Dialog open={modalState === 'viewMom'} onOpenChange={(open) => setModalState(open ? 'viewMom' : null)}>
             <DialogContent className="w-[70vw] h-[90vh] max-w-none p-6 overflow-y-auto">
               <MeetingDetailsWithMOM
-                isOpen={modals.isViewMomOpen}
+                isOpen={modalState === 'viewMom'}
                 onClose={handleCloseModals}
                 meeting={selectedMeeting}
                 TIME_ZONE={TIME_ZONE}
               />
             </DialogContent>
           </Dialog>
-          <Dialog
-            open={modals.isPaymentGateOpen}
-            onOpenChange={(open) => setModals({ ...modals, isPaymentGateOpen: open })}
-          >
+          <Dialog open={modalState === 'paymentGate'} onOpenChange={(open) => setModalState(open ? 'paymentGate' : null)}>
             <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle className="text-red-800">Meeting Limit Reached</DialogTitle>
@@ -1531,19 +933,39 @@ function MeetingsPage({ id }) {
                   You have reached the free tier limit of {FREE_MEETING_LIMIT} meetings. Please upgrade to schedule more meetings.
                 </DialogDescription>
               </DialogHeader>
-              <MeetingAccessGate onPaymentSuccess={handlePaymentSuccess} onCancel={handleCloseModals} />
+              <MeetingAccessGate
+                contactId={contactId}
+                onCancel={handleCloseModals}
+              />
             </DialogContent>
           </Dialog>
-          <CodeVerificationModal
-            isOpen={isModalOpen}
-            onClose={() => setModalOpen(false)}
-            verificationUrl={verificationUrl}
-            style={{ zIndex: 999999 }}
-          />
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
 
-export default MeetingsPage;
+export default MeetingsPage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

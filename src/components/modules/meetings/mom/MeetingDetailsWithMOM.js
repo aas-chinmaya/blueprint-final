@@ -35,6 +35,7 @@ import {
   User,
   FileEdit,
   Eye,
+  Image,
 } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
 
@@ -188,12 +189,9 @@ function MeetingDetailsWithMOM({ isOpen, onClose, meeting, TIME_ZONE }) {
       setSignatureFile(file);
       setSignaturePreview(URL.createObjectURL(file));
     } else {
-      toast({
-        title: "Error",
-        description: "Please upload a valid image file (.png, .jpg, .jpeg).",
-        variant: "destructive",
-        className: "bg-red-100 text-red-800 border-red-300 font-medium",
-      });
+      toast.success(
+         "Please upload a valid image file (.png, .jpg, .jpeg)."
+      );
       setSignatureFile(null);
       setSignaturePreview(null);
     }
@@ -217,39 +215,21 @@ function MeetingDetailsWithMOM({ isOpen, onClose, meeting, TIME_ZONE }) {
   // Handler: Form submission
   const handleSubmit = async () => {
     if (!momForm.createdBy.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter the name of the person who created the MoM.",
-        variant: "destructive",
-        className: "bg-red-100 text-red-800 border-red-300 font-medium",
-      });
+      toast.info("Please enter the name of the person who created the MoM.",
+       
+      );
       return;
     }
     if (!momForm.summary.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a summary.",
-        variant: "destructive",
-        className: "bg-red-100 text-red-800 border-red-300 font-medium",
-      });
+      toast.info("Please enter a summary.");
       return;
     }
     if (!signatureFile) {
-      toast({
-        title: "Error",
-        description: "Please upload a signature image.",
-        variant: "destructive",
-        className: "bg-red-100 text-red-800 border-red-300 font-medium",
-      });
+      toast.info("Please upload a signature image.");
       return;
     }
     if (isTimeExceeded && !isEditMode && (!reasonForDelay.trim() || !isAgreedToTerms)) {
-      toast({
-        title: "Error",
-        description: "Please provide a reason for the delay and agree to the terms.",
-        variant: "destructive",
-        className: "bg-red-100 text-red-800 border-red-300 font-medium",
-      });
+      toast.info( "Please provide a reason for the delay and agree to the terms.");
       return;
     }
     try {
@@ -269,30 +249,17 @@ function MeetingDetailsWithMOM({ isOpen, onClose, meeting, TIME_ZONE }) {
             submittedBy: momForm.createdBy,
           })
         ).unwrap();
-        toast({
-          title: "Success",
-          description: "Cause for delay submitted successfully!",
-          variant: "success",
-          className: "bg-green-100 text-green-800 border-green-300 font-medium",
-        });
+        toast.success( "Cause for delay submitted successfully!");
       }
 
       if (isEditMode && momByMeetingId) {
         await dispatch(updateMoM(momData)).unwrap();
-        toast({
-          title: "Success",
-          description: "MoM updated successfully!",
-          variant: "success",
-          className: "bg-green-100 text-green-800 border-green-300 font-medium",
-        });
+        toast.success(
+         "MoM updated successfully!");
       } else {
         await dispatch(createMoM(momData)).unwrap();
-        toast({
-          title: "Success",
-          description: "MoM created successfully!",
-          variant: "success",
-          className: "bg-green-100 text-green-800 border-green-300 font-medium",
-        });
+        toast.success(
+          "MoM created successfully!");
       }
       setMode("view");
       setIsEditMode(false);
@@ -301,12 +268,9 @@ function MeetingDetailsWithMOM({ isOpen, onClose, meeting, TIME_ZONE }) {
       setSignatureFile(null);
       setSignaturePreview(null);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: `Failed to ${isEditMode ? "update" : "create"} MoM: ${error?.message || "Unknown error"}`,
-        variant: "destructive",
-        className: "bg-red-100 text-red-800 border-red-300 font-medium",
-      });
+      toast.error( `Failed to ${isEditMode ? "update" : "create"} MoM: ${error?.message || "Unknown error"}`,
+       
+      );
     }
   };
 
@@ -360,7 +324,7 @@ function MeetingDetailsWithMOM({ isOpen, onClose, meeting, TIME_ZONE }) {
   }
 
   return (
-    <div className="w-full max-w-[95vw] sm:max-w-4xl mx-auto p-4 sm:p-6 bg-gradient-to-br from-green-50 to-green-200 rounded-2xl shadow-2xl" ref={containerRef}>
+    <div className="w-full max-w-full  mx-auto p-4 sm:p-6 bg-gradient-to-br from-green-50 to-green-200 rounded-2xl shadow-2xl" ref={containerRef}>
       {/* Header with Toggle Icon */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl sm:text-3xl font-bold text-green-800 flex items-center">
@@ -514,7 +478,7 @@ function MeetingDetailsWithMOM({ isOpen, onClose, meeting, TIME_ZONE }) {
               />
               {signaturePreview && (
                 <div className="mt-2">
-                  <img
+                  <Image
                     src={signaturePreview}
                     alt="Signature Preview"
                     className="max-w-[120px] sm:max-w-[150px] max-h-[80px] sm:max-h-[100px] rounded-md border border-green-200"
@@ -695,7 +659,7 @@ function MeetingDetailsWithMOM({ isOpen, onClose, meeting, TIME_ZONE }) {
           )}
         </div>
       )}
-      {mode === "view" && (
+      {/* {mode === "view" && (
         <div className="flex justify-end mt-4">
           <Button
             variant="outline"
@@ -705,7 +669,7 @@ function MeetingDetailsWithMOM({ isOpen, onClose, meeting, TIME_ZONE }) {
             Close
           </Button>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

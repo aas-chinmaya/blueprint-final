@@ -135,9 +135,9 @@ const fullNavData = [
 // ✅ Teams dropdown (team-switcher)
 const teams = [
   {
-    name: "AAS Admin",
+    name: "Blueprint",
     logo: User,
-    plan: "Admin Panel",
+    plan: "Project Management",
   },
 ];
 

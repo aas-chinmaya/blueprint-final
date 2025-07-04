@@ -2,6 +2,12 @@
 @import "tw-animate-css";
 
 
+body {
+  @apply antialiased text-gray-900 bg-white;
+  font-family: var(--font-inter), sans-serif;
+}
+
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

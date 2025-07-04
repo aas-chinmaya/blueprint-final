@@ -22,11 +22,11 @@ export default function page() {
 
   return (
     <>
-      {/* {currentUser.role === "cpc" ? (
+      {currentUser.role === "cpc" ? (
         <CpcDashboard currentUser={currentUser} />
       ) : (
         <EmployeeDashboard currentUser={currentUser} />
-      )} */}
+      )}
     </>
   );
 }

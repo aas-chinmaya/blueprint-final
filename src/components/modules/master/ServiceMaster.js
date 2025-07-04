@@ -427,15 +427,7 @@ export default function Service() {
           ) : (
             <p className="text-gray-500">Loading...</p>
           )}
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setOpenView(false)}
-              className="text-gray-600 hover:bg-gray-100"
-            >
-              Close
-            </Button>
-          </DialogFooter>
+          
         </DialogContent>
       </Dialog>
 
@@ -501,7 +493,7 @@ export default function Service() {
                 type="submit"
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
-                Save Changes
+                Update
               </Button>
             </DialogFooter>
           </form>

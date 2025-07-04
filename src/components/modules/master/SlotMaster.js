@@ -279,7 +279,7 @@ export default function SlotMaster() {
                     <CardContent className="flex items-center justify-between p-4">
                       <div className="flex flex-col">
                         <span className="font-semibold text-green-700">
-                          Slot #{slot.slotNo}: {slot.startTime} - {slot.endTime}
+                          Slot {slot.slotNo}: {slot.startTime} - {slot.endTime}
                         </span>
                         <span className="text-sm text-gray-600">{slot.shift}</span>
                         <span className="text-xs text-gray-400">
@@ -391,7 +391,7 @@ export default function SlotMaster() {
               Confirm Deletion
             </DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete Slot #{slotToDelete}? This action cannot be undone.
+              Are you sure you want to delete Slot {slotToDelete}? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

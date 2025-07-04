@@ -59,21 +59,7 @@ export default function ProtectedLayout({ children }) {
     return path.charAt(0).toUpperCase() + path.slice(1);
   };
 
-  const handleLogout = async () => {
-    try {
-      await dispatch(logoutUser()).unwrap();
-      toast.sucess(
-        "You have been successfully logged out."
-      );
-      router.push("/");
-    } catch (error) {
- 
-      toast.error(
-        error|| "Failed to log out. Please try again."
-        
-      );
-    }
-  };
+
   return (
     <Providers>
       <SidebarProvider>
@@ -107,7 +93,7 @@ export default function ProtectedLayout({ children }) {
               >
                 <Avatar className="h-9 w-9">
                   <AvatarImage
-                    src={userInfo.profilePicture}
+                    src={!userInfo.profilePicture || "/Avatar.png"}
                     alt={userInfo.fullName || "User"}
                   />
                   <AvatarFallback>
@@ -124,13 +110,7 @@ export default function ProtectedLayout({ children }) {
 <div className="bg-muted/50 h-full">
 
           <AppShell className="">
-          {/* <div className="flex flex-1 flex-col gap-4 m-2 rounded-md  pt-0  bg-muted/50 px-2"> */}
-            {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-          </div>
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" /> */}
+        
             {children}
           </AppShell>
 </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import CreateQuotationForm from '@/components/modules/quotation/CreateQuotationForm';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -14,14 +15,13 @@ export default function CreateQuotationPage() {
   }, [searchParams]);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Create Quotation</h1>
+    <div className="">
 
       {meetingId && contactId ? (
         <>
-          <p>✅ Meeting ID: {meetingId}</p>
-          <p>✅ Contact ID: {contactId}</p>
+     
           {/* Pass these IDs to a form component */}
+          <CreateQuotationForm meetingId={meetingId} contactId={contactId} />
         </>
       ) : (
         <p className="text-red-500">Missing meetingId or contactId in URL</p>

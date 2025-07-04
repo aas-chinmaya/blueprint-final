@@ -446,7 +446,7 @@ const handlePageChange = (pageNumber) => {
           )}
         </div>
       ) : (
-        <div className="mt-6 bg-white rounded-lg shadow-md border border-green-200">
+        <div className="mt-0 bg-white rounded-lg shadow-md border border-green-200">
           <Table>
             <TableHeader>
               <TableRow className="bg-green-50">
