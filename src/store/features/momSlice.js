@@ -67,31 +67,75 @@ export const fetchMoMView = createAsyncThunk(
 );
 
 // Create MoM
+// export const createMoM = createAsyncThunk(
+//   'mom/createMoM',
+//   async (momData, { rejectWithValue }) => {
+//     try {
+//       const response = await axiosInstance.post('/mom/createmom', momData,{
+//         headers: {
+//           "Content-Type": "multipart/form-data",
+//         },
+//       });
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response?.data?.message || 'Failed to create MoM');
+//     }
+//   }
+// );
+// Async thunk to create MoM
 export const createMoM = createAsyncThunk(
-  'mom/createMoM',
+  "mom/createMoM",
   async (momData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post('/mom/createmom', momData);
+      console.log("Payload being sent:", momData); // Debug: Log the FormData
+      for (let [key, value] of momData.entries()) {
+        console.log(`${key}:`, value); // Debug: Log FormData entries
+      }
+      const response = await axiosInstance.post("/mom/createmom", momData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to create MoM');
+      console.error("Error in createMoM:", error); // Debug: Log errors
+      return rejectWithValue(error.response?.data?.message || "Failed to create MoM");
     }
   }
 );
-
 // Update MoM
+// export const updateMoM = createAsyncThunk(
+//   'mom/updateMoM',
+//   async (momData, { rejectWithValue }) => {
+//     try {
+//       const response = await axiosInstance.put('/mom/update', momData);
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response?.data?.message || 'Failed to update MoM');
+//     }
+//   }
+// );
+// Async thunk to update MoM
 export const updateMoM = createAsyncThunk(
-  'mom/updateMoM',
+  "mom/updateMoM",
   async (momData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.put('/mom/update', momData);
+      console.log("Payload being sent:", momData); // Debug: Log the FormData
+      for (let [key, value] of momData.entries()) {
+        console.log(`${key}:`, value); // Debug: Log FormData entries
+      }
+      const response = await axiosInstance.put("/mom/update", momData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to update MoM');
+      console.error("Error in updateMoM:", error); // Debug: Log errors
+      return rejectWithValue(error.response?.data?.message || "Failed to update MoM");
     }
   }
 );
-
 const momSlice = createSlice({
   name: 'mom',
   initialState: {

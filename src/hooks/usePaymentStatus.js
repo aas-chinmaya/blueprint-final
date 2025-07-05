@@ -6,15 +6,15 @@ export const usePaymentStatus = (contactId ) => {
   const dispatch = useDispatch()
 
   const { paymentDetails } = useSelector((state) => state.payment)
-
   useEffect(() => {
     if (contactId) {
       dispatch(verifyStatusCode(contactId))
     }
   }, [contactId, dispatch])
+  console.log(paymentDetails)
 
   const status = paymentDetails?.status?.toLowerCase?.() === 'paid' ? 'yes' : 'no'
   console.log(paymentDetails)
-console.log("ststus",paymentDetails?.status?.toLowerCase?.() === 'paid' ? 'yes' : 'no')
-  return status
+console.log("status",paymentDetails?.status?.toLowerCase?.() === 'paid' ? 'yes' : 'no')
+  return status || "No Status found for Given ContactId!"
 }

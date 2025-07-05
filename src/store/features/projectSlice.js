@@ -62,21 +62,21 @@ export const createProject = createAsyncThunk(
   'project/createProject',
   async (projectData, { rejectWithValue }) => {
     try {
-      const formData = new FormData();
-      Object.keys(projectData).forEach((key) => {
-        if (key !== 'attachments') {
-          formData.append(key, projectData[key]);
-        }
-      });
-      if (projectData.attachments) {
-        projectData.attachments.forEach((file) => {
-          formData.append('attachments', file);
-        });
-      }
+      // const formData = new FormData();
+      // Object.keys(projectData).forEach((key) => {
+      //   if (key !== 'attachments') {
+      //     formData.append(key, projectData[key]);
+      //   }
+      // });
+      // if (projectData.attachments) {
+      //   projectData.attachments.forEach((file) => {
+      //     formData.append('attachments', file);
+      //   });
+      // }
       const response = await axiosInstance.post('/projects/onboard', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        // headers: {
+        //   'Content-Type': 'multipart/form-data',
+        // },
       });
       return response.data;
     } catch (error) {

@@ -26,7 +26,7 @@ export const getQuotations = createAsyncThunk(
   'quotation/getQuotations',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get('/quotation/getquotations');
+      const res = await axiosInstance.get('/quotation/getAllquotations');
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -38,7 +38,7 @@ export const getQuotationById = createAsyncThunk(
   'quotations/getQuotationById',
   async (quotationNumber, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get(`/quotation/getQuotationById/${quotationNumber}`);
+      const res = await axiosInstance.get(`/quotation/qoutationbynumber/${quotationNumber}`);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
@@ -87,7 +87,7 @@ export const getPdfById = createAsyncThunk(
   'quotations/getPdfById',
   async (quotationNumber, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get(`/quotation/getPdfById/${quotationNumber}`);
+      const res = await axiosInstance.get(`/quotation/pdfbyqoutationnumber/${quotationNumber}`);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);

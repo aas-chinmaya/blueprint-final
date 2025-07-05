@@ -18,3 +18,16 @@ email,
 
 
 }
+
+
+
+
+// src/constants.js
+export const serviceProviderDetails = {
+  companyName: "AAS Information Technology Pvt. Ltd.",
+  email: "sales@aas.technology",
+  phone: "+91-6742571111",
+  website: "https://aas.technology/",
+  gstin: "27AABCU9603R1ZM",
+};
+ 

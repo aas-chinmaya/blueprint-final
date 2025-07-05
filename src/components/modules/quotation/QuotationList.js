@@ -1,6 +1,4 @@
 
-
-
 'use client'
 
 import React, { useEffect, useState } from 'react'
@@ -34,10 +32,20 @@ export default function QuotationList() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
   const [loadingQuotation, setLoadingQuotation] = useState(false)
   const [showPdf, setShowPdf] = useState(false)
+  const [pdfUrl, setPdfUrl] = useState(null)
 
   useEffect(() => {
     dispatch(getQuotations())
   }, [dispatch])
+
+  useEffect(() => {
+    // Clean up Blob URL when component unmounts or modal closes
+    return () => {
+      if (pdfUrl) {
+        URL.revokeObjectURL(pdfUrl)
+      }
+    }
+  }, [pdfUrl])
 
   const handleViewQuotation = async (quotationNumber) => {
     setShowPdf(false)
@@ -49,14 +57,40 @@ export default function QuotationList() {
     setLoadingQuotation(false)
   }
 
-  const handleViewPdf = async (quotationNumber) => {
+  const handleViewPdf = (quotationNumber) => {
     setShowPdf(true)
     setLoadingQuotation(true)
-    const result = await dispatch(getQuotationById(quotationNumber))
-    if (result?.payload) {
-      setIsViewModalOpen(true)
+
+    // Check if selectedQuotation has pdf data
+    if (selectedQuotation?.pdf?.data?.length > 0) {
+      try {
+        // Convert pdf.data (array of bytes) to Uint8Array
+        const uint8Array = new Uint8Array(selectedQuotation.pdf.data)
+        // Create a Blob from the Uint8Array
+        const blob = new Blob([uint8Array], { type: 'application/pdf' })
+        // Generate a URL for the Blob
+        const blobUrl = URL.createObjectURL(blob)
+        setPdfUrl(blobUrl)
+      } catch (error) {
+        console.error('Error creating PDF URL:', error)
+        setPdfUrl(null)
+      }
+    } else {
+      console.warn('No PDF data available in the response')
+      setPdfUrl(null)
     }
     setLoadingQuotation(false)
+  }
+
+  const handleDownloadPdf = () => {
+    if (pdfUrl && selectedQuotation?.quotationNumber) {
+      const link = document.createElement('a')
+      link.href = pdfUrl
+      link.download = `Quotation_${selectedQuotation.quotationNumber}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
   }
 
   const formatCurrency = (amount) =>
@@ -73,10 +107,8 @@ export default function QuotationList() {
       year: 'numeric',
     })
 
-  const getPdfUrl = (quotationNumber) => `/api/quotations/pdf/${quotationNumber}`
-
   return (
-    <div className="min-h-screen bg-gray-50 ">
+    <div className="min-h-screen bg-gray-50">
       {/* View Modal */}
       <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
         <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto">
@@ -89,19 +121,27 @@ export default function QuotationList() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setShowPdf((prev) => !prev)}
+                  onClick={() => {
+                    if (showPdf) {
+                      setShowPdf(false)
+                      setPdfUrl(null) // Reset PDF URL
+                    } else {
+                      handleViewPdf(selectedQuotation?.quotationNumber)
+                    }
+                  }}
                 >
-                  {showPdf ? 'Back to Details' : 'View PDF'}
+                  {showPdf ? 'Back' : 'View PDF'}
                 </Button>
-                {showPdf && selectedQuotation?.quotationNumber && (
-                  <a
-                    href={getPdfUrl(selectedQuotation.quotationNumber)}
-                    download
-                    className="text-sm text-blue-600 hover:underline flex items-center"
+                {showPdf && pdfUrl && selectedQuotation?.quotationNumber && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDownloadPdf}
+                    className="text-blue-600 hover:text-blue-800"
                   >
                     <Download className="w-4 h-4 mr-1" />
                     Download PDF
-                  </a>
+                  </Button>
                 )}
               </div>
             </div>
@@ -111,19 +151,22 @@ export default function QuotationList() {
             <p className="text-gray-500">Loading quotation details...</p>
           ) : selectedQuotation?._id ? (
             showPdf ? (
-              <iframe
-                src={getPdfUrl(selectedQuotation.quotationNumber)}
-                title="Quotation PDF"
-                className="w-full h-[500px] border rounded"
-              />
+              pdfUrl ? (
+                <iframe
+                  src={pdfUrl}
+                  title="Quotation PDF"
+                  className="w-full h-[80vh] border rounded"
+                />
+              ) : (
+                <p className="text-red-500">No PDF data available for this quotation.</p>
+              )
             ) : (
               <div className="space-y-4 text-sm">
                 <p><strong>Quotation Number:</strong> {selectedQuotation.quotationNumber}</p>
                 <p><strong>Contact ID:</strong> {selectedQuotation.contactId}</p>
-                <p><strong>Title:</strong> {selectedQuotation.title}</p>
+                <p><strong>Title:</strong> {selectedQuotation.projectTitle}</p>
                 <p><strong>Description:</strong> {selectedQuotation.description}</p>
                 <p><strong>Scope of Work:</strong> {selectedQuotation.scopeOfWork}</p>
-
                 <div>
                   <strong>Deliverables:</strong>
                   {Array.isArray(selectedQuotation?.deliverables) ? (
@@ -136,7 +179,6 @@ export default function QuotationList() {
                     <p>{selectedQuotation?.deliverables || 'No deliverables available'}</p>
                   )}
                 </div>
-
                 <div>
                   <strong>Items:</strong>
                   <table className="w-full text-left border mt-2">
@@ -158,8 +200,7 @@ export default function QuotationList() {
                     </tbody>
                   </table>
                 </div>
-
-                <p><strong>Timeline:</strong> {formatDate(selectedQuotation.timeline?.startDate)} - {formatDate(selectedQuotation.timeline?.endDate)}</p>
+                <p><strong>Timeline:</strong> {selectedQuotation.timeline}</p>
                 <p><strong>Subtotal:</strong> {formatCurrency(selectedQuotation.subtotal)}</p>
                 <p><strong>Tax:</strong> {selectedQuotation.taxPercent}% ({formatCurrency(selectedQuotation.taxAmount)})</p>
                 <p><strong>Total:</strong> {formatCurrency(selectedQuotation.total)} {selectedQuotation.currency}</p>
@@ -244,3 +285,12 @@ export default function QuotationList() {
     </div>
   )
 }
+
+
+
+
+
+
+
+
+

@@ -119,17 +119,7 @@ const fullNavData = [
     url: "/task",
     icon: IconChecklist,
   },
-   // Optional future sections:
-  // {
-  //   title: "Bug",
-  //   url: "/bug",
-  //   icon: IconBug,
-  // },
-  // {
-  //   title: "Report",
-  //   url: "/report",
-  //   icon: IconReportAnalytics,
-  // },
+
 ];
 
 // ✅ Teams dropdown (team-switcher)
