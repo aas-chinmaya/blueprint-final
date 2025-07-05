@@ -74,7 +74,7 @@ export default function FetchAllProjects() {
     return () => {
       dispatch(clearProjects()); // Clean up on unmount
     };
-  }, [dispatch, fetchAllProjects]);
+  });
 
   // Calculate project statistics
   const projectStats = projects
