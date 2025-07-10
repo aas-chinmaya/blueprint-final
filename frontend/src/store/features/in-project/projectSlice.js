@@ -61,17 +61,7 @@ export const createProject = createAsyncThunk(
   'project/createProject',
   async (projectData, { rejectWithValue }) => {
     try {
-      // const formData = new FormData();
-      // Object.keys(projectData).forEach((key) => {
-      //   if (key !== 'attachments') {
-      //     formData.append(key, projectData[key]);
-      //   }
-      // });
-      // if (projectData.attachments) {
-      //   projectData.attachments.forEach((file) => {
-      //     formData.append('attachments', file);
-      //   });
-      // }
+   
       const response = await axiosInstance.post('/projects/onboard', projectData, {
         // headers: {
         //   'Content-Type': 'multipart/form-data',
@@ -122,7 +112,8 @@ export const fetchProjectsByEmployeeId = createAsyncThunk(
   'project/fetchProjectsByEmployeeId',
   async (employeeId, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get(`/projects/getall/${employeeId}`);
+      const response = await axiosInstance.get(`/projects/by-person/${employeeId}`);
+  
       return response.data;
     } catch (error) {
       console.error('Error fetching projects by employee ID:', error);

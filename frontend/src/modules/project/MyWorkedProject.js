@@ -61,7 +61,7 @@ export default function MyWorkedProject({ employeeId }) {
   const dispatch = useDispatch();
   const router = useRouter();
   const { employeeProjects, status, error } = useSelector((state) => state.project);
-
+console.log('Employee Projects:', employeeProjects);
   // State for filters and sorting
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -71,7 +71,8 @@ export default function MyWorkedProject({ employeeId }) {
   useEffect(() => {
     if (!employeeProjects.length && status.fetchEmployeeProjects === 'idle') {
       if (employeeId) {
-        dispatch(fetchProjectsByEmployeeId(employeeId));
+        const d=dispatch(fetchProjectsByEmployeeId(employeeId));
+        console.log('Fetching projects for employee:', d.response);
       }
     }
   }, [dispatch, employeeProjects.length, status.fetchEmployeeProjects, employeeId]);
