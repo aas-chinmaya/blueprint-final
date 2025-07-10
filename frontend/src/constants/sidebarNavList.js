@@ -29,9 +29,9 @@ export const fullNav = [
     icon: CalendarDays,
     roles: ["cpc", "employee"],
     items: [
-      { title: "All Meetings", url: "/meetings/all", roles: ["cpc"] },
-      { title: "Calendar", url: "/meetings/calendar", roles: ["cpc"] },
-      { title: "Scheduled", url: "/meetings/scheduled", roles: ["cpc","employee"] },
+      { title: "Client Meeting", url: "/meetings/all", roles: ["cpc"] },
+      { title: "Meeting Calendar", url: "/meetings/calendar", roles: ["cpc"] },
+      // { title: "Scheduled", url: "/meetings/scheduled", roles: ["cpc","employee"] },
       { title: "Mom Cause", url: "/meetings/cause", roles: ["cpc"] },
     ],
   },
@@ -71,8 +71,8 @@ export const fullNav = [
     icon: Bug,
     roles: ["cpc", "employee"],
      items: [
-      { title: "All Bug", url: "/master/services", roles: ["cpc"] },
-      { title: "Assigned Bug", url: "/master/industry", roles: ["employee"] },
+      { title: "All Bug", url: "/bug", roles: ["cpc"] },
+      { title: "Assigned Bug", url: "/bug/assigned-bugs", roles: ["employee"] },
    
     ],
   },

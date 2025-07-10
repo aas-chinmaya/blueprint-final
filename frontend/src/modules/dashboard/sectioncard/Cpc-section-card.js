@@ -97,7 +97,7 @@ export function SectionCardCPC() {
     }
 
     Promise.allSettled(promises).catch(console.error);
-  }, [dispatch, clientsStatus, fetchClients, projectStatus, taskStatus, clients, projects, allTaskList]);
+  }, [dispatch, clientsStatus, projectStatus, taskStatus, clients, projects, allTaskList]);
 
   useEffect(() => {
     fetchAllData();

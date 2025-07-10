@@ -77,7 +77,7 @@ const isBugLoading = useSelector((state) => state.bugs.loading.bugsByEmployeeId)
         </CardFooter>
       </Card>
     )
-  ), []);
+  ), [isProjectsLoading, employeeProjects]);
 
   const TasksCard = useMemo(() => (
     isTasksLoading ? <CardSkeleton /> : (
@@ -93,7 +93,7 @@ const isBugLoading = useSelector((state) => state.bugs.loading.bugsByEmployeeId)
         </CardFooter>
       </Card>
     )
-  ), []);
+  ), [isTasksLoading, tasks]);
   
   const BugCard = useMemo(() => (
     isBugLoading ? <CardSkeleton /> : (
@@ -109,7 +109,7 @@ const isBugLoading = useSelector((state) => state.bugs.loading.bugsByEmployeeId)
         </CardFooter>
       </Card>
     )
-  ), []);
+  ), [isBugLoading, bugs]);
 
   const GrowthCard = useMemo(() => (
     <Card className="@container/card">

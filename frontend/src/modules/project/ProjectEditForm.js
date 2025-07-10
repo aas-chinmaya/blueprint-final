@@ -4,7 +4,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { validateInput, sanitizeInput } from '@/lib/utils/sanitize';
+import { validateInput, sanitizeInput } from '@/utils/sanitize';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { fetchProjectById, updateProject } from '@/store/features/in-project/projectSlice'; // Corrected import
@@ -22,7 +22,7 @@ import {
   FiArrowLeft,
 } from 'react-icons/fi';
 import { toast } from '@/components/ui/sonner';
-import TeamLeadSelect from '@/components/modules/project/TeamLeadSelect';
+import TeamLeadSelect from '@/modules/project/TeamLeadSelect';
 import gsap from 'gsap';
 
 export default function ProjectEditForm({ projectId }) {

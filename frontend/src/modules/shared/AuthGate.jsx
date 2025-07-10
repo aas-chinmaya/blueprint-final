@@ -1,7 +1,6 @@
 'use client'
 
 import { useAuthCheck } from '@/hooks/useAuthRedirect'
-import { Skeleton } from '@/components/ui/skeleton'
 
 export default function AuthGate({ children }) {
   const { isLoading } = useAuthCheck()
@@ -9,7 +8,7 @@ export default function AuthGate({ children }) {
   if (isLoading) {
     return (
       <div className="min-h-screen flex justify-center items-center">
-        <Skeleton className="w-1/2 h-32 rounded-xl" />
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }

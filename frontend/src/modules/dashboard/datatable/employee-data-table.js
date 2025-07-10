@@ -113,7 +113,6 @@ export function DataTableEmployee({ employeeId }) {
         return 0;
     }
   };
-console.log(employeeTasks, employeeProjects, teamsByEmployee);
   const renderModalContent = (item, type) => {
     if (type === "task") {
       return (

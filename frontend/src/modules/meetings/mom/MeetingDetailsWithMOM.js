@@ -1,9 +1,4 @@
 
-
-
-
-
-
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
@@ -26,7 +21,6 @@ import {
   Loader2,
   Download,
   Edit2,
-  PlusCircle,
   AlertCircle,
   Calendar,
   Users,
@@ -34,25 +28,26 @@ import {
   FileText,
   Signature,
   User,
-  FileEdit,
-  Eye,
-  Image,
 } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import Image from "next/image";
 
 function MeetingDetailsWithMOM({ isOpen, onClose, meeting, TIME_ZONE }) {
   const dispatch = useDispatch();
   const { momByMeetingId, momByMeetingIdLoading, momView, momViewLoading } = useSelector(
     (state) => state.mom
   );
-  const [mode, setMode] = useState("view"); // Toggle state: 'view' or 'form'
+  const [mode, setMode] = useState("view");
   const [isEditMode, setIsEditMode] = useState(false);
   const [isTimeExceeded, setIsTimeExceeded] = useState(false);
+  const [isWithinOneHour, setIsWithinOneHour] = useState(false);
   const [reasonForDelay, setReasonForDelay] = useState("");
   const [isAgreedToTerms, setIsAgreedToTerms] = useState(false);
   const [signatureFile, setSignatureFile] = useState(null);
   const [signaturePreview, setSignaturePreview] = useState(null);
   const containerRef = useRef(null);
+  const { currentUser } = useCurrentUser();
 
   // Form state for creating/editing MoM
   const [momForm, setMomForm] = useState({
@@ -62,7 +57,7 @@ function MeetingDetailsWithMOM({ isOpen, onClose, meeting, TIME_ZONE }) {
     participants: "",
     summary: "",
     notes: "",
-    createdBy: "",
+    createdBy: currentUser?.name || "",
     meetingId: meeting?.meetingId || "",
   });
 
@@ -77,34 +72,37 @@ function MeetingDetailsWithMOM({ isOpen, onClose, meeting, TIME_ZONE }) {
   };
 
   // Helper: Compute duration as "startTime - endTime"
-const getDurationString = useCallback(() => {
-  const start = formatTimes(meeting?.start?.dateTime);
-  const end = formatTimes(meeting?.end?.dateTime);
-  return start && end ? `${start} - ${end}` : "";
-}, [meeting]);
+  const getDurationString = useCallback(() => {
+    const start = formatTimes(meeting?.start?.dateTime);
+    const end = formatTimes(meeting?.end?.dateTime);
+    return start && end ? `${start} - ${end}` : "";
+  }, [meeting]);
 
-  // Helper: Format attendees into a string
-  const getAttendeesString = (attendees) => {
+  // Helper: Parse attendees into an array
+  const getAttendeesArray = (attendees) => {
     if (Array.isArray(attendees)) {
-      return attendees.join(", ");
+      return attendees;
     }
-    return attendees ? String(attendees) : "";
+    return attendees ? String(attendees).split(",").map((p) => p.trim()).filter(Boolean) : [];
   };
 
-  // Helper: Check if meeting has ended and 1-hour window has passed
-
-const checkMeetingTimeStatus = useCallback(() => {
-  if (!meeting?.end?.dateTime) return false;
-  const endTime = new Date(meeting.end.dateTime);
-  const now = new Date();
-  const oneHourAfterEnd = addHours(endTime, 1);
-  return isAfter(now, oneHourAfterEnd);
-}, [meeting]);
+  // Helper: Check meeting time status
+  const checkMeetingTimeStatus = useCallback(() => {
+    if (!meeting?.end?.dateTime) return { isTimeExceeded: false, isWithinOneHour: false };
+    const endTime = new Date(meeting.end.dateTime);
+    const now = new Date();
+    const oneHourAfterEnd = addHours(endTime, 1);
+    return {
+      isTimeExceeded: isAfter(now, endTime),
+      isWithinOneHour: isAfter(now, endTime) && !isAfter(now, oneHourAfterEnd),
+    };
+  }, [meeting]);
 
   // Effect: Initialize form and check time status
   useEffect(() => {
-    const timeExceeded = checkMeetingTimeStatus();
-    setIsTimeExceeded(timeExceeded);
+    const { isTimeExceeded, isWithinOneHour } = checkMeetingTimeStatus();
+    setIsTimeExceeded(isTimeExceeded);
+    setIsWithinOneHour(isWithinOneHour);
 
     if (momByMeetingId && momByMeetingId.meetingId === meeting?.meetingId) {
       setMomForm({
@@ -113,36 +111,34 @@ const checkMeetingTimeStatus = useCallback(() => {
         duration: momByMeetingId.duration || getDurationString() || "",
         participants: Array.isArray(momByMeetingId.participants)
           ? momByMeetingId.participants.join(", ")
-          : getAttendeesString(momByMeetingId.participants) || getAttendeesString(meeting?.attendees) || "",
+          : momByMeetingId.participants || getAttendeesArray(meeting?.attendees).join(", ") || "",
         summary: momByMeetingId.summary || "",
         notes: momByMeetingId.notes || "",
-        createdBy: momByMeetingId.createdBy || "",
+        createdBy: momByMeetingId.createdBy || currentUser?.name || "",
         meetingId: meeting?.meetingId || "",
       });
       setMode("view");
       setIsEditMode(false);
-      setReasonForDelay(momByMeetingId.reasonForDelay || "");
-      setIsAgreedToTerms(false);
-      setSignatureFile(null);
-      setSignaturePreview(null);
     } else {
       setMomForm({
         agenda: meeting?.agenda || "",
         meetingMode: meeting?.meetingMode || "Online",
         duration: getDurationString() || "",
-        participants: getAttendeesString(meeting?.attendees) || "",
+        participants: getAttendeesArray(meeting?.attendees).join(", ") || "",
         summary: "",
         notes: "",
-        createdBy: "",
+        createdBy: currentUser?.name || "",
         meetingId: meeting?.meetingId || "",
       });
-      setMode("view");
+      setMode("form");
       setIsEditMode(false);
-      setIsAgreedToTerms(false);
-      setSignatureFile(null);
-      setSignaturePreview(null);
     }
-  }, [momByMeetingId, momByMeetingIdLoading, meeting, checkMeetingTimeStatus, getDurationString]);
+
+    setReasonForDelay(momByMeetingId?.reasonForDelay || "");
+    setIsAgreedToTerms(false);
+    setSignatureFile(null);
+    setSignaturePreview(null);
+  }, [momByMeetingId, meeting, checkMeetingTimeStatus, getDurationString, currentUser?.name]);
 
   // Effect: Fetch MoM data when modal opens
   useEffect(() => {
@@ -231,7 +227,6 @@ const checkMeetingTimeStatus = useCallback(() => {
     }
 
     try {
-      // Create FormData object
       const formData = new FormData();
       formData.append("agenda", momForm.agenda);
       formData.append("meetingMode", momForm.meetingMode);
@@ -241,8 +236,9 @@ const checkMeetingTimeStatus = useCallback(() => {
       formData.append("notes", momForm.notes);
       formData.append("createdBy", momForm.createdBy);
       formData.append("meetingId", momForm.meetingId);
+      formData.append("submittedBy", currentUser?.name || momForm.createdBy);
       if (signatureFile) {
-        formData.append("signature", signatureFile); // Append the file
+        formData.append("signature", signatureFile);
       }
       if (isTimeExceeded && !isEditMode) {
         formData.append("reasonForDelay", reasonForDelay);
@@ -253,7 +249,7 @@ const checkMeetingTimeStatus = useCallback(() => {
           submitCause({
             meetingId: meeting.meetingId,
             reason: reasonForDelay,
-            submittedBy: momForm.createdBy,
+            submittedBy: currentUser?.name || momForm.createdBy,
           })
         ).unwrap();
         toast.success("Cause for delay submitted successfully!");
@@ -282,22 +278,6 @@ const checkMeetingTimeStatus = useCallback(() => {
     if (mode === "view") {
       setMode("form");
       setIsEditMode(momByMeetingId ? true : false);
-      if (!momByMeetingId) {
-        setMomForm({
-          agenda: meeting?.agenda || "",
-          meetingMode: meeting?.meetingMode || "Online",
-          duration: getDurationString() || "",
-          participants: getAttendeesString(meeting?.attendees) || "",
-          summary: "",
-          notes: "",
-          createdBy: "",
-          meetingId: meeting?.meetingId || "",
-        });
-        setReasonForDelay("");
-        setIsAgreedToTerms(false);
-        setSignatureFile(null);
-        setSignaturePreview(null);
-      }
     } else {
       setMode("view");
       setIsEditMode(false);
@@ -314,370 +294,320 @@ const checkMeetingTimeStatus = useCallback(() => {
     onClose();
   };
 
+  // Helper: Render participant with circled initial and email tooltip
+  const renderParticipant = (participant, index) => {
+    const initial = participant.charAt(0).toUpperCase();
+    return (
+      <div
+        key={index}
+        className="relative inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-600 font-semibold text-sm cursor-pointer group"
+        title={participant}
+      >
+        {initial}
+        <span className="absolute left-0 top-full mt-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 z-10">
+          {participant}
+        </span>
+      </div>
+    );
+  };
+
   // Loading state
   if (momByMeetingIdLoading || momViewLoading) {
     return (
-      <div className="min-h-[400px] bg-gradient-to-br from-green-50 to-green-200 rounded-2xl flex items-center justify-center">
+      <div className="min-h-[400px] bg-white rounded-xl flex items-center justify-center shadow-md">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-12 w-12 text-green-700 animate-spin" />
-          <span className="text-green-800 text-lg font-semibold">Loading...</span>
+          <Loader2 className="h-12 w-12 text-green-600 animate-spin" />
+          <span className="text-green-600 text-lg font-semibold">Loading...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-full mx-auto p-4 sm:p-6 bg-gradient-to-br from-green-50 to-green-200 rounded-2xl shadow-2xl" ref={containerRef}>
-      {/* Header with Toggle Icon */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-green-800 flex items-center">
-          <FileText className="h-6 w-6 sm:h-7 sm:w-7 mr-2" />
+    <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 bg-white rounded-xl shadow-md">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h2 className="text-xl sm:text-2xl font-bold text-green-600 flex items-center">
+          <FileText className="h-5 w-5 sm:h-6 sm:w-6 mr-2" />
           {mode === "form" ? (isEditMode ? "Edit Minutes of Meeting" : "Create Minutes of Meeting") : "Meeting Details"}
         </h2>
-        <button
-          onClick={handleToggleMode}
-          className="p-2 rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition-colors duration-300"
-          title={mode === "view" ? (momByMeetingId ? "Edit MoM" : "Create MoM") : "View Details"}
-          disabled={isTimeExceeded && !momByMeetingId}
-        >
-          {mode === "view" ? (
-            <FileEdit className="h-6 w-6" />
-          ) : (
-            <Eye className="h-6 w-6" />
-          )}
-        </button>
+        {mode === "view" && momByMeetingId && (
+          <button
+            onClick={handleToggleMode}
+            className="p-2 rounded-full bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
+            title="Edit MoM"
+          >
+            <Edit2 className="h-5 w-5" />
+          </button>
+        )}
       </div>
 
-      {mode === "form" ? (
-        // Form View
-        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-green-200 animate-fade-in">
-          {isTimeExceeded && !isEditMode && (
-            <div className="mb-4 p-3 bg-red-100 text-red-800 rounded-lg flex items-center">
-              <AlertCircle className="h-5 w-5 mr-2" />
-              <span className="text-sm sm:text-base">Time Exceeded: MoM creation delayed beyond 1 hour.</span>
-            </div>
-          )}
-          <div className="space-y-4">
-            <div>
-              <Label className="text-green-700 font-semibold text-sm sm:text-base flex items-center">
-                <FileText className="h-5 w-5 mr-2" />
-                Agenda
-              </Label>
-              <Input
-                value={momForm.agenda}
-                onChange={(e) => handleMomFormChange(e, "agenda")}
-                placeholder="Enter meeting agenda..."
-                className="mt-1 border-green-300 focus:ring-2 focus:ring-green-500 text-sm sm:text-base bg-green-50 rounded-lg"
-                readOnly
-              />
-            </div>
-            <div>
-              <Label className="text-green-700 font-semibold text-sm sm:text-base flex items-center">
-                <Users className="h-5 w-5 mr-2" />
-                Meeting Mode
-              </Label>
-              <Input
-                value={momForm.meetingMode || "Online"}
-                onChange={(e) => handleMomFormChange(e, "meetingMode")}
-                placeholder="Online/In-person"
-                className="mt-1 border-green-300 focus:ring-2 focus:ring-green-500 text-sm sm:text-base bg-green-50 rounded-lg"
-                readOnly
-              />
-            </div>
-            <div>
-              <Label className="text-green-700 font-semibold text-sm sm:text-base flex items-center">
-                <Clock className="h-5 w-5 mr-2" />
-                Duration
-              </Label>
-              <Input
-                value={momForm.duration}
-                onChange={(e) => handleMomFormChange(e, "duration")}
-                placeholder="Start time - End time"
-                className="mt-1 border-green-300 focus:ring-2 focus:ring-green-500 text-sm sm:text-base bg-green-50 rounded-lg"
-                readOnly
-              />
-            </div>
-            <div>
-              <Label className="text-green-700 font-semibold text-sm sm:text-base flex items-center">
-                <Users className="h-5 w-5 mr-2" />
-                Participants
-              </Label>
-              <Input
-                value={momForm.participants}
-                onChange={(e) => handleMomFormChange(e, "participants")}
-                placeholder="Comma-separated names..."
-                className="mt-1 border-green-300 focus:ring-2 focus:ring-green-500 text-sm sm:text-base bg-green-50 rounded-lg"
-                readOnly
-              />
-            </div>
-            <div>
-              <Label className="text-green-700 font-semibold text-sm sm:text-base flex items-center">
-                <FileText className="h-5 w-5 mr-2" />
-                Summary
-              </Label>
-              <Textarea
-                value={momForm.summary}
-                onChange={(e) => handleMomFormChange(e, "summary")}
-                placeholder="Enter meeting summary..."
-                className="mt-1 border-green-300 focus:ring-2 focus:ring-green-500 text-sm sm:text-base bg-green-50 rounded-lg resize-none"
-                rows={4}
-              />
-            </div>
-            <div>
-              <Label className="text-green-700 font-semibold text-sm sm:text-base flex items-center">
-                <FileText className="h-5 w-5 mr-2" />
-                Notes
-              </Label>
-              <Textarea
-                value={momForm.notes}
-                onChange={(e) => handleMomFormChange(e, "notes")}
-                placeholder="Enter additional notes..."
-                className="mt-1 border-green-300 focus:ring-2 focus:ring-green-500 text-sm sm:text-base bg-green-50 rounded-lg resize-none"
-                rows={4}
-              />
-            </div>
-            {isTimeExceeded && !isEditMode && (
-              <>
-                <div>
-                  <Label className="text-green-700 font-semibold text-sm sm:text-base flex items-center">
-                    <AlertCircle className="h-5 w-5 mr-2 text-red-500" />
-                    Reason for Delay
-                  </Label>
-                  <Textarea
-                    value={reasonForDelay}
-                    onChange={handleReasonForDelayChange}
-                    placeholder="Enter reason for delay..."
-                    className="mt-1 border-green-300 focus:ring-2 focus:ring-green-500 text-sm sm:text-base bg-green-50 rounded-lg resize-none"
-                    rows={3}
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="terms"
-                    checked={isAgreedToTerms}
-                    onCheckedChange={handleTermsChange}
-                    className="border-green-400 data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
-                  />
-                  <Label
-                    htmlFor="terms"
-                    className="text-green-700 font-semibold text-sm sm:text-base"
-                  >
-                    I agree to the cause terms and conditions
-                  </Label>
-                </div>
-              </>
-            )}
-            <div>
-              <Label className="text-green-700 font-semibold text-sm sm:text-base flex items-center">
-                <Signature className="h-5 w-5 mr-2" />
-                Signature (Image)
-              </Label>
-              <Input
-                type="file"
-                accept="image/png,image/jpeg,image/jpg"
-                onChange={handleSignatureFileChange}
-                className="mt-1 border-green-300 focus:ring-2 focus:ring-green-500 text-sm sm:text-base bg-green-50 rounded-lg"
-              />
-              {signaturePreview && (
-                <div className="mt-2">
-                 <Image
-  src={signaturePreview}
-  alt="Signature Preview"
-  width={150} // You must provide width and height
-  height={100}
-  className="rounded-md border border-green-200"
-  style={{ maxWidth: '120px', maxHeight: '80px' }}
-/>
-                </div>
-              )}
-            </div>
-            <div>
-              <Label className="text-green-700 font-semibold text-sm sm:text-base flex items-center">
-                <User className="h-5 w-5 mr-2" />
-                Created By
-              </Label>
-              <Input
-                value={momForm.createdBy}
-                onChange={(e) => handleMomFormChange(e, "createdBy")}
-                placeholder="Recorder's name..."
-                className="mt-1 border-green-300 focus:ring-2 focus:ring-green-500 text-sm sm:text-base bg-green-50 rounded-lg"
-              />
-            </div>
+      {/* Warning Messages */}
+      {isTimeExceeded && (!momByMeetingId || !isWithinOneHour) && (
+        <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg flex items-center text-sm">
+          <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+          <span>
+            {!momByMeetingId
+              ? isWithinOneHour
+                ? "Please complete MoM within one hour of meeting end time."
+                : "Meeting has ended, and no MoM has been created."
+              : "Meeting has ended, and MoM creation is delayed beyond one hour."}
+          </span>
+        </div>
+      )}
+
+      {/* Two-Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* conseguenze */}
+        <div className="space-y-4">
+          <div>
+            <Label className="text-green-600 font-semibold flex items-center">
+              <FileText className="h-5 w-5 mr-2" />
+              Agenda
+            </Label>
+            <p className="text-gray-700 text-sm sm:text-base">{meeting?.agenda || "N/A"}</p>
           </div>
-          <div className="flex flex-col sm:flex-row justify-end mt-6 gap-3">
-            <Button
-              variant="outline"
-              className="w-full sm:w-auto border-green-500 text-green-700 hover:bg-green-100 hover:text-green-800 transition-colors duration-300 text-sm sm:text-base rounded-lg"
-              onClick={() => setMode("view")}
-            >
-              Cancel
-            </Button>
-            <Button
-              className="w-full sm:w-auto bg-green-700 hover:bg-green-800 text-white text-sm sm:text-base transition-all duration-300 rounded-lg"
-              onClick={handleSubmit}
-              disabled={momByMeetingIdLoading || (isTimeExceeded && !isEditMode && !areRequiredFieldsFilled())}
-            >
-              {momByMeetingIdLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Submitting...
-                </>
-              ) : isEditMode ? (
-                "Update MoM"
+          <div>
+            <Label className="text-green-600 font-semibold flex items-center">
+              <Users className="h-5 w-5 mr-2" />
+              Meeting Mode
+            </Label>
+            <p className="text-gray-700 text-sm sm:text-base">{meeting?.meetingMode || "Online"}</p>
+          </div>
+          <div>
+            <Label className="text-green-600 font-semibold flex items-center">
+              <Clock className="h-5 w-5 mr-2" />
+              Duration
+            </Label>
+            <p className="text-gray-700 text-sm sm:text-base">{getDurationString() || "N/A"}</p>
+          </div>
+          <div>
+            <Label className="text-green-600 font-semibold flex items-center">
+              <Users className="h-5 w-5 mr-2" />
+              Participants
+            </Label>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {getAttendeesArray(meeting?.attendees).length > 0 ? (
+                getAttendeesArray(meeting?.attendees).map((participant, index) =>
+                  renderParticipant(participant, index)
+                )
               ) : (
-                "Create MoM"
+                <p className="text-gray-700 text-sm sm:text-base">N/A</p>
               )}
-            </Button>
+            </div>
           </div>
         </div>
-      ) : (
-        // View Mode: Meeting Details and MoM (if exists)
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-          {/* Meeting Details */}
-          <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-green-200 transition-transform duration-300 hover:scale-[1.01]">
-            <h3 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4 flex items-center">
-              <Calendar className="h-6 w-6 mr-2" />
-              Meeting Details
-            </h3>
-            <div className="space-y-3 text-green-700 text-sm sm:text-base">
-              <p className="flex items-start">
-                <FileText className="h-5 w-5 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
-                <span>
-                  <strong className="font-semibold">Agenda:</strong> {meeting?.agenda || "N/A"}
-                </span>
-              </p>
-              <p className="flex items-start">
-                <Users className="h-5 w-5 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
-                <span>
-                  <strong className="font-semibold">Meeting Mode:</strong> {meeting?.meetingMode || "N/A"}
-                </span>
-              </p>
-              <p className="flex items-start">
-                <Clock className="h-5 w-5 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
-                <span>
-                  <strong className="font-semibold">Duration:</strong> {getDurationString() || "N/A"}
-                </span>
-              </p>
-              <p className="flex items-start">
-                <Users className="h-5 w-5 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
-                <span>
-                  <strong className="font-semibold">Participants:</strong> {getAttendeesString(meeting?.attendees) || "N/A"}
-                </span>
-              </p>
-            </div>
-          </div>
 
-          {/* MoM Preview or Create Button */}
-          {momByMeetingId ? (
-            <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-green-200 transition-transform duration-300 hover:scale-[1.01]">
-              <h3 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4 flex items-center">
-                <FileText className="h-6 w-6 mr-2" />
-                Minutes of Meeting
-              </h3>
-              {momByMeetingId.reasonForDelay && (
-                <div className="mb-4 p-3 bg-amber-100 text-amber-800 rounded-lg flex items-center">
-                  <AlertCircle className="h-5 w-5 mr-2" />
-                  <span className="text-sm sm:text-base">This MoM was created with reference to a delay cause.</span>
-                </div>
+        {/* Right Column: Form or MoM Preview */}
+        <div className="space-y-4">
+          {mode === "form" ? (
+            // Form View
+            <div className="space-y-4">
+              
+              <div>
+                <Label className="text-green-600 font-semibold flex items-center">
+                  <FileText className="h-5 w-5 mr-2" />
+                  Summary
+                </Label>
+                <Textarea
+                  value={momForm.summary}
+                  onChange={(e) => handleMomFormChange(e, "summary")}
+                  placeholder="Enter meeting summary..."
+                  className="mt-1 border-green-200 focus:ring-1 focus:ring-green-500 bg-green-50/50 rounded-lg text-sm sm:text-base"
+                  rows={4}
+                />
+              </div>
+              <div>
+                <Label className="text-green-600 font-semibold flex items-center">
+                  <FileText className="h-5 w-5 mr-2" />
+                  Notes
+                </Label>
+                <Textarea
+                  value={momForm.notes}
+                  onChange={(e) => handleMomFormChange(e, "notes")}
+                  placeholder="Enter additional notes..."
+                  className="mt-1 border-green-200 focus:ring-1 focus:ring-green-500 bg-green-50/50 rounded-lg text-sm sm:text-base"
+                  rows={4}
+                />
+              </div>
+              {isTimeExceeded && !isEditMode && (
+                <>
+                  <div>
+                    <Label className="text-green-600 font-semibold flex items-center">
+                      <AlertCircle className="h-5 w-5 mr-2 text-red-500" />
+                      Reason for Delay
+                    </Label>
+                    <Textarea
+                      value={reasonForDelay}
+                      onChange={handleReasonForDelayChange}
+                      placeholder="Enter reason for delay..."
+                      className="mt-1 border-green-200 focus:ring-1 focus:ring-green-500 bg-green-50/50 rounded-lg text-sm sm:text-base"
+                      rows={3}
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="terms"
+                      checked={isAgreedToTerms}
+                      onCheckedChange={handleTermsChange}
+                      className="border-green-400 data-[state=checked]:bg-green-500"
+                    />
+                    <Label htmlFor="terms" className="text-green-600 font-semibold text-sm sm:text-base">
+                      I agree to the cause terms and conditions
+                    </Label>
+                  </div>
+                </>
               )}
-           
-              {momView?.pdfUrl ? (
-                <div className="w-full h-[300px] sm:h-[400px] rounded-lg border border-green-200 overflow-auto">
-                  {/* <iframe src={momView.pdfUrl} width="100%" height="100%" className="rounded-lg" title="MoM PDF Preview" /> */}
-                  {/* <iframe src={momByMeetingId.attachmentUrl} width="100%" height="100%" className="rounded-lg" title="MoM PDF Preview" /> */}
-                  <iframe src={momView.pdfUrl} width="100%" height="100%" className="rounded-lg" title="MoM PDF Preview" />
-                </div>
-              ) : (
-                <div className="space-y-3 text-green-700 text-sm sm:text-base">
-                  <p className="flex items-start">
-                    <FileText className="h-5 w-5 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
-                    <span>
-                      <strong className="font-semibold">Summary:</strong> {momByMeetingId.summary || "N/A"}
-                    </span>
-                  </p>
-                  <p className="flex items-start">
-                    <FileText className="h-5 w-5 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
-                    <span>
-                      <strong className="font-semibold">Notes:</strong> {momByMeetingId.notes || "N/A"}
-                    </span>
-                  </p>
-                  <p className="flex items-start">
-                    <Signature className="h-5 w-5 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
-                    <span>
-                      <strong className="font-semibold">Signature:</strong> [File Uploaded]
-                    </span>
-                  </p>
-                  <p className="flex items-start">
-                    <User className="h-5 w-5 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
-                    <span>
-                      <strong className="font-semibold">Created By:</strong> {momByMeetingId.createdBy || "N/A"}
-                    </span>
-                  </p>
-                  <p className="flex items-start">
-                    <Calendar className="h-5 w-5 mr-2 mt-0.5 text-green-600 flex-shrink-0" />
-                    <span>
-                      <strong className="font-semibold">Meeting Date:</strong> {momByMeetingId.date || meeting?.date || "N/A"}
-                    </span>
-                  </p>
-                  {momByMeetingId.reasonForDelay && (
-                    <p className="flex items-start">
-                      <AlertCircle className="h-5 w-5 mr-2 mt-0.5 text-amber-600 flex-shrink-0" />
-                      <span>
-                        <strong className="font-semibold">Reason for Delay:</strong> {momByMeetingId.reasonForDelay}
-                      </span>
-                    </p>
-                  )}
-                </div>
-              )}
-              {momView?.pdfUrl && (
-                <div className="flex justify-end mt-4">
-                  <Button
-                    variant="outline"
-                    className="w-full sm:w-auto border-green-500 text-green-700 hover:bg-green-100 hover:text-green-800 transition-colors duration-300 text-sm sm:text-base rounded-lg"
-                    onClick={() => window.open(momView.pdfUrl, "_blank")}
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download PDF
-                  </Button>
-                </div>
-              )}
+              <div>
+                <Label className="text-green-600 font-semibold flex items-center">
+                  <Signature className="h-5 w-5 mr-2" />
+                  Signature (Image)
+                </Label>
+                <Input
+                  type="file"
+                  accept="image/png,image/jpeg,image/jpg"
+                  onChange={handleSignatureFileChange}
+                  className="mt-1 border-green-200 focus:ring-1 focus:ring-green-500 bg-green-50/50 rounded-lg text-sm sm:text-base"
+                />
+                {signaturePreview && (
+                  <div className="mt-2">
+                    <Image
+                      src={signaturePreview}
+                      alt="Signature Preview"
+                      width={120}
+                      height={80}
+                      className="rounded-md border border-green-200"
+                    />
+                  </div>
+                )}
+              </div>
+              <div>
+                <Label className="text-green-600 font-semibold flex items-center">
+                  <User className="h-5 w-5 mr-2" />
+                  Created By
+                </Label>
+                <Input
+                  value={momForm.createdBy}
+                  onChange={(e) => handleMomFormChange(e, "createdBy")}
+                  placeholder="Recorder's name..."
+                  className="mt-1 border-green-200 focus:ring-1 focus:ring-green-500 bg-green-50/50 rounded-lg text-sm sm:text-base"
+                />
+              </div>
+             
+              <div className="flex justify-end gap-3">
+  {isEditMode && (
+    <Button
+      variant="outline"
+      className="border-green-500 text-green-600 hover:bg-green-100 rounded-lg text-sm sm:text-base"
+      onClick={() => setMode("view")}
+    >
+      Cancel
+    </Button>
+  )}
+
+  <Button
+    className="bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm sm:text-base"
+    onClick={handleSubmit}
+    disabled={
+      momByMeetingIdLoading ||
+      (isTimeExceeded && !isEditMode && !areRequiredFieldsFilled())
+    }
+  >
+    {momByMeetingIdLoading ? (
+      <>
+        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+        Submitting...
+      </>
+    ) : isEditMode ? (
+      "Update MoM"
+    ) : (
+      "Create MoM"
+    )}
+  </Button>
+</div>
+
             </div>
           ) : (
-            <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-green-200 transition-transform duration-300 hover:scale-[1.01]">
-              <h3 className="text-xl sm:text-2xl font-semibold text-green-800 mb-4 flex items-center">
-                <FileText className="h-6 w-6 mr-2" />
-                Minutes of Meeting
-              </h3>
-              <p className="text-green-700 text-sm sm:text-base mb-4">No MoM has been created for this meeting yet.</p>
-              {isTimeExceeded && (
-                <div className="mb-4 p-3 bg-red-100 text-red-800 rounded-lg flex items-center">
-                  <AlertCircle className="h-5 w-5 mr-2" />
-                  <span className="text-sm sm:text-base">Time Exceeded: MoM creation delayed beyond 1 hour.</span>
+            // View Mode: MoM Preview
+            <div className="space-y-4">
+              {momByMeetingId && momView?.pdfUrl && (
+                <div>
+                
+                  <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px] rounded-lg border border-green-200 overflow-hidden">
+                    <iframe
+                      src={momView.pdfUrl}
+                      width="100%"
+                      height="100%"
+                      className="rounded-lg"
+                      title="MoM PDF Preview"
+                    />
+                  </div>
+                  {/* <div className="mt-4">
+                    <Button
+                      variant="outline"
+                      className="w-full border-green-500 text-green-600 hover:bg-green-100 rounded-lg text-sm sm:text-base"
+                      onClick={() => window.open(momView.pdfUrl, "_blank")}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download PDF
+                    </Button>
+                  </div> */}
                 </div>
               )}
-              <Button
-                className="w-full sm:w-auto bg-green-700 hover:bg-green-800 text-white text-sm sm:text-base transition-all duration-300 rounded-lg"
-                onClick={() => { setMode("form"); setIsEditMode(false); }}
-                disabled={isTimeExceeded}
-              >
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Create MoM
-              </Button>
+              {/* {momByMeetingId && (
+                <>
+                  <div>
+                    <Label className="text-green-600 font-semibold flex items-center">
+                      <FileText className="h-5 w-5 mr-2" />
+                      Summary
+                    </Label>
+                    <p className="text-gray-700 text-sm sm:text-base">{momByMeetingId.summary || "N/A"}</p>
+                  </div>
+                  <div>
+                    <Label className="text-green-600 font-semibold flex items-center">
+                      <FileText className="h-5 w-5 mr-2" />
+                      Notes
+                    </Label>
+                    <p className="text-gray-700 text-sm sm:text-base">{momByMeetingId.notes || "N/A"}</p>
+                  </div>
+                  <div>
+                    <Label className="text-green-600 font-semibold flex items-center">
+                      <Signature className="h-5 w-5 mr-2" />
+                      Signature
+                    </Label>
+                    <p className="text-gray-700 text-sm sm:text-base">[File Uploaded]</p>
+                  </div>
+                  <div>
+                    <Label className="text-green-600 font-semibold flex items-center">
+                      <User className="h-5 w-5 mr-2" />
+                      Created By
+                    </Label>
+                    <p className="text-gray-700 text-sm sm:text-base">{momByMeetingId.createdBy || "N/A"}</p>
+                  </div>
+                  <div>
+                    <Label className="text-green-600 font-semibold flex items-center">
+                      <Calendar className="h-5 w-5 mr-2" />
+                      Meeting Date
+                    </Label>
+                    <p className="text-gray-700 text-sm sm:text-base">{momByMeetingId.date || meeting?.date || "N/A"}</p>
+                  </div>
+                  {momByMeetingId.reasonForDelay && (
+                    <div>
+                      <Label className="text-green-600 font-semibold flex items-center">
+                        <AlertCircle className="h-5 w-5 mr-2 text-amber-500" />
+                        Reason for Delay
+                      </Label>
+                      <p className="text-gray-700 text-sm sm:text-base">{momByMeetingId.reasonForDelay}</p>
+                    </div>
+                  )}
+                </>
+              )} */}
             </div>
           )}
         </div>
-      )}
-      {mode === "view" && (
-        <div className="flex justify-end mt-4">
-          <Button
-            variant="outline"
-            className="w-full sm:w-auto border-green-500 text-green-700 hover:bg-green-100 hover:text-green-800 transition-colors duration-300 text-sm sm:text-base rounded-lg"
-            onClick={handleClose}
-          >
-            Close
-          </Button>
-        </div>
-      )}
+      </div>
+
+ 
     </div>
   );
 }

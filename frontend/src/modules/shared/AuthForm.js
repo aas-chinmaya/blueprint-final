@@ -14,8 +14,8 @@ import { toast } from "@/components/ui/sonner"; // ✅ Call the toast method
 
 const Login = () => {
   const [mode, setMode] = useState("login");
-  const [email, setEmail] = useState("chinmaya@aas.technology");
-  const [password, setPassword] = useState("Chin@2025");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [otp, setOtp] = useState(Array(6).fill(""));

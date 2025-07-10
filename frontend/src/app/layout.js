@@ -34,14 +34,14 @@ export default function RootLayout({ children }) {
       <body className="font-inter antialiased">
          <Providers>
         
-            {children}
-          <Toaster position="top-right" richColors closeButton />
+            {/* {children}
+          <Toaster position="top-right" richColors closeButton /> */}
          
-        {/* <AuthGate>
+        <AuthGate>
           
             {children}
           <Toaster position="top-right" richColors closeButton />
-          </AuthGate> */}
+          </AuthGate>
         </Providers>
       </body>
     </html>

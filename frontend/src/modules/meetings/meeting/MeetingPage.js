@@ -1046,7 +1046,7 @@ const handleCreate = async (newMeeting) => {
               <DialogHeader>
                 <DialogTitle className="text-red-800">Meeting Limit Reached</DialogTitle>
                 <DialogDescription>
-                  You have reached the free tier limit of {FREE_MEETING_LIMIT} meetings. Please upgrade to schedule more meetings.
+                  Contact have reached the free tier limit of {FREE_MEETING_LIMIT} meetings. Please Send Payment Link to schedule more meetings.
                 </DialogDescription>
               </DialogHeader>
               <MeetingAccessGate

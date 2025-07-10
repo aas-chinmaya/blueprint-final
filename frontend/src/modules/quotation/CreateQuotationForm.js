@@ -1,5 +1,7 @@
 "use client";
+import { addDays, format } from "date-fns";
 
+import { useMemo } from "react";
 import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
@@ -17,7 +19,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PlusCircle, Trash2, FileText, User, Building, Mail, Phone, Globe, Percent, DollarSign, Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
 import { useContactDetails } from "@/hooks/useContact";
-import { useSearchParams } from "next/navigation";
 import { fetchUserByEmail } from "@/store/features/shared/userSlice";
 
 // Currency formatting utility
@@ -45,8 +46,12 @@ const quotationSchema = z.object({
   termsAndConditions: z.string().min(1, "Terms and conditions are required"),
 });
 
-export default function CreateQuotationForm() {
+export default function CreateQuotationForm({ contactId }) {
   const dispatch = useDispatch();
+  const currentDate = new Date();
+  const validTillDate = new Date();
+  validTillDate.setDate(currentDate.getDate() + 7);
+
   const { loading, error, quotation } = useSelector((state) => state.quotation);
   const {
     userData,
@@ -54,36 +59,32 @@ export default function CreateQuotationForm() {
     loading: userLoading,
   } = useSelector((state) => state.user) || {};
 
-  const currentUser = {
-    // role: "employee", // Change to 'employee' or 'team_lead' for testing
-    role: employeeData?.designation, // Change to 'employee' or 'team_lead' for testing
-    name: employeeData?.name,
-  };
+ 
 useEffect(() => {
     dispatch(fetchUserByEmail())
   }, [dispatch])
-   const searchParams = useSearchParams()
-  const contactId = searchParams.get('contactId') // or pass directly as prop
+
 //tobe update or deleted
 const { contact } = useContactDetails(contactId)
-const clientDetails={
-      name:contact?.fullName ,
-      company:contact?.companyName,
-      email: contact?.email,
-      phone:contact?.phone,
-}
 
-  
-  const [staticData] = useState({
-    clientDetails,
-  
+const staticData = useMemo(() => {
+  return {
+    clientDetails: {
+      contactId: contactId,
+      name: contact?.fullName || "",
+      company: contact?.companyName || "",
+      email: contact?.email || "",
+      phone: contact?.phone || "",
+    },
     serviceProviderDetails,
     preparedBy: {
-      name: `${employeeData.firstName || ''} ${employeeData.lastName || ''}`.trim(),
-      designation: employeeData.designation,
-      email: employeeData.email,
+      name: `${employeeData?.firstName || ""} ${employeeData?.lastName || ""}`.trim(),
+      designation: employeeData?.designation || "",
+      email: employeeData?.email || "",
     },
-  });
+  };
+}, [contact,contactId, employeeData]);
+
 
   const {
     register,
@@ -94,6 +95,7 @@ const clientDetails={
   } = useForm({
     resolver: zodResolver(quotationSchema),
     defaultValues: {
+
       projectTitle: "",
       scopeOfWork: "",
       deliverables: "",
@@ -122,11 +124,17 @@ const clientDetails={
 
   // Handle form submission
   const onSubmit = async (data) => {
+    const now = new Date();
+  const validTill = new Date();
+  validTill.setDate(now.getDate() + 7);
+
     try {
       const quotationData = {
         ...data,
+        date: now.toISOString(), // inject full ISO string
+      validTill: validTill.toISOString(), // 7 days ahead
         clientDetails: staticData.clientDetails,
-        serviceProvider: staticData.serviceProviderDetails,
+        serviceProviderDetails: staticData.serviceProviderDetails,
         preparedBy: staticData.preparedBy,
         createdBy: employeeData?.email,
       };
@@ -160,7 +168,7 @@ const clientDetails={
   }, [error]);
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-3 bg-gradient-to-br from-green-50 to-green-200 rounded-xl shadow-xl">
+    <div className="w-full  p-3 bg-gradient-to-br from-green-50 to-green-200 rounded-xl shadow-xl">
       <Card className="bg-white border border-green-200 rounded-xl shadow-md">
         <CardHeader className="p-4">
           <CardTitle className="text-lg font-semibold text-green-800 flex items-center">
