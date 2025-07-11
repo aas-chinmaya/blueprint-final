@@ -2,15 +2,24 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from '@/components/ui/sonner'
 import { Button } from '@/components/ui/button'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { sendPaymentlink } from '@/store/features/meeting/paymentSlice'
+import { getContactById, clearSelectedContact } from "@/store/features/pre-project/contactSlice";
 
 function MeetingAccessGate({ contactId, contactEmail , onCancel }) {
   const [isSending, setIsSending] = useState(false)
   const dispatch = useDispatch()
+  const { selectedContact, status, error } = useSelector((state) => state.contact);
+  // Fetch contact by ID when modal opens
+  useEffect(() => {
+    if ( contactId) {
+      dispatch(getContactById(contactId));
+    }
+  }, [dispatch, contactId]);
+console.log('Selected Contact:', selectedContact);
   const handleSendLink = async () => {
     if (!contactId || !contactEmail) {
       toast.error('❌ Missing contact ID or email')
@@ -22,7 +31,8 @@ function MeetingAccessGate({ contactId, contactEmail , onCancel }) {
     const payload = {
       amount: 1000,
       contactId,
-      email: contactEmail,
+     
+
     }
 
     try {
