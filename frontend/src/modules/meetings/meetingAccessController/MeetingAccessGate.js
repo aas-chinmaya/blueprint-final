@@ -11,7 +11,6 @@ import { sendPaymentlink } from '@/store/features/meeting/paymentSlice'
 function MeetingAccessGate({ contactId, contactEmail , onCancel }) {
   const [isSending, setIsSending] = useState(false)
   const dispatch = useDispatch()
-console.log(contactEmail)
   const handleSendLink = async () => {
     if (!contactId || !contactEmail) {
       toast.error('❌ Missing contact ID or email')
@@ -30,7 +29,6 @@ console.log(contactEmail)
       await dispatch(sendPaymentlink(payload)).unwrap()
       toast.success('✅ Payment link sent successfully. Please complete the payment to schedule more meetings.')
     } catch (error) {
-      console.error('[MeetingAccessGate] Error:', error)
       toast.error('❌ Failed to send payment link')
     } finally {
       setIsSending(false)

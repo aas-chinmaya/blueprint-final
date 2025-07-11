@@ -1,20 +1,3 @@
-// 'use client'
-
-// import ProjectBugs from '@/modules/bug/ProjectBugs'
-// import { useSearchParams } from 'next/navigation'
-
-// export default function ProjectBugListPage() {
-//   const searchParams = useSearchParams()
-//   const projectId = searchParams.get('projectId')
-
-
-//   return (
-//     <div className="p-4">
-//       <h1 className="text-2xl font-semibold mb-4">🪲 Bugs for Project ID: {projectId}</h1>
-//       <ProjectBugs projectId={projectId} />
-//     </div>
-//   )
-// }
 
 
 

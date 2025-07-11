@@ -17,9 +17,11 @@ import {
 } from '@/store/features/in-project/TaskSlice';
 import { ArrowLeft, Eye, Edit, Trash2, X } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
-const AllTaskListByProjectId = ({ projectId }) => {
-
+const AllTaskListByProjectId = ({ projectId ,project}) => {
+   const { currentUser ,isTeamLead } = useCurrentUser(project?.teamLeadId);
+    console.log("isTeamLead", isTeamLead);
   const dispatch = useDispatch();
   const router = useRouter();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -221,23 +223,25 @@ const AllTaskListByProjectId = ({ projectId }) => {
                       >
                         <Eye className="h-5 w-5" />
                       </button>
-                      <button
-                        onClick={() => handleEditTask(task.task_id)}
-                        className="text-yellow-600 hover:text-yellow-800 transition-colors"
-                        aria-label={`Edit task ${task.title}`}
-                        title="Edit Task"
-                      >
-                        <Edit className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => openDeleteModal(task.task_id)}
-                        className="text-red-600 hover:text-red-800 transition-colors"
-                        aria-label={`Delete task ${task.title}`}
-                        title="Delete Task"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
+           
+    
+                        <button
+                          onClick={() => handleEditTask(task.task_id)}
+                          className="text-yellow-600 hover:text-yellow-800 transition-colors"
+                          aria-label={`Edit task ${task.title}`}
+                          title="Edit Task"
+                        >
+                          <Edit className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => openDeleteModal(task.task_id)}
+                          className="text-red-600 hover:text-red-800 transition-colors"
+                          aria-label={`Delete task ${task.title}`}
+                          title="Delete Task"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+              </div>
                   </td>
                 </tr>
               ))

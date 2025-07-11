@@ -58,7 +58,6 @@ export default function MyWorkedProject({ employeeId }) {
   const router = useRouter();
   const { employeeProjects = [], status = {}, error = {} } = useSelector((state) => state.project || {});
 
-  console.log('Employee Projects:', employeeProjects);
 
   // State for filters and sorting
   const [searchTerm, setSearchTerm] = useState('');

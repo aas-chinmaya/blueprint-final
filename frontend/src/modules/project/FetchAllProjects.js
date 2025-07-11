@@ -67,14 +67,6 @@ export default function FetchAllProjects() {
   const [sortField, setSortField] = useState('projectName');
   const [sortDirection, setSortDirection] = useState('asc');
 
-  // useEffect(() => {
-  //   if (status.fetchAllProjects === 'idle') {
-  //     dispatch(fetchAllProjects());
-  //   }
-  //   return () => {
-  //     dispatch(clearProjects()); // Clean up on unmount
-  //   };
-  // },[dispatch,status.fetchAllProjects]);
 
   
 useEffect(() => {

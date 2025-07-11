@@ -13,6 +13,6 @@ export default function PublicLayout({ children }) {
     return () => clearTimeout(timer);
   }, []);
 
-  return <>{ children}</>;
-  // return <>{loading ? <PreLoader /> : children}</>;
+  // return <>{ children}</>;
+  return <>{loading ? <PreLoader /> : children}</>;
 }

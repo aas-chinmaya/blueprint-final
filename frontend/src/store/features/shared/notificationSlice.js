@@ -9,7 +9,7 @@ export const fetchNotifications = createAsyncThunk(
       const response = await axiosInstance.get(`/notification/getnotications/${recipientId}`);
       return response.data;
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      // console.error('Error fetching notifications:', error);
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch notifications');
     }
   }
@@ -23,7 +23,7 @@ export const deleteNotification = createAsyncThunk(
       await axiosInstance.delete(`/notification/soft/${_id}`);
       return _id;
     } catch (error) {
-      console.error('Error deleting notification:', error);
+      // console.error('Error deleting notification:', error);
       return rejectWithValue(error.response?.data?.message || 'Failed to delete notification');
     }
   }
@@ -37,7 +37,7 @@ export const deleteAllNotifications = createAsyncThunk(
       await axiosInstance.delete(`/notification/softdeleteall/${recipientId}`);
       return recipientId;
     } catch (error) {
-      console.error('Error deleting all notifications:', error);
+      // console.error('Error deleting all notifications:', error);
       return rejectWithValue(error.response?.data?.message || 'Failed to delete all notifications');
     }
   }

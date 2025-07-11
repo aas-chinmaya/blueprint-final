@@ -1,18 +1,3 @@
-// 'use client';
-
-// import CreateQuotationForm from '@/modules/quotation/CreateQuotationForm';
-// import { useSearchParams } from 'next/navigation';
-
-// export default function CreateQuotationPage() {
-//   const searchParams = useSearchParams();
-// const meetingId = searchParams.get('meetingId');
-//   const contactId = searchParams.get('contactId');
-
- 
-//   return (
-//           <CreateQuotationForm meetingId={meetingId} contactId={contactId} />
-//   );
-// }
 
 
 // src/app/(protected)/quotation/create/page.js

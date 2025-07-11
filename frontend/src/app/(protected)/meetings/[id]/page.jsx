@@ -7,8 +7,8 @@ import { useParams } from "next/navigation";
 import MeetingsPage from "@/modules/meetings/meeting/MeetingPage";
 
 export default function MeetingDetailsPage() {
-  const { Id } = useParams(); // Extract meeting ID from URL
-  return <MeetingsPage id={Id} />;
+  const { id } = useParams(); // Extract meeting ID from URL
+  return <MeetingsPage id={id} />;
 }
 
 

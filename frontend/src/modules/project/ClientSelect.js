@@ -11,7 +11,6 @@ import { fetchClients } from '@/store/features/in-project/projectSlice'; // Corr
 export default function ClientSelect({ value, onChange }) {
   const dispatch = useDispatch();
   const { clients, loading, error } = useSelector((state) => {
-    console.log('Redux state:', state); // Debug
     return {
       clients: state.project.clients || [], // Fallback to empty array
       loading: state.project.status.fetch12lients, // Correct path

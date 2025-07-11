@@ -16,6 +16,7 @@ const EditTask = () => {
   const router = useRouter();
   const params = useParams();
   const task_id = params.id;
+  console.log('task_id from params:', task_id); // should log the ID from URL
   const task = useSelector((state) => state.task.currentTask);
   const loading = useSelector((state) => state.task.status === 'loading');
   const error = useSelector((state) => state.task.error);

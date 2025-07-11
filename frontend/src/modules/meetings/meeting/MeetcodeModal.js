@@ -2,6 +2,7 @@
 "use client";
 import {axiosInstance3} from "@/lib/axios";
 import { useState } from "react";
+import { toast } from "@/components/ui/sonner";
 
 export default function CodeVerificationModal({
   isOpen,
@@ -20,19 +21,17 @@ export default function CodeVerificationModal({
   };
   const handleVerifyCode = async () => {
     if (!codeInput) {
-      alert("❌ Please enter the code.");
+      toast.info("❌ Please enter the code.");
       return;
     }
 
     try {
       const res = await axiosInstance3.get(`/oauth2callback?code=${codeInput}`);
-      console.log("✅ Verification successful:", res.data);
-
+toast.success("✅ Verification successful!");
       setCodeInput("");
       onClose(); // close modal
     } catch (err) {
-      console.error("❌ Verification failed:", err);
-    }
+toast.error("❌ Verification failed. Please try again.");}
   };
 
   if (!isOpen) return null;

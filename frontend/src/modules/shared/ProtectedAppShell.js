@@ -88,15 +88,7 @@ export default function ProtectedAppShell({ children }) {
               className="relative h-9 w-9 rounded-full p-0"
               onClick={() => setShowProfile(true)}
             >
-              {/* <Avatar className="h-9 w-9">
-                  <AvatarImage
-                    src={!userInfo.profilePicture || "/Avatar.png"}
-                    alt={userInfo.fullName || "User"}
-                  />
-                  <AvatarFallback>
-                    {userInfo.fullName?.charAt(0) || "U"}
-                  </AvatarFallback>
-                </Avatar> */}
+       
               <Avatar>
                 <AvatarImage
                   src={
