@@ -22,7 +22,7 @@ const employeeId= currentUser?.id  // Default to a specific employee ID if not a
   return (
 
         <div className="p-4">
-      {/* {isCpc ? (
+      {isCpc ? (
         <div className="space-y-6">
           <SectionCardCPC />
           <div className="px-4 lg:px-6">
@@ -38,7 +38,7 @@ const employeeId= currentUser?.id  // Default to a specific employee ID if not a
           </div>
           <DataTableEmployee employeeId={employeeId}/>
         </div>
-      )} */}
+      )}
       
     </div>
 

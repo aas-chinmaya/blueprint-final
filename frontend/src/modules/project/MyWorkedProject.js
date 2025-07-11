@@ -1,8 +1,4 @@
 
-
-
-
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -60,8 +56,10 @@ const progressColors = {
 export default function MyWorkedProject({ employeeId }) {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { employeeProjects, status, error } = useSelector((state) => state.project);
-console.log('Employee Projects:', employeeProjects);
+  const { employeeProjects = [], status = {}, error = {} } = useSelector((state) => state.project || {});
+
+  console.log('Employee Projects:', employeeProjects);
+
   // State for filters and sorting
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -71,14 +69,13 @@ console.log('Employee Projects:', employeeProjects);
   useEffect(() => {
     if (!employeeProjects.length && status.fetchEmployeeProjects === 'idle') {
       if (employeeId) {
-        const d=dispatch(fetchProjectsByEmployeeId(employeeId));
-        console.log('Fetching projects for employee:', d.response);
+        dispatch(fetchProjectsByEmployeeId(employeeId));
       }
     }
   }, [dispatch, employeeProjects.length, status.fetchEmployeeProjects, employeeId]);
 
   // Calculate project statistics
-  const projectStats = employeeProjects
+  const projectStats = Array.isArray(employeeProjects)
     ? {
         total: employeeProjects.length,
         planned: employeeProjects.filter((p) => p.status === 'Planned').length,
@@ -119,8 +116,6 @@ console.log('Employee Projects:', employeeProjects);
   const handleViewProject = (projectId) => {
     router.push(`/project/${projectId}`);
   };
-
-
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -313,8 +308,6 @@ console.log('Employee Projects:', employeeProjects);
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-
-             
             </div>
           </div>
         </div>
@@ -329,7 +322,6 @@ console.log('Employee Projects:', employeeProjects);
             <h3 className="text-xl font-semibold text-foreground mb-2">No projects found</h3>
             <p className="text-muted-foreground">
               No projects match your filters. Try adjusting your search or{' '}
-             
             </p>
           </CardContent>
         </Card>
