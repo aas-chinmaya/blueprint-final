@@ -6,6 +6,7 @@ import userReducer from './features/shared/userSlice';
 import contactReducer from './features/pre-project/contactSlice';
 import meetingReducer from './features/pre-project/meetingSlice';
 import meetingCalendarReducer from './features/calender/meetingCalendarSlice';
+import teamMeetingsReducer from './features/calender/teammeetingCalenderSlice';
 import momReducer from './features/pre-project/momSlice';
 import quotationReducer from './features/pre-project/quotationSlice';
 import clientReducer from './features/pre-project/clientSlice';
@@ -29,6 +30,7 @@ import viewTeamByProjectIdReducer from './features/in-project/viewTeamByProjectI
 import slotReducer from './features/master/slotMasterSlice';
 import serviceReducer from './features/master/serviceMasterSlice';
 import industriesReducer from './features/master/industriesMasterSlice';
+import slotsReducer1 from './features/calender/slotSlice';
 
  const store = configureStore({
   reducer: {
@@ -61,11 +63,13 @@ import industriesReducer from './features/master/industriesMasterSlice';
   slots: slotReducer,
   services: serviceReducer,
   industries:industriesReducer,
-
+  slots1: slotsReducer1,
 
 
   teamMembers: teamMembersReducer,
   projectTeam: viewTeamByProjectIdReducer,
+
+  teamMeetings:teamMeetingsReducer,
   
   },
 })

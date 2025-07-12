@@ -150,7 +150,7 @@ function MeetingForm({ meeting = {}, onSave, onCancel, isEditing = false, loadin
   );
   const [formData, setFormData] = useState({
     eventId: meeting.meetingId || "",
-    email: meeting.email || "it_chinmaya@outlook.com",
+    email: meeting.email ,
     summary: meeting.title || "New Meeting",
     description: meeting.agenda || "",
     attendees: Array.isArray(meeting.attendees)

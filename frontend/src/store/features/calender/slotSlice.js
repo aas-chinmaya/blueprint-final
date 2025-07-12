@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosInstance from '@/lib/axiosInstance'; // make sure this is correctly configured
+import {axiosInstance} from '@/lib/axios'; // make sure this is correctly configured
 
 // ------------------------------------------
 // Async Thunks

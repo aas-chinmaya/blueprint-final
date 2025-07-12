@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -12,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useEffect, useMemo, useCallback, useState } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAllTaskByEmployeeId,
@@ -23,6 +24,8 @@ import {
 } from "@/store/features/in-project/projectSlice";
 import { fetchTeamsByEmployeeId } from "@/store/features/in-project/teamSlice";
 import { fetchBugByEmployeeId } from "@/store/features/in-project/bugSlice";
+import { useCountUp } from "@/hooks/useCountUp";
+import { motion, AnimatePresence } from "framer-motion";
 
 const CardSkeleton = () => (
   <Card className="@container/card animate-pulse">
@@ -40,99 +43,113 @@ const CardSkeleton = () => (
 
 export function SectionCardEmployee({ employeeId }) {
   const dispatch = useDispatch();
-  const { teamsByEmployee, status, error } = useSelector((state) => state.team);
+
+  const { teamsByEmployee, status: teamStatus } = useSelector((state) => state.team);
+  const { employeeProjects } = useSelector((state) => state.project);
+  const { bugsByEmployeeId, loading: bugLoading } = useSelector((state) => state.bugs);
   const tasks = useSelector(selectAllTaskListByEmployeeId);
-  const isTasksLoading = status.fetchAllTaskByEmployeeId === 'loading';
-  const {employeeProjects} = useSelector((state) => state.project);
-  const isProjectsLoading = status.fetchEmployeeProjects === 'loading';
-  // const bugs = useSelector((state) => state.bugs.selectBugsByEmployeeId);
-  // const isBugLoading = status.bugs.loading.selectBugLoadingByEmployeeId  === 'loading';
-const bugs = useSelector((state) => state.bugs.bugsByEmployeeId);
-const isBugLoading = useSelector((state) => state.bugs.loading.bugsByEmployeeId);
-// console.log("bugs",employeeProjects, bugs,teamsByEmployee);  
-  
-   useEffect(() => {
-     if (employeeId) {
-       dispatch(fetchTeamsByEmployeeId(employeeId));
+
+  const isProjectsLoading = teamStatus.fetchEmployeeProjects === "loading";
+  const isTasksLoading = teamStatus.fetchAllTaskByEmployeeId === "loading";
+  const isBugLoading = bugLoading?.bugsByEmployeeId === "loading";
+  const isTeamsLoading = teamStatus.fetchTeamsByEmployeeId === "loading";
+
+  const allLoaded = useMemo(() =>
+    !isProjectsLoading && !isTasksLoading && !isBugLoading && !isTeamsLoading,
+    [isProjectsLoading, isTasksLoading, isBugLoading, isTeamsLoading]
+  );
+
+  useEffect(() => {
+    if (employeeId) {
       dispatch(fetchProjectsByEmployeeId(employeeId));
       dispatch(getAllTaskByEmployeeId(employeeId));
       dispatch(fetchBugByEmployeeId(employeeId));
+      dispatch(fetchTeamsByEmployeeId(employeeId));
+    }
+  }, [dispatch, employeeId]);
 
+  const animatedProjects = useCountUp(employeeProjects?.length || 0);
+  const animatedTasks = useCountUp(tasks?.length || 0);
+  const animatedBugs = useCountUp(bugsByEmployeeId?.length || 0);
+  const animatedTeams = useCountUp(teamsByEmployee?.length || 0);
 
-     }
-   }, [dispatch, employeeId]);
- 
+  const cardVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 },
+  };
 
-  const ProjectsCard = useMemo(() => (
-    isProjectsLoading ? <CardSkeleton /> : (
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Total Projects I Worked</CardDescription>
-          <CardTitle className="text-2xl font-semibold">{employeeProjects.length}</CardTitle>
-          <CardAction><Badge variant="outline"><IconTrendingUp /> +12.5%</Badge></CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="flex gap-2 font-medium">Trending up this month <IconTrendingUp className="size-4" /></div>
-          <div className="text-muted-foreground">Visitors for the last 6 months</div>
-        </CardFooter>
-      </Card>
-    )
-  ), [isProjectsLoading, employeeProjects]);
-
-  const TasksCard = useMemo(() => (
-    isTasksLoading ? <CardSkeleton /> : (
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>My Tasks</CardDescription>
-          <CardTitle className="text-2xl font-semibold">{tasks.length}</CardTitle>
-          <CardAction><Badge variant="outline"><IconTrendingUp /> +12.5%</Badge></CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="flex gap-2 font-medium">Strong user retention <IconTrendingUp className="size-4" /></div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
-        </CardFooter>
-      </Card>
-    )
-  ), [isTasksLoading, tasks]);
-  
-  const BugCard = useMemo(() => (
-    isBugLoading ? <CardSkeleton /> : (
-      <Card className="@container/card">
-        <CardHeader>
-          <CardDescription>Bug Found</CardDescription>
-          <CardTitle className="text-2xl font-semibold">{bugs.length}</CardTitle>
-          <CardAction><Badge variant="outline"><IconTrendingUp /> +12.5%</Badge></CardAction>
-        </CardHeader>
-        <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="flex gap-2 font-medium">Strong user retention <IconTrendingUp className="size-4" /></div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
-        </CardFooter>
-      </Card>
-    )
-  ), [isBugLoading, bugs]);
-
-  const GrowthCard = useMemo(() => (
-    <Card className="@container/card">
-      <CardHeader>
-        <CardDescription>Growth Rate</CardDescription>
-        <CardTitle className="text-2xl font-semibold">4.5%</CardTitle>
-        <CardAction><Badge variant="outline"><IconTrendingUp /> +4.5%</Badge></CardAction>
-      </CardHeader>
-      <CardFooter className="flex-col items-start gap-1.5 text-sm">
-        <div className="flex gap-2 font-medium">Steady performance increase <IconTrendingUp className="size-4" /></div>
-        <div className="text-muted-foreground">Meets growth projections</div>
-      </CardFooter>
-    </Card>
-  ), []);
-
-
+  const cards = [
+    {
+      title: "Total Projects I Worked",
+      count: animatedProjects,
+      badge: "+12.5%",
+    footer: "Increased project participation",
+    note: "Tracks all assigned or collaborated projects",
+    },
+    {
+      title: "My Tasks",
+      count: animatedTasks,
+      badge: "+12.5%",
+      footer: "Strong user retention",
+    note: "Task activity exceeds expectations",
+    },
+    {
+      title: "Bug Found",
+      count: animatedBugs,
+      badge: "+12.5%",
+       footer: "Increased QA visibility",
+  note: "Helps improve overall system stability",
+    },
+    {
+      title: "All Teams We Worked",
+      count: animatedTeams,
+      badge: "+4.5%",
+    footer: "Consistent team performance",
+    note: "On track with growth metrics",
+    },
+  ];
 
   return (
     <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 xl:grid-cols-4 lg:px-6">
-      {ProjectsCard}
-      {TasksCard}
-      {BugCard}
-      {GrowthCard}
+      {allLoaded ? (
+        <AnimatePresence>
+          {cards.map((card, index) => (
+            <motion.div
+              key={index}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              variants={cardVariants}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+            >
+              <Card className="@container/card">
+                <CardHeader>
+                  <CardDescription>{card.title}</CardDescription>
+                  <CardTitle className="text-2xl font-semibold">{card.count}</CardTitle>
+                  <CardAction>
+                    <Badge variant="outline">
+                      <IconTrendingUp className="size-4" /> {card.badge}
+                    </Badge>
+                  </CardAction>
+                </CardHeader>
+                <CardFooter className="flex-col items-start gap-1.5 text-sm">
+                  <div className="flex gap-2 font-medium">
+                    {card.footer} <IconTrendingUp className="size-4" />
+                  </div>
+                  <div className="text-muted-foreground">{card.note}</div>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      ) : (
+        <>
+          <CardSkeleton />
+          <CardSkeleton />
+          <CardSkeleton />
+          <CardSkeleton />
+        </>
+      )}
     </div>
   );
 }

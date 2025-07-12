@@ -179,9 +179,7 @@ const employeeId=currentUser.id
     )
   }
 
-  if (hasError) {
-    return <div className="text-red-500">Error loading chart data.</div>
-  }
+  
 
   if (chartData.length === 0) {
     return (
@@ -283,3 +281,8 @@ const employeeId=currentUser.id
     </Card>
   )
 }
+
+
+
+
+
