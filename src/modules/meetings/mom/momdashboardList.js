@@ -54,16 +54,16 @@ export default function MomDashboardList() {
       <div className="bg-card rounded-lg border overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader className="bg-muted">
+            <TableHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
               <TableRow>
-                <TableHead className="text-center">S.No</TableHead>
-                <TableHead className="text-center">MoM ID</TableHead>
-                <TableHead className="text-center">Created By</TableHead>
-                <TableHead className="text-center">Date</TableHead>
-                <TableHead className="text-center">Time</TableHead>
-                <TableHead className="text-center">Duration</TableHead>
-                <TableHead className="text-center">Mode</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
+                <TableHead className="text-center text-white">S.No</TableHead>
+                <TableHead className="text-center text-white">MoM ID</TableHead>
+                <TableHead className="text-center text-white">Created By</TableHead>
+                <TableHead className="text-center text-white">Date</TableHead>
+                <TableHead className="text-center text-white">Time</TableHead>
+                <TableHead className="text-center text-white">Duration</TableHead>
+                <TableHead className="text-center text-white">Mode</TableHead>
+                <TableHead className="text-center text-white">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -105,14 +105,15 @@ export default function MomDashboardList() {
                             <TooltipTrigger asChild>
                               <Button
                                 size="sm"
-                                variant="outline"
+                                className="cursor-pointer text-blue-700"
+                                variant="icon"
                                 onClick={() => handleViewPDF(item.pdfUrl)}
                               >
-                                <Eye className="h-4 w-4 mr-1" /> View PDF
+                                <Eye className="h-4 w-4 " /> 
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>Preview PDF in modal</p>
+                              <p>View PDF</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -140,7 +141,7 @@ export default function MomDashboardList() {
       
         <DialogContent className="w-full max-w-5xl h-[90vh] flex flex-col">
   <DialogHeader>
-    <DialogTitle>MoM PDF Preview</DialogTitle>
+    <DialogTitle className="text-blue-800">MoM PDF Preview</DialogTitle>
   </DialogHeader>
 
   
@@ -151,11 +152,13 @@ export default function MomDashboardList() {
         src={selectedPDFUrl}
         className="w-full h-full rounded-md border"
         title="MoM PDF"
+        
       />
     ) : (
       <p className="text-muted-foreground text-center py-10">Loading PDF...</p>
     )}
   </div>
+  
 </DialogContent>
 
       </Dialog>

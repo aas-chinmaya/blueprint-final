@@ -98,10 +98,7 @@ export default function SlotsManager() {
     <>
       <Card className="!rounded-none">
         <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b px-4 py-2">
-          {/* <div className="flex items-center gap-2">
-            <CalendarIcon className="w-5 h-5 text-green-600" />
-            <CardTitle className="text-lg text-green-600">Slot Calendar View</CardTitle>
-          </div> */}
+       
 
           <div className="text-sm text-muted-foreground">{dateRange}</div>
 
@@ -162,8 +159,8 @@ export default function SlotsManager() {
               selectable={false}
               events={events}
               eventClick={handleEventClick}
-              eventBackgroundColor="#22c55e"
-              eventBorderColor="#15803d"
+              eventBackgroundColor="#2276c5ff"
+              eventBorderColor="#2571c9ff"
               eventTextColor="#fff"
               eventClassNames="rounded px-0 py-0.5 text-sm"
             />

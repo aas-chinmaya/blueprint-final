@@ -215,7 +215,7 @@ function MeetingForm({ meeting = {}, onSave, onCancel, isEditing = false, loadin
   };
 
   return (
-    <div className="bg-green-50 p-6 rounded-lg">
+    <div className="bg-blue-50 p-6 rounded-lg">
       {formError && (
         <Alert variant="destructive" className="mb-4">
           <AlertDescription>{formError}</AlertDescription>
@@ -224,30 +224,25 @@ function MeetingForm({ meeting = {}, onSave, onCancel, isEditing = false, loadin
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <Label className="text-green-800 font-medium mb-2 block">Select Date</Label>
-            <Card className="border-green-200">
+            <Label className="text-blue-800 font-medium mb-2 block">Select Date</Label>
+            <Card className="border-blue-200">
               <CardContent className="p-4">
                 <CalendarComponent
                   mode="single"
+                 
                   selected={selectedDate}
                   onSelect={(date) => date && setSelectedDate(date)}
                   disabled={(date) => date < new Date().setHours(0, 0, 0, 0)}
-                  className="rounded-md"
+                  className="rounded-md "
                 />
               </CardContent>
             </Card>
-            {selectedDate && (
-              <div className="mt-2 p-2 bg-green-50 rounded-md border border-green-200">
-                <p className="text-green-800 text-sm">
-                  Selected: {formatSelectedDate(selectedDate)}
-                </p>
-              </div>
-            )}
-            <Label className="text-green-800 font-medium mt-4 block flex items-center gap-2">
+        
+            <Label className="text-blue-800 font-medium mt-4 block flex items-center gap-2">
               <Clock className="w-4 h-4" /> Select Time Slot
             </Label>
             <Select onValueChange={handleSlotChange} value={formData.selectedSlot?._id || ""}>
-              <SelectTrigger className="border-green-300 focus:border-green-500 focus:ring-green-500">
+              <SelectTrigger className="border-blue-300 focus:border-blue-500 focus:ring-blue-500">
                 <SelectValue placeholder="Choose a time slot" />
               </SelectTrigger>
               <SelectContent>
@@ -269,7 +264,7 @@ function MeetingForm({ meeting = {}, onSave, onCancel, isEditing = false, loadin
           </div>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="email" className="text-green-800 font-medium">Organizer Email</Label>
+              <Label htmlFor="email" className="text-blue-800 font-medium">Organizer Email</Label>
               <Input
                 id="email"
                 name="email"
@@ -277,22 +272,22 @@ function MeetingForm({ meeting = {}, onSave, onCancel, isEditing = false, loadin
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="border-green-300 focus:border-green-500 focus:ring-green-500"
+                className="border-blue-300 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
             <div>
-              <Label htmlFor="summary" className="text-green-800 font-medium">Meeting Summary</Label>
+              <Label htmlFor="summary" className="text-blue-800 font-medium">Meeting Summary</Label>
               <Input
                 id="summary"
                 name="summary"
                 value={formData.summary}
                 onChange={handleChange}
                 required
-                className="border-green-300 focus:border-green-500 focus:ring-green-500"
+                className="border-blue-300 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
             <div>
-              <Label htmlFor="attendees" className="text-green-800 font-medium">
+              <Label htmlFor="attendees" className="text-blue-800 font-medium">
                 Attendee Emails (comma-separated)
               </Label>
               <Input
@@ -301,43 +296,30 @@ function MeetingForm({ meeting = {}, onSave, onCancel, isEditing = false, loadin
                 value={formData.attendees}
                 onChange={handleChange}
                 placeholder="email1@example.com, email2@example.com"
-                className="border-green-300 focus:border-green-500 focus:ring-green-500"
+                className="border-blue-300 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
             <div>
-              <Label htmlFor="description" className="text-green-800 font-medium">Description</Label>
+              <Label htmlFor="description" className="text-blue-800 font-medium">Description</Label>
               <textarea
                 id="description"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full border-green-300 focus:border-green-500 focus:ring-green-500 rounded-md p-2"
+                className="w-full border-blue-300 focus:border-blue-500 focus:ring-blue-500 rounded-md p-2"
                 rows={4}
                 placeholder="Add meeting agenda or description..."
               />
             </div>
           </div>
         </div>
-        {selectedDate && formData.selectedSlot && (
-          <div className="p-4 bg-green-100 rounded-md border border-green-200">
-            <h4 className="text-green-800 font-medium mb-2">Meeting Summary:</h4>
-            <div className="text-sm text-green-700 space-y-1">
-              <p><strong>Date:</strong> {formatSelectedDate(selectedDate)}</p>
-              <p>
-                <strong>Time:</strong>{" "}
-                {formatSlotTime(formData.selectedSlot.startTime, formData.selectedSlot.endTime)}
-              </p>
-              <p><strong>Shift:</strong> {formData.selectedSlot.shift}</p>
-              <p><strong>Slot No:</strong> {formData.selectedSlot.slotNo}</p>
-            </div>
-          </div>
-        )}
+      
         <div className="flex justify-end space-x-2 pt-4">
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="border-green-300 text-green-700 hover:bg-green-50"
+            className="border-blue-300 text-blue-700 hover:bg-blue-50"
             disabled={loading || slotsLoading}
           >
             Cancel
@@ -345,7 +327,7 @@ function MeetingForm({ meeting = {}, onSave, onCancel, isEditing = false, loadin
           <Button
             onClick={handleSubmit}
             disabled={loading || !selectedDate || !formData.selectedSlot || slotsLoading}
-            className="bg-green-700 hover:bg-green-800 text-white"
+            className="bg-blue-700 hover:bg-blue-800 text-white"
           >
             {loading ? "Saving..." : isEditing ? "Update Meeting" : "Schedule Meeting"}
           </Button>
@@ -358,29 +340,29 @@ function MeetingForm({ meeting = {}, onSave, onCancel, isEditing = false, loadin
 // MeetingDetails Component
 function MeetingDetails({ meeting, onClose }) {
   return (
-    <div className="bg-green-50 p-6 rounded-2xl shadow-md w-full max-w-3xl mx-auto space-y-6">
+    <div className="bg-blue-50 p-6 rounded-2xl shadow-md w-full max-w-3xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-2xl font-bold text-green-800">{meeting.title}</h3>
+        <h3 className="text-2xl font-bold text-blue-800">{meeting.title}</h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="flex items-center space-x-3 text-green-700">
+        <div className="flex items-center space-x-3 text-blue-700">
           <CalendarIcon className="h-5 w-5" />
           <span className="font-medium">{formatDate(meeting.date)}</span>
         </div>
-        <div className="flex items-center space-x-3 text-green-700">
+        <div className="flex items-center space-x-3 text-blue-700">
           <Clock className="h-5 w-5" />
           <span className="font-medium">
             {formatTimes(meeting.start?.dateTime)} - {formatTimes(meeting.end?.dateTime)}
           </span>
         </div>
-        <div className="flex items-center space-x-3 text-green-700">
+        <div className="flex items-center space-x-3 text-blue-700">
           <MapPin className="h-5 w-5" />
           {meeting.hangoutLink ? (
             <a
               href={meeting.hangoutLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium underline hover:text-green-900"
+              className="font-medium underline hover:text-blue-900"
             >
               Google Meet
             </a>
@@ -388,16 +370,16 @@ function MeetingDetails({ meeting, onClose }) {
             <span className="font-medium">Online</span>
           )}
         </div>
-        <div className="flex items-center space-x-3 text-green-700">
+        <div className="flex items-center space-x-3 text-blue-700">
           <Users className="h-5 w-5" />
           <div className="flex space-x-2">
             {meeting.attendees?.length > 0 ? (
               meeting.attendees.split(",").map((email, idx) => (
                 <div key={idx} className="relative group">
-                  <div className="w-8 h-8 rounded-full bg-green-200 text-green-800 font-semibold flex items-center justify-center cursor-default select-none">
+                  <div className="w-8 h-8 rounded-full bg-blue-200 text-blue-800 font-semibold flex items-center justify-center cursor-default select-none">
                     {getInitials(email.trim())}
                   </div>
-                  <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-green-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap pointer-events-none transition-opacity duration-300 z-10">
+                  <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-blue-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap pointer-events-none transition-opacity duration-300 z-10">
                     {email.trim()}
                   </span>
                 </div>
@@ -409,17 +391,17 @@ function MeetingDetails({ meeting, onClose }) {
         </div>
       </div>
       {meeting.hangoutLink && (
-        <div className="flex items-center space-x-4 p-4 bg-white border border-green-200 rounded-lg">
+        <div className="flex items-center space-x-4 p-4 bg-white border border-blue-200 rounded-lg">
           <div className="w-10 h-10 rounded bg-white flex items-center justify-center">
-            <Link className="h-6 w-6 text-green-800" />
+            <Link className="h-6 w-6 text-blue-800" />
           </div>
           <div className="flex flex-col">
-            <span className="text-green-800 font-semibold">Join Google Meet</span>
+            <span className="text-blue-800 font-semibold">Join Google Meet</span>
             <a
               href={meeting.hangoutLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-green-600 underline"
+              className="text-blue-600 underline"
             >
               {meeting.hangoutLink}
             </a>
@@ -427,9 +409,9 @@ function MeetingDetails({ meeting, onClose }) {
         </div>
       )}
       {meeting?.agenda && (
-        <div className="p-4 bg-white border border-green-200 rounded-lg">
-          <h4 className="font-medium text-green-800 mb-2">Description</h4>
-          <p className="text-green-700 whitespace-pre-wrap">{meeting.agenda}</p>
+        <div className="p-4 bg-white border border-blue-200 rounded-lg">
+          <h4 className="font-medium text-blue-800 mb-2">Description</h4>
+          <p className="text-blue-700 whitespace-pre-wrap">{meeting.agenda}</p>
         </div>
       )}
     </div>
@@ -656,17 +638,17 @@ const handleCreate = async (newMeeting) => {
   const remainingFreeMeetings = Math.max(0, FREE_MEETING_LIMIT - meetingsData.length)
 
   return (
-    <div className="min-h-screen">
-      <Card className="mx-auto border-green-200 shadow-lg">
-        <CardHeader className="border-b border-green-200">
-          <CardTitle className="flex justify-between items-center text-green-800">
+  
+      <Card className="">
+        <CardHeader className="">
+          <CardTitle className="flex justify-between items-center text-blue-800">
             <div className="flex items-center space-x-2">
               <CalendarIcon className="h-6 w-6" />
               <span className="text-2xl font-bold">Meetings for Contact ID: {id}</span>
             </div>
             <div className="relative group">
               <Button
-                className="bg-green-700 hover:bg-green-800 text-white"
+                className="bg-blue-700 hover:bg-blue-800 text-white"
                 onClick={handleScheduleClick}
                 onMouseEnter={() => setShowTooltip(true)}
                 onMouseLeave={() => setShowTooltip(false)}
@@ -701,12 +683,12 @@ const handleCreate = async (newMeeting) => {
           )}
           <div className="flex flex-col md:flex-row gap-4 mb-6 items-center">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-green-600" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-blue-600" />
               <Input
                 placeholder="Search by meeting title..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 border-green-300 focus:ring-green-500 text-green-900 rounded-lg"
+                className="pl-10 border-blue-300 focus:ring-blue-500 text-blue-900 rounded-lg"
               />
             </div>
             <div className="flex items-center gap-2">
@@ -714,7 +696,7 @@ const handleCreate = async (newMeeting) => {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className="border-green-300 text-green-700 hover:bg-green-50 rounded-lg"
+                    className="border-blue-300 text-blue-700 hover:bg-blue-50 rounded-lg"
                   >
                     <CalendarIcon className="h-5 w-5 mr-2" />
                     {dateRange.from && dateRange.to
@@ -736,7 +718,7 @@ const handleCreate = async (newMeeting) => {
                   variant="ghost"
                   size="sm"
                   onClick={resetDateRange}
-                  className="text-green-600 hover:text-green-800 hover:bg-green-100"
+                  className="text-blue-600 hover:text-blue-800 hover:bg-blue-100"
                 >
                   <X className="h-4 w-4 mr-1" />
                   Reset
@@ -744,47 +726,48 @@ const handleCreate = async (newMeeting) => {
               )}
             </div>
           </div>
-          <div className="bg-white rounded-lg border border-green-200 overflow-hidden">
+          <div className="bg-white min-h-screen rounded-lg border border-blue-200 overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="bg-green-50">
-                  <TableHead className="text-green-800 font-semibold">Title</TableHead>
-                  <TableHead className="text-green-800 font-semibold">Date</TableHead>
-                  <TableHead className="text-green-800 font-semibold">Time</TableHead>
-                  <TableHead className="text-green-800 font-semibold">Link</TableHead>
-                  <TableHead className="text-green-800 font-semibold">Attendees</TableHead>
-                  <TableHead className="text-green-800 font-semibold">Actions</TableHead>
+                <TableRow className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white
+ ">
+                  <TableHead className=" font-semibold text-white">Title</TableHead>
+                  <TableHead className=" font-semibold text-white">Date</TableHead>
+                  <TableHead className=" font-semibold text-white">Time</TableHead>
+                  <TableHead className=" font-semibold text-white">Link</TableHead>
+                  <TableHead className=" font-semibold text-white">Attendees</TableHead>
+                  <TableHead className=" font-semibold text-white">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {contactMeetingsLoading ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8">
-                      <Loader2 className="h-8 w-8 animate-spin text-green-600 mx-auto" />
-                      <span className="text-green-700">Loading meetings...</span>
+                      <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto" />
+                      <span className="text-blue-700">Loading meetings...</span>
                     </TableCell>
                   </TableRow>
                 ) : filteredMeetings.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8">
-                      <div className="text-green-700">No meetings found.</div>
+                      <div className="text-blue-700">No meetings found.</div>
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredMeetings.map((meeting) => (
-                    <TableRow key={meeting.meetingId} className="hover:bg-green-50">
-                      <TableCell className="font-medium text-green-800">{meeting.title}</TableCell>
-                      <TableCell className="text-green-700">{formatDate(meeting.date)}</TableCell>
-                      <TableCell className="text-green-700">
+                    <TableRow key={meeting.meetingId} className="hover:bg-blue-50">
+                      <TableCell className="font-medium text-blue-800">{meeting.title}</TableCell>
+                      <TableCell className="text-blue-700">{formatDate(meeting.date)}</TableCell>
+                      <TableCell className="text-blue-700">
                         {formatTimes(meeting.start?.dateTime)} - {formatTimes(meeting.end?.dateTime)}
                       </TableCell>
-                      <TableCell className="text-green-700">
+                      <TableCell className="text-blue-700">
                         {meeting.hangoutLink ? (
                           <a
                             href={meeting.hangoutLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition"
+                            className="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition"
                           >
                             Join 
                           </a>
@@ -792,7 +775,7 @@ const handleCreate = async (newMeeting) => {
                           'Online'
                         )}
                       </TableCell>
-                      <TableCell className="text-green-700">
+                      <TableCell className="text-blue-700">
                         {meeting.attendees
                           ? `${meeting.attendees.split(', ').length} attendees`
                           : 'None'}
@@ -804,7 +787,7 @@ const handleCreate = async (newMeeting) => {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleView(meeting)}
-                              className="text-green-600 hover:text-green-800 hover:bg-green-100"
+                              className="text-blue-600 hover:text-blue-800 hover:bg-blue-100"
                             >
                               <Eye className="h-4 w-4" />
                             </Button>
@@ -884,7 +867,7 @@ const handleCreate = async (newMeeting) => {
           <Dialog open={modalState === 'create'} onOpenChange={(open) => setModalState(open ? 'create' : null)}>
             <DialogContent className="min-w-4xl">
               <DialogHeader>
-                <DialogTitle className="text-green-800">Create New Meeting</DialogTitle>
+                <DialogTitle className="text-blue-800">Create New Meeting</DialogTitle>
               </DialogHeader>
               <MeetingForm
                 onSave={handleCreate}
@@ -896,7 +879,7 @@ const handleCreate = async (newMeeting) => {
           <Dialog open={modalState === 'edit'} onOpenChange={(open) => setModalState(open ? 'edit' : null)}>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle className="text-green-800">Edit Meeting</DialogTitle>
+                <DialogTitle className="text-blue-800">Edit Meeting</DialogTitle>
               </DialogHeader>
               {selectedMeeting && (
                 <MeetingForm
@@ -912,11 +895,11 @@ const handleCreate = async (newMeeting) => {
           <Dialog open={modalState === 'view'} onOpenChange={(open) => setModalState(open ? 'view' : null)}>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle className="text-green-800">Meeting Details</DialogTitle>
+                <DialogTitle className="text-blue-800">Meeting Details</DialogTitle>
               </DialogHeader>
             
                                 {selectedMeeting && (
-                  <Card className="w-full max-w-2xl mx-auto shadow-md border-green-200 bg-white">
+                  <Card className="w-full max-w-2xl mx-auto shadow-md border-blue-200 bg-white">
                    
 
                     <CardContent className="space-y-6 pt-6 text-sm text-gray-800">
@@ -924,7 +907,7 @@ const handleCreate = async (newMeeting) => {
                       {/* Date & Time */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="flex items-start gap-3">
-                          <CalendarDays className="w-5 h-5 text-green-600 mt-0.5" />
+                          <CalendarDays className="w-5 h-5 text-blue-600 mt-0.5" />
                           <div>
                             <p className="text-xs text-gray-500 uppercase">Date</p>
                             <p className="text-base font-medium">{formatDate(selectedMeeting.date)}</p>
@@ -932,7 +915,7 @@ const handleCreate = async (newMeeting) => {
                         </div>
 
                         <div className="flex items-start gap-3">
-                          <Clock className="w-5 h-5 text-green-600 mt-0.5" />
+                          <Clock className="w-5 h-5 text-blue-600 mt-0.5" />
                           <div>
                             <p className="text-xs text-gray-500 uppercase">Time</p>
                             <p className="text-base font-medium">
@@ -944,14 +927,14 @@ const handleCreate = async (newMeeting) => {
 
                       {/* Location */}
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-green-600 mt-0.5" />
+                    <MapPin className="w-5 h-5 text-blue-600 mt-0.5" />
                     <div>
                       <p className="text-xs text-gray-500 uppercase">Location</p>
                       <a
                         href={selectedMeeting.location}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-base font-medium text-green-700 underline hover:text-green-900 transition-colors"
+                        className="text-base font-medium text-blue-700 underline hover:text-blue-900 transition-colors"
                       >
                         {selectedMeeting.location}
                       </a>
@@ -962,7 +945,7 @@ const handleCreate = async (newMeeting) => {
                       {/* Attendees */}
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2">
-                          <Users className="w-5 h-5 text-green-600" />
+                          <Users className="w-5 h-5 text-blue-600" />
                           <p className="text-xs text-gray-500 uppercase">Attendees</p>
                         </div>
                         <div className="flex flex-wrap gap-2 mt-1">
@@ -975,7 +958,7 @@ const handleCreate = async (newMeeting) => {
                                   <div
                     key={index}
                     title={trimmed}
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-green-100 text-green-800 text-sm font-semibold hover:bg-green-200 cursor-pointer"
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-800 text-sm font-semibold hover:bg-blue-200 cursor-pointer"
                   >
                     {trimmed[0]?.toUpperCase()}
                   </div>
@@ -988,7 +971,7 @@ const handleCreate = async (newMeeting) => {
 
                       {/* Agenda */}
                       <div className="flex items-start gap-3">
-                        <ClipboardList className="w-5 h-5 text-green-600 mt-0.5" />
+                        <ClipboardList className="w-5 h-5 text-blue-600 mt-0.5" />
                         <div>
                           <p className="text-xs text-gray-500 uppercase">Agenda</p>
                           <p className="text-base font-medium">
@@ -1058,7 +1041,7 @@ const handleCreate = async (newMeeting) => {
           </Dialog>
         </CardContent>
       </Card>
-    </div>
+    
   )
 }
 

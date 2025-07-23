@@ -182,13 +182,29 @@ const handleViewQuotation = async (quotationNumber) => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header with Search, Filter, and Sort */}
-      <div className="mb-6 p-4 bg-white rounded-lg border border-green-200">
+      <div className="mb-6 p-4 bg-white ">
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
           <div className="flex items-center gap-4 w-full sm:w-auto">
-            <Button variant="back" size="sm" onClick={() => router.back()}>
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              Back
-            </Button>
+                               <button
+  onClick={() => router.back()}
+  className="inline-flex cursor-pointer items-center gap-2 bg-blue-700 text-white font-medium text-sm px-4 py-2 rounded-full shadow-md hover:bg-blue-800 hover:shadow-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+>
+  <svg
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M15 19l-7-7 7-7"
+    />
+  </svg>
+  Back
+</button>
             <div className="relative w-full sm:w-64">
               <Input
                 type="text"
@@ -218,7 +234,7 @@ const handleViewQuotation = async (quotationNumber) => {
                 <SelectValue placeholder="Filter by Approval Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Approval Statuses</SelectItem>
+                <SelectItem value="all">Approval Status</SelectItem>
 
                 <SelectItem value="accepted">Accepted</SelectItem>
                 <SelectItem value="rejected">Rejected</SelectItem>
@@ -233,7 +249,7 @@ const handleViewQuotation = async (quotationNumber) => {
                 <SelectValue placeholder="Filter by Document Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Document Statuses</SelectItem>
+                <SelectItem value="all">All Document Status</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
                 <SelectItem value="final">Final</SelectItem>
               </SelectContent>

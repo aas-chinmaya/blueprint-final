@@ -123,88 +123,87 @@ const currentMeetings = filteredAndSortedContacts.slice(indexOfFirstMeeting, ind
  
   return (
     <div className="min-h-screen ">
-      <Card className="border-green-300 shadow-2xl rounded-2xl overflow-hidden">
+      <Card className=" overflow-hidden">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold text-green-800 flex items-center">
-            <User className="h-6 w-6 mr-2" />
+          <CardTitle className="text-3xl font-bold text-blue-800 flex items-center">
             Meetings Dashboard
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           {/* Search */}
           <div className="relative flex-1 mb-6">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-green-600" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-blue-600" />
             <Input
               placeholder="Search by name, email, company, etc..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border-green-300 focus:ring-green-500 text-green-900 rounded-lg"
+              className="pl-10 border-blue-300 focus:ring-blue-500 text-blue-900 rounded-lg"
             />
           </div>
  
           {/* Table */}
-          <div className="overflow-x-auto rounded-lg border border-green-200">
+          <div className="overflow-x-auto rounded-lg border border-blue-200">
             <Table>
               <TableHeader>
-                <TableRow className="bg-green-50 hover:bg-green-100">
+                <TableRow className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
                   <TableHead
-                    className="cursor-pointer text-green-800 font-semibold"
+                    className="cursor-pointer text-white font-semibold"
                     onClick={() => handleSort("contactId")}
                   >
                     Contact ID
                     <ArrowUpDown className="inline ml-2 h-4 w-4" />
                   </TableHead>
                   <TableHead
-                    className="cursor-pointer text-green-800 font-semibold"
+                    className="cursor-pointer text-white font-semibold"
                     onClick={() => handleSort("fullName")}
                   >
                     Full Name
                     <ArrowUpDown className="inline ml-2 h-4 w-4" />
                   </TableHead>
                   <TableHead
-                    className="cursor-pointer text-green-800 font-semibold"
+                    className="cursor-pointer text-white font-semibold"
                     onClick={() => handleSort("email")}
                   >
                     Email
                     <ArrowUpDown className="inline ml-2 h-4 w-4" />
                   </TableHead>
                   <TableHead
-                    className="cursor-pointer text-green-800 font-semibold"
+                    className="cursor-pointer text-white font-semibold"
                     onClick={() => handleSort("phone")}
                   >
                     Phone
                     <ArrowUpDown className="inline ml-2 h-4 w-4" />
                   </TableHead>
                   <TableHead
-                    className="cursor-pointer text-green-800 font-semibold"
+                    className="cursor-pointer text-white font-semibold"
                     onClick={() => handleSort("companyName")}
                   >
                     Company
                     <ArrowUpDown className="inline ml-2 h-4 w-4" />
                   </TableHead>
-                  <TableHead className="text-green-800 font-semibold">Status</TableHead>
-                  <TableHead className="text-green-800 font-semibold">Actions</TableHead>
+                  <TableHead className="text-white font-semibold">Status</TableHead>
+                  <TableHead className="text-white font-semibold">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {status === "loading" ? (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-8">
-                      <Loader2 className="h-8 w-8 animate-spin text-green-600 mx-auto" />
-                      <span className="text-green-700">Loading contacts...</span>
+                      <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto" />
+                      <span className="text-blue-700">Loading contacts...</span>
                     </TableCell>
                   </TableRow>
                 ) : filteredAndSortedContacts.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-8">
-                      <div className="text-green-700 text-lg">
+                      <div className="text-blue-700 text-lg">
                         No contacts found.
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : (
                   currentMeetings.map((contact) => (
-                    <TableRow key={contact._id} className="hover:bg-green-50">
+                    <TableRow key={contact._id} className="hover:bg-blue-50">
                       <TableCell>{contact.contactId || "N/A"}</TableCell>
                       <TableCell>{contact.fullName || "N/A"}</TableCell>
                       <TableCell>{contact.email || "N/A"}</TableCell>
@@ -215,7 +214,7 @@ const currentMeetings = filteredAndSortedContacts.slice(indexOfFirstMeeting, ind
                           className={cn(
                             "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium",
                             contact.status === "Accepted"
-                              ? "bg-green-100 text-green-800"
+                              ? "bg-blue-100 text-blue-800"
                               : contact.status === "Pending"
                               ? "bg-yellow-100 text-yellow-800"
                               : "bg-red-100 text-red-800"
@@ -228,7 +227,7 @@ const currentMeetings = filteredAndSortedContacts.slice(indexOfFirstMeeting, ind
                         <Button
                           variant="outline"
                           size="icon"
-                          className="border-green-500 text-green-700 hover:bg-green-100"
+                          className="border-blue-500 text-blue-700 hover:bg-blue-100"
                           onClick={() => handleViewMeetings(contact.contactId)}
                           title="View Meetings"
                         >
@@ -247,12 +246,12 @@ const currentMeetings = filteredAndSortedContacts.slice(indexOfFirstMeeting, ind
             <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 mt-4">
               {/* Items per page selector */}
               <div className="flex items-center space-x-2">
-                <Label htmlFor="meetingsPerPage" className="text-green-700">Meetings per page:</Label>
+                <Label htmlFor="meetingsPerPage" className="text-blue-700">Meetings per page:</Label>
                 <Select
                   value={meetingsPerPage.toString()}
                   onValueChange={(value) => setMeetingsPerPage(Number(value))}
                 >
-                  <SelectTrigger className="w-24 border-green-400 focus:ring-green-500">
+                  <SelectTrigger className="w-24 border-blue-400 focus:ring-blue-500">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -270,7 +269,7 @@ const currentMeetings = filteredAndSortedContacts.slice(indexOfFirstMeeting, ind
                                 variant="outline"
                                 onClick={() => handlePageChange(currentPage - 1)}
                                 disabled={currentPage === 1}
-                                className="text-green-600 hover:bg-green-100"
+                                className="text-blue-600 hover:bg-blue-100"
                               >
                                 Previous
                               </Button>
@@ -281,8 +280,8 @@ const currentMeetings = filteredAndSortedContacts.slice(indexOfFirstMeeting, ind
                                   onClick={() => handlePageChange(page + 1)}
                                   className={
                                     currentPage === page + 1
-                                      ? 'bg-green-600 text-white hover:bg-green-700'
-                                      : 'text-green-600 hover:bg-green-100'
+                                      ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                      : 'text-blue-600 hover:bg-blue-100'
                                   }
                                 >
                                   {page + 1}
@@ -292,7 +291,7 @@ const currentMeetings = filteredAndSortedContacts.slice(indexOfFirstMeeting, ind
                                 variant="outline"
                                 onClick={() => handlePageChange(currentPage + 1)}
                                 disabled={currentPage === totalPages}
-                                className="text-green-600 hover:bg-green-100"
+                                className="text-blue-600 hover:bg-blue-100"
                               >
                                 Next
                               </Button>
@@ -300,18 +299,18 @@ const currentMeetings = filteredAndSortedContacts.slice(indexOfFirstMeeting, ind
  
               {/* Go to page input */}
               <div className="flex items-center space-x-2">
-                <Label htmlFor="goToPage" className="text-green-700">Go to page:</Label>
+                <Label htmlFor="goToPage" className="text-blue-700">Go to page:</Label>
                 <Input
                   id="goToPage"
                   type="number"
                   value={goToPage}
                   onChange={(e) => setGoToPage(e.target.value)}
-                  className="w-20 border-green-400 focus:ring-green-500"
+                  className="w-20 border-blue-400 focus:ring-blue-500"
                   placeholder="Page"
                 />
                 <Button
                   onClick={handleGoToPage}
-                  className="bg-green-600 hover:bg-green-700 text-white"
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   Go
                 </Button>

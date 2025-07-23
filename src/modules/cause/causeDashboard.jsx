@@ -165,10 +165,10 @@ function CauseDashboard() {
   // Loading state
   if (loading && !allCauses.length) {
     return (
-      <div className="min-h-[400px] bg-gradient-to-br from-green-50 to-teal-50 rounded-xl flex items-center justify-center">
+      <div className="min-h-[400px] bg-gradient-to-br from-blue-50 to-teal-50 rounded-xl flex items-center justify-center">
         <div className="flex flex-col items-center">
-          <Loader2 className="h-12 w-12 text-green-600 animate-spin" />
-          <span className="mt-4 text-green-700 text-lg font-semibold">
+          <Loader2 className="h-12 w-12 text-blue-600 animate-spin" />
+          <span className="mt-4 text-blue-700 text-lg font-semibold">
             Loading Causes...
           </span>
         </div>
@@ -177,42 +177,38 @@ function CauseDashboard() {
   }
 
   return (
-    <div className="w-full min-h-[80vh] mx-auto p-4 sm:p-6 lg:p-8">
-      <div className="bg-white rounded-xl shadow-xl border border-green-200">
+    <div className="w-full min-h-[80vh]">
+      <div className="bg-white rounded-xl shadow-xl ">
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-t-xl p-4 sm:p-6">
-          <div className="flex items-center gap-3">
-            <AlertCircle className="h-8 w-8" />
-            <h1 className="text-2xl sm:text-3xl font-bold">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-xl p-4">
+       
+            <h1 className="text-xl sm:text-3xl font-bold">
               Cause Dashboard
             </h1>
-          </div>
-          <p className="text-sm text-green-100 mt-2">
-            Manage and review causes for delayed Minutes of Meeting submissions.
-          </p>
+         
         </div>
 
         {/* Causes Table */}
         <div className="p-4 sm:p-6">
           <Table>
             <TableHeader>
-              <TableRow className="bg-green-50 hover:bg-green-50">
-                <TableHead className="text-green-800 font-semibold py-4 text-sm">
+              <TableRow className="bg-blue-50 hover:bg-blue-50">
+                <TableHead className="text-blue-800 font-semibold py-4 text-sm">
                   Cause ID
                 </TableHead>
-                <TableHead className="text-green-800 font-semibold py-4 text-sm">
+                <TableHead className="text-blue-800 font-semibold py-4 text-sm">
                   Meeting ID
                 </TableHead>
-                <TableHead className="text-green-800 font-semibold py-4 text-sm">
+                <TableHead className="text-blue-800 font-semibold py-4 text-sm">
                   Reason
                 </TableHead>
-                <TableHead className="text-green-800 font-semibold py-4 text-sm">
+                <TableHead className="text-blue-800 font-semibold py-4 text-sm">
                   Submitted By
                 </TableHead>
-                <TableHead className="text-green-800 font-semibold py-4 text-sm">
+                <TableHead className="text-blue-800 font-semibold py-4 text-sm">
                   Status
                 </TableHead>
-                <TableHead className="text-green-800 font-semibold py-4 text-sm">
+                <TableHead className="text-blue-800 font-semibold py-4 text-sm">
                   Actions
                 </TableHead>
               </TableRow>
@@ -222,7 +218,7 @@ function CauseDashboard() {
                 currentCauses.map((cause) => (
                   <TableRow
                     key={cause._id}
-                    className="hover:bg-green-50 transition-colors duration-200"
+                    className="hover:bg-blue-50 transition-colors duration-200"
                   >
                     <TableCell className="text-gray-700 text-sm py-4">
                       {cause.showCauseId}
@@ -242,7 +238,7 @@ function CauseDashboard() {
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${
                           cause.status === "Approved"
-                            ? "bg-green-100 text-green-800"
+                            ? "bg-blue-100 text-blue-800"
                             : cause.status === "Rejected"
                             ? "bg-red-100 text-red-800"
                             : "bg-amber-100 text-amber-800"
@@ -255,7 +251,7 @@ function CauseDashboard() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-green-500 text-green-600 hover:bg-green-100 hover:text-green-700 transition-colors duration-200 text-sm"
+                        className="border-blue-500 text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-colors duration-200 text-sm"
                         onClick={() => handleViewCause(cause)}
                       >
                         <Eye className="h-4 w-4 mr-2" />
@@ -280,16 +276,16 @@ function CauseDashboard() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 p-4 sm:p-6 border-t border-green-200">
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4 p-4 sm:p-6 border-t border-blue-200">
             <div className="flex items-center space-x-3">
-              <Label htmlFor="causesPerPage" className="text-green-700 font-medium">
+              <Label htmlFor="causesPerPage" className="text-blue-700 font-medium">
                 Causes per page:
               </Label>
               <Select
                 value={causesPerPage.toString()}
                 onValueChange={(value) => setCausesPerPage(Number(value))}
               >
-                <SelectTrigger className="w-24 border-green-400 focus:ring-2 focus:ring-green-500 bg-green-50">
+                <SelectTrigger className="w-24 border-blue-400 focus:ring-2 focus:ring-blue-500 bg-blue-50">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -306,7 +302,7 @@ function CauseDashboard() {
                 size="sm"
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="border-green-500 text-green-600 hover:bg-green-100 hover:text-green-700"
+                className="border-blue-500 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
               >
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 Previous
@@ -319,8 +315,8 @@ function CauseDashboard() {
                   onClick={() => handlePageChange(page + 1)}
                   className={
                     currentPage === page + 1
-                      ? "bg-green-600 text-white hover:bg-green-700"
-                      : "border-green-500 text-green-600 hover:bg-green-100"
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : "border-blue-500 text-blue-600 hover:bg-blue-100"
                   }
                 >
                   {page + 1}
@@ -331,7 +327,7 @@ function CauseDashboard() {
                 size="sm"
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="border-green-500 text-green-600 hover:bg-green-100 hover:text-green-700"
+                className="border-blue-500 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
               >
                 Next
                 <ChevronRight className="h-4 w-4 ml-1" />
@@ -339,7 +335,7 @@ function CauseDashboard() {
             </div>
 
             <div className="flex items-center space-x-3">
-              <Label htmlFor="goToPage" className="text-green-700 font-medium">
+              <Label htmlFor="goToPage" className="text-blue-700 font-medium">
                 Go to page:
               </Label>
               <Input
@@ -347,13 +343,13 @@ function CauseDashboard() {
                 type="number"
                 value={goToPage}
                 onChange={(e) => setGoToPage(e.target.value)}
-                className="w-20 border-green-400 focus:ring-2 focus:ring-green-500 bg-green-50"
+                className="w-20 border-blue-400 focus:ring-2 focus:ring-blue-500 bg-blue-50"
                 placeholder="Page"
               />
               <Button
                 size="sm"
                 onClick={handleGoToPage}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 Go
               </Button>
@@ -364,19 +360,19 @@ function CauseDashboard() {
         {/* View/Update Modal */}
         {selectedCause && (
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogContent className="sm:max-w-[90vw] md:max-w-[600px] bg-white rounded-2xl border border-green-300 shadow-2xl p-6 animate-fade-in">
+            <DialogContent className="sm:max-w-[90vw] md:max-w-[600px] bg-white rounded-2xl border border-blue-300 shadow-2xl p-6 animate-fade-in">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-bold text-green-800 flex items-center gap-2">
-                  <AlertCircle className="h-6 w-6 text-green-600" />
+                <DialogTitle className="text-2xl font-bold text-blue-800 flex items-center gap-2">
+                  <AlertCircle className="h-6 w-6 text-blue-600" />
                   Cause Details
                 </DialogTitle>
               </DialogHeader>
               <div className="space-y-5">
                 {/* Cause ID Section */}
-                <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                  <Hash className="h-5 w-5 text-green-600" />
+                <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+                  <Hash className="h-5 w-5 text-blue-600" />
                   <div>
-                    <Label className="text-green-700 font-semibold text-sm">Cause ID</Label>
+                    <Label className="text-blue-700 font-semibold text-sm">Cause ID</Label>
                     <p className="text-gray-800 text-base font-medium">{selectedCause.showCauseId}</p>
                   </div>
                 </div>
@@ -384,49 +380,49 @@ function CauseDashboard() {
                 {selectedCause.status === "Pending" ? (
                   <>
                     <div className="flex items-start gap-3">
-                      <FileText className="h-5 w-5 text-green-600 mt-2" />
+                      <FileText className="h-5 w-5 text-blue-600 mt-2" />
                       <div className="flex-1">
-                        <Label className="text-green-700 font-semibold text-sm">Meeting ID</Label>
+                        <Label className="text-blue-700 font-semibold text-sm">Meeting ID</Label>
                         <Input
                           value={selectedCause.meetingId}
                           readOnly
-                          className="mt-1 border-green-400 bg-green-50 text-gray-800 text-sm focus:ring-0 cursor-not-allowed rounded-lg"
+                          className="mt-1 border-blue-400 bg-blue-50 text-gray-800 text-sm focus:ring-0 cursor-not-allowed rounded-lg"
                         />
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
-                      <AlertCircle className="h-5 w-5 text-green-600 mt-2" />
+                      <AlertCircle className="h-5 w-5 text-blue-600 mt-2" />
                       <div className="flex-1">
-                        <Label className="text-green-700 font-semibold text-sm">Reason</Label>
+                        <Label className="text-blue-700 font-semibold text-sm">Reason</Label>
                         <Textarea
                           value={selectedCause.reason}
                           readOnly
-                          className="mt-1 border-green-400 bg-green-50 text-gray-800 text-sm resize-none focus:ring-0 cursor-not-allowed rounded-lg"
+                          className="mt-1 border-blue-400 bg-blue-50 text-gray-800 text-sm resize-none focus:ring-0 cursor-not-allowed rounded-lg"
                           rows={4}
                         />
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
-                      <User className="h-5 w-5 text-green-600 mt-2" />
+                      <User className="h-5 w-5 text-blue-600 mt-2" />
                       <div className="flex-1">
-                        <Label className="text-green-700 font-semibold text-sm">Submitted By</Label>
+                        <Label className="text-blue-700 font-semibold text-sm">Submitted By</Label>
                         <Input
                           value={selectedCause.submittedBy}
                           readOnly
-                          className="mt-1 border-green-400 bg-green-50 text-gray-800 text-sm focus:ring-0 cursor-not-allowed rounded-lg"
+                          className="mt-1 border-blue-400 bg-blue-50 text-gray-800 text-sm focus:ring-0 cursor-not-allowed rounded-lg"
                         />
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-2" />
+                      <CheckCircle className="h-5 w-5 text-blue-600 mt-2" />
                       <div className="flex-1">
-                        <Label className="text-green-700 font-semibold text-sm">Status</Label>
+                        <Label className="text-blue-700 font-semibold text-sm">Status</Label>
                         <Select
                           value={newStatus}
                           onValueChange={setNewStatus}
                           className="mt-1"
                         >
-                          <SelectTrigger className="border-green-400 focus:ring-2 focus:ring-green-500 bg-green-50 text-gray-800 text-sm rounded-lg">
+                          <SelectTrigger className="border-blue-400 focus:ring-2 focus:ring-blue-500 bg-blue-50 text-gray-800 text-sm rounded-lg">
                             <SelectValue placeholder="Select status" />
                           </SelectTrigger>
                           <SelectContent>
@@ -441,40 +437,40 @@ function CauseDashboard() {
                 ) : (
                   <>
                     <div className="flex items-start gap-3">
-                      <FileText className="h-5 w-5 text-green-600 mt-1" />
+                      <FileText className="h-5 w-5 text-blue-600 mt-1" />
                       <div className="flex-1">
-                        <Label className="text-green-700 font-semibold text-sm">Meeting ID</Label>
-                        <div className="mt-1 p-2 bg-green-50 border border-green-400 rounded-lg text-gray-800 text-sm">
+                        <Label className="text-blue-700 font-semibold text-sm">Meeting ID</Label>
+                        <div className="mt-1 p-2 bg-blue-50 border border-blue-400 rounded-lg text-gray-800 text-sm">
                           {selectedCause.meetingId}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
-                      <AlertCircle className="h-5 w-5 text-green-600 mt-1" />
+                      <AlertCircle className="h-5 w-5 text-blue-600 mt-1" />
                       <div className="flex-1">
-                        <Label className="text-green-700 font-semibold text-sm">Reason</Label>
-                        <div className="mt-1 p-2 bg-green-50 border border-green-400 rounded-lg text-gray-800 text-sm min-h-[100px]">
+                        <Label className="text-blue-700 font-semibold text-sm">Reason</Label>
+                        <div className="mt-1 p-2 bg-blue-50 border border-blue-400 rounded-lg text-gray-800 text-sm min-h-[100px]">
                           {selectedCause.reason}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
-                      <User className="h-5 w-5 text-green-600 mt-1" />
+                      <User className="h-5 w-5 text-blue-600 mt-1" />
                       <div className="flex-1">
-                        <Label className="text-green-700 font-semibold text-sm">Submitted By</Label>
-                        <div className="mt-1 p-2 bg-green-50 border border-green-400 rounded-lg text-gray-800 text-sm">
+                        <Label className="text-blue-700 font-semibold text-sm">Submitted By</Label>
+                        <div className="mt-1 p-2 bg-blue-50 border border-blue-400 rounded-lg text-gray-800 text-sm">
                           {selectedCause.submittedBy}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-1" />
+                      <CheckCircle className="h-5 w-5 text-blue-600 mt-1" />
                       <div className="flex-1">
-                        <Label className="text-green-700 font-semibold text-sm">Status</Label>
+                        <Label className="text-blue-700 font-semibold text-sm">Status</Label>
                         <div
                           className={`mt-1 p-2 border rounded-lg text-sm font-medium ${
                             selectedCause.status === "Approved"
-                              ? "bg-green-100 text-green-800 border-green-400"
+                              ? "bg-blue-100 text-blue-800 border-blue-400"
                               : "bg-red-100 text-red-800 border-red-400"
                           }`}
                         >
@@ -488,7 +484,7 @@ function CauseDashboard() {
               <DialogFooter className="mt-6 flex flex-col sm:flex-row gap-3">
                 <Button
                   variant="outline"
-                  className="border-green-500 text-green-600 hover:bg-green-100 hover:text-green-700 transition-colors duration-200 text-sm rounded-lg"
+                  className="border-blue-500 text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-colors duration-200 text-sm rounded-lg"
                   onClick={handleCloseModal}
                 >
                   Close
@@ -497,7 +493,7 @@ function CauseDashboard() {
                   <div className="flex gap-3">
                     <div className="relative group">
                       <Button
-                        className="bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg"
+                        className="bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg"
                         onClick={() => handleConfirmAction("Approved")}
                         disabled={loading}
                       >
@@ -531,11 +527,11 @@ function CauseDashboard() {
         {/* Confirmation Dialog */}
         {isConfirmDialogOpen && (
           <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-            <DialogContent className="sm:max-w-[400px] bg-white rounded-2xl border border-green-300 shadow-lg p-6">
+            <DialogContent className="sm:max-w-[400px] bg-white rounded-2xl border border-blue-300 shadow-lg p-6">
               <DialogHeader>
-                <DialogTitle className="text-xl font-semibold text-green-800 flex items-center gap-2">
+                <DialogTitle className="text-xl font-semibold text-blue-800 flex items-center gap-2">
                   {confirmAction === "Approved" ? (
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <CheckCircle className="h-5 w-5 text-blue-600" />
                   ) : (
                     <XCircle className="h-5 w-5 text-red-600" />
                   )}
@@ -548,7 +544,7 @@ function CauseDashboard() {
               <DialogFooter className="mt-4 flex flex-col sm:flex-row gap-3">
                 <Button
                   variant="outline"
-                  className="border-green-500 text-green-600 hover:bg-green-100 hover:text-green-700 text-sm rounded-lg"
+                  className="border-blue-500 text-blue-600 hover:bg-blue-100 hover:text-blue-700 text-sm rounded-lg"
                   onClick={handleCloseConfirmDialog}
                 >
                   Cancel
@@ -556,7 +552,7 @@ function CauseDashboard() {
                 <Button
                   className={`text-white text-sm rounded-lg ${
                     confirmAction === "Approved"
-                      ? "bg-green-600 hover:bg-green-700"
+                      ? "bg-blue-600 hover:bg-blue-700"
                       : "bg-red-600 hover:bg-red-700"
                   }`}
                   onClick={handleUpdateStatus}

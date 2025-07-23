@@ -110,15 +110,11 @@ const events = meetings.map((meeting) => ({
   },
 }));
 
-console.log("events",events);
   return (
     <>
       <Card className="!rounded-none">
         <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b px-4 py-2">
-          {/* <div className="flex items-center gap-2">
-            <CalendarIcon className="w-5 h-5 text-green-600" />
-            <CardTitle className="text-lg text-green-600">My Calendar</CardTitle>
-          </div> */}
+        
 
           <div className="text-sm text-muted-foreground">{dateRange}</div>
 
@@ -177,8 +173,8 @@ console.log("events",events);
 
 
             eventClick={handleEventClick}
-            eventBackgroundColor="#22c55e"
-            eventBorderColor="#15803d"
+            eventBackgroundColor="#1b77e0ff"
+            eventBorderColor="#1b6dcaff"
             eventTextColor="#fff"
             eventClassNames="rounded px-0 py-0.5 text-sm"
           />
@@ -189,7 +185,7 @@ console.log("events",events);
  <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
   <DialogContent className="max-w-lg rounded-2xl shadow-xl">
     <DialogHeader>
-      <DialogTitle className="text-xl font-semibold text-green-600 flex items-center gap-2">
+      <DialogTitle className="text-xl font-semibold text-blue-600 flex items-center gap-2">
         <CalendarDays className="w-5 h-5" />
         {selectedEvent?.title || 'Event Details'}
       </DialogTitle>
@@ -254,7 +250,7 @@ console.log("events",events);
                     href={selectedEvent.extendedProps.entryPoint}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-green-600 underline hover:text-green-800 text-sm"
+                    className="text-blue-600 underline hover:text-blue-800 text-sm"
                   >
                     Join Meeting
                   </a>
