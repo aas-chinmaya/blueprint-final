@@ -186,7 +186,7 @@ export function SectionCardCPC() {
               <div className={`rounded-xl border p-1 ${card.bgColor}`}>
                 <Card className="bg-transparent shadow-none">
                   <CardHeader>
-                    <CardDescription className="text-white">{card.title}</CardDescription>
+                    <CardDescription className="text-lg font-large text-white">{card.title}</CardDescription>
                     <CardTitle className="text-2xl font-semibold text-white">{card.count}</CardTitle>
                     <CardAction>
                     </CardAction>

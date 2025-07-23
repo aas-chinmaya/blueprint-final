@@ -525,7 +525,7 @@ const handleViewQuotation = async (quotationNumber) => {
       <div className="bg-white rounded-lg border border-green-200 overflow-hidden min-h-[75vh]">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader className="bg-green-600">
+            <TableHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
               <TableRow className="border-0">
                 <TableHead className="w-20 text-center text-white font-semibold py-3 text-sm">
                   S.No.

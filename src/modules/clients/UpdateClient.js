@@ -247,7 +247,7 @@ export default function EditClientForm() {
           </div>
 
           <div className="sm:col-span-2 flex justify-center mt-6">
-            <Button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded-md">
+            <Button type="submit" className="bg-gradient-to-r from-blue-600 to-indigo-600  text-white px-6 py-2 rounded-md">
               Update Client
             </Button>
           </div>

@@ -23,7 +23,7 @@ import {
   FiEdit,
   FiPaperclip,
 } from "react-icons/fi";
-import { Briefcase, TrendingUp } from "lucide-react";
+import { Briefcase, TrendingUp, FileStack, BugIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ViewTeamByProjectId from "@/modules/team/viewTeamByProjectId";
 import CreateTeamForm from "@/modules/team/createTeam";
@@ -49,7 +49,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import TeamMeetingCreateForm from "../meetings/team-meetings/TeamMeetingCreateForm";
-import ProjectWiseTeamMeet from "../meetings/team-meetings/ProjectWiseTeamMeet";
+// import ProjectWiseTeamMeet from "../meetings/team-meetings/ProjectWiseTeamMeet";
 import ProjectWisebugList from "../bug/ProjectWisebugList";
 
 export default function ViewProjectById({ projectId }) {
@@ -153,7 +153,7 @@ export default function ViewProjectById({ projectId }) {
     {
       id: "bug",
       label: "Bug",
-      icon: <FiUsers className="h-5 w-5" />,
+      icon: <BugIcon className="h-5 w-5" />,
     },
   ];
 
@@ -202,24 +202,23 @@ export default function ViewProjectById({ projectId }) {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
               <Button
-                variant="outline"
+           
                 size="sm"
                 onClick={() => router.back()}
-                className="border-blue-500 text-blue-700 hover:bg-blue-600 hover:text-white font-semibold"
+                className="text-white bg-blue-700 hover:bg-blue-600 font-semibold"
                 aria-label="Go back"
               >
                 <FiArrowLeft className="h-5 w-5 mr-2" aria-hidden="true" />
                 Back
               </Button>
-              <CardTitle className="text-2xl font-bold text-blue-700">
+              <CardTitle className="text-2xl font-bold text-black">
                 {project.data.projectName || "Unnamed Project"}
               </CardTitle>
             </div>
             {statusUpdateMessage && (
               <p
-                className={`text-sm ${
-                  successMessage ? "text-blue-600" : "text-red-600"
-                }`}
+                className={`text-sm ${successMessage ? "text-blue-600" : "text-red-600"
+                  }`}
               >
                 {statusUpdateMessage}
               </p>
@@ -228,39 +227,34 @@ export default function ViewProjectById({ projectId }) {
         </CardHeader>
         <CardContent className="pt-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+
             <TabsList className="p-1 bg-gray-100 rounded-full flex flex-wrap justify-center sm:justify-start gap-2">
               {tabs.map((tab) => (
-              
                 <TabsTrigger
-              key={tab.id}
-              value={tab.id}
-              disabled={
-                // (tab.id === "details" && isTasksTeamDisabled) ||
-                (tab.id === "bug" && isBugDisabled)
-              }
-              className={`flex items-center gap-2 rounded-full py-2 px-4 text-sm font-medium transition-colors
-                ${activeTab === tab.id ? "bg-blue" : "text-gray-700 hover:bg-blue-100"}
-                ${
-                  // (tab.id === "details" && isTasksTeamDisabled) ||
-                  (tab.id === "bug" && isBugDisabled)
-                    ? "opacity-50 cursor-not-allowed"
-                    : ""
-                }`}
-            >
-              {tab.icon && <span className="text-lg">{tab.icon}</span>}
-              {tab.label}
-            </TabsTrigger>
-
+                  key={tab.id}
+                  value={tab.id}
+                  disabled={
+                    (tab.id === "bug" && isBugDisabled)
+                  }
+                  className={`flex cursor-pointer items-center gap-2 rounded-full py-2 px-3 sm:px-4 text-sm font-medium transition-colors
+        ${activeTab === tab.id ? "bg-blue text-black" : "text-gray-700 hover:bg-blue-100"}
+        ${
+                    (tab.id === "bug" && isBugDisabled)
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                    }`}
+                >
+                  {tab.icon && <span className="text-lg">{tab.icon}</span>}
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </TabsTrigger>
               ))}
-              
             </TabsList>
-
 
             <TabsContent value="details" className="min-h-[calc(100vh-200px)]">
               <div className="space-y-6">
-                <div className="space-y-4">
+                <div className="space-y-4 pb-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-back flex items-center gap-2">
                       <FiInfo className="h-5 w-5 text-blue-600" />
                       Project Details
                     </h3>
@@ -276,31 +270,31 @@ export default function ViewProjectById({ projectId }) {
                       </Button>
                     )}
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600 pl-7">
                     <div className="flex items-center gap-3">
-                      <Briefcase className="h-5 w-5 text-gray-400" />
-                      <span className="font-bold text-gray-700 w-28">
+                      <Briefcase className="h-4 w-4 text-[#38b000]" />
+                      <span className="font-semibold text-gray-900 w-28">
                         Project ID:
                       </span>
                       <span>{project.data.projectId}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <FiPaperclip className="h-5 w-5 text-gray-400" />
-                      <span className="font-bold text-gray-700 w-28">
+                      <FiPaperclip className="h-4 w-4 text-[#38b000]" />
+                      <span className="font-semibold text-gray-900 w-28">
                         Category:
                       </span>
                       <span>{project.data.category || "N/A"}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <FiUser className="h-5 w-5 text-gray-400" />
-                      <span className="font-bold text-gray-700 w-28">
+                      <FiUser className="h-4 w-4 text-[#38b000]" />
+                      <span className="font-semibold text-gray-900 w-28">
                         Client ID:
                       </span>
                       <span>{project.data.clientId || "N/A"}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <TrendingUp className="h-5 w-5 text-gray-400" />
-                      <span className="font-bold text-gray-700 w-28">
+                      <TrendingUp className="h-4 w-4 text-[#38b000]" />
+                      <span className="font-semibold text-gray-900 w-28">
                         Status:
                       </span>
                       <Badge
@@ -309,30 +303,29 @@ export default function ViewProjectById({ projectId }) {
                             setIsStatusModalOpen(true);
                           }
                         }}
-                        className={`cursor-pointer px-3 py-1 text-sm font-medium ${
-                          project.data.status === "Completed"
-                            ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
-                            : project.data.status === "In Progress"
+                        className={`cursor-pointer px-3 py-1 text-sm font-medium ${project.data.status === "Completed"
+                          ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
+                          : project.data.status === "In Progress"
                             ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
                             : project.data.status === "Cancelled"
-                            ? "bg-red-100 text-red-800 hover:bg-red-200"
-                            : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-                        }`}
+                              ? "bg-red-100 text-red-800 hover:bg-red-200"
+                              : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                          }`}
                         aria-label={`Change status from ${project.data.status}`}
                       >
                         {project.data.status}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-3">
-                      <FiUser className="h-5 w-5 text-gray-400" />
-                      <span className="font-bold text-gray-700 w-28">
+                      <FiUser className="h-4 w-4 text-[#38b000]" />
+                      <span className="font-semibold text-gray-900 w-28">
                         Team Lead:
                       </span>
                       <span>{project.data.teamLeadName || "Unassigned"}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <FiCalendar className="h-5 w-5 text-gray-400" />
-                      <span className="font-bold text-gray-700 w-28">
+                      <FiCalendar className="h-4 w-4 text-[#38b000]" />
+                      <span className="font-semibold text-gray-900 w-28">
                         Created At:
                       </span>
                       <span>
@@ -347,75 +340,77 @@ export default function ViewProjectById({ projectId }) {
                 {(project.data.startDate ||
                   project.data.endDate ||
                   project.data.attachments?.length > 0) && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                      <FiCalendar className="h-5 w-5 text-blue-600" />
-                      Timeline & Attachments
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600">
-                      {project.data.startDate && (
-                        <div className="flex items-center gap-3">
-                          <FiCalendar className="h-5 w-5 text-gray-400" />
-                          <span className="font-bold text-gray-700 w-28">
-                            Start Date:
-                          </span>
-                          <span>
-                            {new Date(project.data.startDate).toLocaleDateString()}
-                          </span>
-                        </div>
-                      )}
-                      {project.data.endDate && (
-                        <div className="flex items-center gap-3">
-                          <FiCalendar className="h-5 w-5 text-gray-400" />
-                          <span className="font-bold text-gray-700 w-28">
-                            End Date:
-                          </span>
-                          <span>
-                            {new Date(project.data.endDate).toLocaleDateString()}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    {project.data.attachments?.length > 0 && (
-                      <div className="space-y-3">
-                        <h4 className="text-sm font-bold text-gray-700">
-                          Attachments:
-                        </h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {project.data.attachments.map((attachment, index) => (
-                            <Button
-                              key={index}
-                              onClick={() =>
-                                handleDownload(attachment.url, attachment.filename)
-                              }
-                              disabled={isDownloading}
-                              variant="outline"
-                              className="flex items-center gap-2 w-full justify-start text-left border-gray-200 hover:bg-blue-50"
-                              aria-label={`Download ${attachment.filename}`}
-                            >
-                              <FiDownload className="h-5 w-5 text-blue-600" />
-                              <span className="text-gray-700 truncate">
-                                {attachment.filename}
-                              </span>
-                            </Button>
-                          ))}
-                        </div>
+                    <div className="space-y-4 pb-3">
+                      <h3 className="text-lg font-bold text-back flex items-center gap-2">
+                        <FiCalendar className="h-5 w-5 text-blue-600" />
+                        Timeline & Attachments
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600 pl-7">
+                        {project.data.startDate && (
+                          <div className="flex items-center gap-3">
+                            <FiCalendar className="h-4 w-4 text-[#38b000]" />
+                            <span className="font-semibold text-gray-900 w-28">
+                              Start Date:
+                            </span>
+                            <span>
+                              {new Date(project.data.startDate).toLocaleDateString()}
+                            </span>
+                          </div>
+                        )}
+                        {project.data.endDate && (
+                          <div className="flex items-center gap-3">
+                            <FiCalendar className="h-4 w-4 text-[#38b000]" />
+                            <span className="font-semibold text-gray-900 w-28">
+                              End Date:
+                            </span>
+                            <span>
+                              {new Date(project.data.endDate).toLocaleDateString()}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                )}
+                      {project.data.attachments?.length > 0 && (
+                        <div className="flex items-center gap-3 pl-7">
+                          <FileStack className="h-4 w-4 text-[#38b000]" />
+                          <span className="font-semibold text-gray-900 w-28">
+                            Attachments:
+                          </span>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {project.data.attachments.map((attachment, index) => (
+                              <Button
+                                key={index}
+                                onClick={() =>
+                                  handleDownload(attachment.url, attachment.filename)
+                                }
+                                disabled={isDownloading}
+                                variant="outline"
+                                className="flex items-center gap-2 w-full justify-start text-left border-gray-200 hover:bg-blue-50 w-fit"
+                                aria-label={`Download ${attachment.filename}`}
+                              >
+                                <FiDownload className="h-5 w-5 text-blue-600" />
+                                <span className="text-gray-700 truncate">
+                                  {attachment.filename}
+                                </span>
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    </div>
+                  )}
+
+                <div className="space-y-4 pb-3">
+                  <h3 className="text-lg font-bold text-back flex items-center gap-2">
                     <FiFileText className="h-5 w-5 text-blue-600" />
                     Description
                   </h3>
                   {project.data.description ? (
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-sm text-gray-600 leading-relaxed pl-7">
                       {project.data.description}
                     </p>
                   ) : (
-                    <p className="text-sm text-gray-500 italic">
+                    <p className="text-sm text-gray-500 italic pl-7">
                       No description available
                     </p>
                   )}
@@ -434,27 +429,27 @@ export default function ViewProjectById({ projectId }) {
 
             <TabsContent value="team" className="min-h-[calc(100vh-200px)]" >
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <div className="flex items-center justify-between relative">
+                  {/* <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                     <FiUsers className="h-5 w-5 text-blue-600" />
                     Team
-                  </h3>
+                  </h3> */}
                   {
-                    (currentUser?.role === "cpc" || isTeamLead)&&(
+                    (currentUser?.role === "cpc" || isTeamLead) && (
 
-                  <Button
-                    size="sm"
-                    onClick={() => setIsTeamFormOpen(true)}
-                    className="bg-blue-600 text-white hover:bg-blue-700"
-                    aria-label="Create new team"
-                  >
-                    <FiPlus className="h-5 w-5 mr-2" />
-                    Create Team
-                  </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => setIsTeamFormOpen(true)}
+                        className="bg-blue-600 text-white hover:bg-blue-700 absolute top-0 right-0"
+                        aria-label="Create new team"
+                      >
+                        <FiPlus className="h-5 w-5 mr-2" />
+                        Create Team
+                      </Button>
                     )
                   }
                 </div>
-               
+
                 {isTeamFormOpen ? (
                   project &&
                   project.data && (
@@ -476,7 +471,7 @@ export default function ViewProjectById({ projectId }) {
                 )}
               </div>
             </TabsContent>
-{/* 
+            {/* 
             <TabsContent value="meeting">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -502,9 +497,9 @@ export default function ViewProjectById({ projectId }) {
 
             <TabsContent value="bug" className="min-h-[calc(100vh-200px)]">
               <div className="space-y-4">
-             
 
-                <ProjectWisebugList project={project.data}  projectId={projectId} teamLeadId={project?.data?.teamLeadId} />
+
+                <ProjectWisebugList project={project.data} projectId={projectId} teamLeadId={project?.data?.teamLeadId} />
               </div>
             </TabsContent>
 
@@ -600,7 +595,7 @@ export default function ViewProjectById({ projectId }) {
               Create New Meeting
             </DialogTitle>
           </DialogHeader>
-          <TeamMeetingCreateForm 
+          <TeamMeetingCreateForm
             projectId={projectId} teamLeadId={project.data.teamLeadId}
             onSubmit={() => setIsMeetingModalOpen(false)}
           />

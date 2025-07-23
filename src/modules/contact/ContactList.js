@@ -319,52 +319,52 @@ const ContactsList = () => {
           {/* Table */}
           <div className="overflow-x-auto rounded-lg border">
             <Table>
-              <TableHeader>
-                <TableRow className="bg-muted hover:bg-muted/80">
+              <TableHeader >
+                <TableRow className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
                   <TableHead
-                    className="cursor-pointer font-semibold min-w-[100px]"
+                    className="cursor-pointer text-white font-semibold min-w-[100px]"
                     onClick={() => handleSort("contactId")}
                   >
                     Contact ID
                     <ArrowUpDown className="inline ml-2 h-4 w-4 text-success" />
                   </TableHead>
                   <TableHead
-                    className="cursor-pointer font-semibold min-w-[120px]"
+                    className="cursor-pointer text-white font-semibold min-w-[120px]"
                     onClick={() => handleSort("fullName")}
                   >
                     Full Name
                     <ArrowUpDown className="inline ml-2 h-4 w-4 text-success" />
                   </TableHead>
                   <TableHead
-                    className="cursor-pointer font-semibold min-w-[150px]"
+                    className="cursor-pointer font-semibold  text-white min-w-[150px]"
                     onClick={() => handleSort("email")}
                   >
                     Email
                     <ArrowUpDown className="inline ml-2 h-4 w-4 text-success" />
                   </TableHead>
                   <TableHead
-                    className="cursor-pointer font-semibold min-w-[100px]"
+                    className="cursor-pointer text-white font-semibold min-w-[100px]"
                     onClick={() => handleSort("phone")}
                   >
                     Phone
                     <ArrowUpDown className="inline ml-2 h-4 w-4 text-success" />
                   </TableHead>
                   <TableHead
-                    className="cursor-pointer font-semibold min-w-[120px]"
+                    className="text-white cursor-pointer font-semibold min-w-[120px]"
                     onClick={() => handleSort("companyName")}
                   >
                     Company
                     <ArrowUpDown className="inline ml-2 h-4 w-4 text-success" />
                   </TableHead>
-                  <TableHead className="font-semibold min-w-[100px]">Status</TableHead>
+                  <TableHead className="font-semibold min-w-[100px] text-white">Status</TableHead>
                   <TableHead
-                    className="cursor-pointer font-semibold min-w-[120px]"
+                    className="cursor-pointer text-white font-semibold min-w-[120px]"
                     onClick={() => handleSort("createdAt")}
                   >
                     Inquiry Date
                     <ArrowUpDown className="inline ml-2 h-4 w-4 text-success" />
                   </TableHead>
-                  <TableHead className="font-semibold min-w-[120px]">Actions</TableHead>
+                  <TableHead className="text-white font-semibold min-w-[120px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -373,7 +373,6 @@ const ContactsList = () => {
                     <TableCell colSpan={8} className="text-center py-8">
                       <div className="flex flex-col items-center gap-2">
                         <Loader2 className="h-8 w-8 animate-spin text-success" />
-                        <span>Loading contacts...</span>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -525,7 +524,7 @@ const ContactsList = () => {
       {/* View Contact Modal */}
       <Dialog open={isViewModalOpen} onOpenChange={closeViewModal}>
         <DialogContent className="max-w-full sm:max-w-4xl max-h-[85vh] overflow-y-auto rounded-lg">
-          <DialogHeader className="bg-muted p-4 rounded-t-lg">
+          <DialogHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-lg ">
             <DialogTitle className="text-2xl font-bold flex items-center">
               <User className="h-6 w-6 mr-2 text-success" />
               Contact Details
@@ -655,7 +654,7 @@ const ContactsList = () => {
       {/* Update Status Modal */}
       <Dialog open={isStatusModalOpen} onOpenChange={() => setIsStatusModalOpen(false)}>
         <DialogContent className="max-w-full sm:max-w-md rounded-lg">
-          <DialogHeader className="bg-muted p-4 rounded-t-lg">
+          <DialogHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-lg">
             <DialogTitle className="text-xl font-bold flex items-center">
               <Tag className="h-5 w-5 mr-2 text-success" />
               Update Contact Status
@@ -691,7 +690,7 @@ const ContactsList = () => {
               />
             </div>
             <Button
-              className="bg-primary text-primary-foreground hover:bg-primary/90 w-full"
+              className="bg-blue-700 w-full"
               onClick={handleStatusUpdate}
               disabled={!newStatus}
             >
@@ -705,7 +704,7 @@ const ContactsList = () => {
       {/* Delete Confirmation Modal */}
       <Dialog open={isDeleteModalOpen} onOpenChange={() => setIsDeleteModalOpen(false)}>
         <DialogContent className="max-w-full sm:max-w-md rounded-lg">
-          <DialogHeader className="bg-muted p-4 rounded-t-lg">
+          <DialogHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-lg">
             <DialogTitle className="text-xl font-bold flex items-center">
               <Trash2 className="h-5 w-5 mr-2 text-danger" />
               Confirm Deletion
@@ -725,7 +724,7 @@ const ContactsList = () => {
               Cancel
             </Button>
             <Button
-              className="bg-danger text-danger-foreground hover:bg-danger/90"
+              className="bg-red-500 hover:bg-red-500"
               onClick={handleDeleteContact}
               disabled={isDeleting}
             >

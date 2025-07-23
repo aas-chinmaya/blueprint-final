@@ -80,7 +80,7 @@ export function SectionCardEmployee({ employeeId }) {
 
   const cards = [
     {
-      title: "Total Projects I Worked",
+      title: "Total Projects",
       count: animatedProjects,
       badge: "+12.5%",
       footer: "Increased project participation",
@@ -104,7 +104,7 @@ export function SectionCardEmployee({ employeeId }) {
       bgColor: "bg-[#0a89e9] border-blue-100",
     },
     {
-      title: "All Teams We Worked",
+      title: "Teams I’ve Collaborated With",
       count: animatedTeams,
       badge: "+4.5%",
       footer: "Consistent team performance",
@@ -131,7 +131,7 @@ export function SectionCardEmployee({ employeeId }) {
             <div className={`rounded-xl border p-1 ${card.bgColor}`}>
               <Card className="bg-transparent shadow-none">
                 <CardHeader>
-                  <CardDescription className="text-sm font-medium text-white">
+                  <CardDescription className="text-lg font-large text-white">
                     {card.title}
                   </CardDescription>
                   <CardTitle className="text-2xl font-bold text-white">{card.count}</CardTitle>

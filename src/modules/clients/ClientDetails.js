@@ -117,7 +117,7 @@ export default function ClientDetails() {
   }
 
   return (
-    <div className="container max-w-screen-xl mx-auto px-4 py-8 space-y-6">
+    <div className="px-4 space-y-6">
       {/* Top Header */}
       <div className="flex justify-between items-center mb-4">
         <Button

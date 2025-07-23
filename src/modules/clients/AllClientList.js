@@ -191,8 +191,8 @@ export default function AllClientList() {
               </Button>
             )}
           </div>
-          <Button onClick={() => router.push("/client/onboarding")}> 
-            <Plus className="h-4 w-4 mr-2" /> Add Client
+          <Button className="bg-gradient-to-r from-blue-600 via-blue-600 to-blue-600" onClick={() => router.push("/client/onboarding")}> 
+            <Plus className="h-4 w-4 mr-2" /> Onboard Client
           </Button>
         </div>
       </div>
@@ -200,14 +200,14 @@ export default function AllClientList() {
       <div className="bg-card rounded-lg border overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader className="bg-muted">
+            <TableHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
               <TableRow>
-                <TableHead className="text-center w-20">S.No</TableHead>
-                <TableHead className="text-center">ID</TableHead>
-                <TableHead className="text-left min-w-[150px]">Client Name</TableHead>
-                <TableHead className="text-left min-w-[100px]">Industry</TableHead>
-                <TableHead className="text-center min-w-[90px]">Date</TableHead>
-                <TableHead className="text-center w-20">Actions</TableHead>
+                <TableHead className="text-center  text-white  w-20">S.No</TableHead>
+                <TableHead className="text-center text-white ">ID</TableHead>
+                <TableHead className="text-left  text-white min-w-[150px]">Client Name</TableHead>
+                <TableHead className="text-left  text-white min-w-[100px]">Industry</TableHead>
+                <TableHead className="text-center text-white  min-w-[90px]">Date</TableHead>
+                <TableHead className="text-center text-white  w-20">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -241,7 +241,7 @@ export default function AllClientList() {
                     <TableCell className="text-center">
                       <div className="flex justify-center gap-1">
                         <Button
-                          variant="ghost"
+                          variant="ghost" className="text-blue-500 hover:text-blue-700"
                           size="icon"
                           onClick={() => handleEdit(client)}
                           title="Edit Client"
@@ -249,7 +249,7 @@ export default function AllClientList() {
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
-                          variant="ghost"
+                          variant="ghost" className="text-gray-500 hover:text-gray-700"
                           size="icon"
                           onClick={() => handleView(client)}
                           title="View Client"

@@ -264,7 +264,7 @@ export default function FetchAllProjects() {
               {/* Filter Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="flex items-center gap-2" aria-label="Filter and sort projects">
+                  <Button variant="outline" className="text-blue-800 flex items-center gap-2" aria-label="Filter and sort projects">
                     <FiFilter aria-hidden="true" />
                     <span className="hidden sm:inline">Filter</span>
                     <FiChevronDown aria-hidden="true" />
@@ -405,7 +405,7 @@ export default function FetchAllProjects() {
             </p>
             <Button
               onClick={selectedStatus !== 'all' || searchTerm ? clearFilters : handleOnboarding}
-              className="flex items-center gap-2 mx-auto bg-green-700"
+              className="flex items-center gap-2 mx-auto bg-blue-700 hover:bg-blue-700"
               aria-label={selectedStatus !== 'all' || searchTerm ? 'Clear filters' : 'Create new project'}
             >
               {selectedStatus !== 'all' || searchTerm ? <FiX aria-hidden="true" /> : <FiPlus aria-hidden="true" />}
@@ -452,17 +452,18 @@ export default function FetchAllProjects() {
                 <div className="space-y-3">
                   <div className="flex items-center text-muted-foreground group-hover:text-foreground">
                     <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center mr-3 group-hover:bg-primary/10">
-                      <Briefcase className="w-4 h-4 text-muted-foreground group-hover:text-primary" aria-hidden="true" />
+                      <Briefcase className="w-4 h-4 text-[#1447e6] group-hover:text-primary" aria-hidden="true" />
                     </div>
                     <span className="text-sm font-medium">ID: {project.projectId}</span>
                   </div>
 
                   <div className="flex items-center text-muted-foreground group-hover:text-foreground">
                     <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center mr-3 group-hover:bg-primary/10">
-                      <FiUser className="w-4 h-4 text-muted-foreground group-hover:text-primary" aria-hidden="true" />
+                      <FiUser className="w-4 h-4 text-[#1447e6] group-hover:text-primary" aria-hidden="true" />
                     </div>
                     <span className="text-sm font-medium">{project.teamLeadName || 'Unassigned'}</span>
                   </div>
+                  
 
                   <div className="pt-4 border-t border-border">
                     <div className="flex justify-between items-center mb-2">
@@ -494,10 +495,10 @@ export default function FetchAllProjects() {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="border-t border-border">
+              <CardFooter className="p-3 border-t border-border">
                 <Button
                   variant="link"
-                  className="w-full justify-between text-primary text-sm font-medium group-hover:text-primary-dark"
+                  className="w-full justify-between text-[#1447e6] text-md font-bold group-hover:text-primary-dark"
                   onClick={() => handleViewProject(project.projectId)}
                   aria-label={`View details for project ${project.projectName}`}
                 >

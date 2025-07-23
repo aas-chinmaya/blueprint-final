@@ -21,8 +21,13 @@ export const fetchProjectById = createAsyncThunk(
 export const updateProject = createAsyncThunk(
   'project/editById',
   async ({ projectId, updatedData }, { rejectWithValue }) => {
+    // console.log(updatedData);
     try {
-      const response = await axiosInstance.put(`/projects/updateProject/${projectId}`, updatedData);
+      const response = await axiosInstance.put(`/projects/updateProject/${projectId}`, updatedData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to edit project');
@@ -78,9 +83,9 @@ export const createProject = createAsyncThunk(
     try {
    
       const response = await axiosInstance.post('/projects/onboard', projectData, {
-        // headers: {
-        //   'Content-Type': 'multipart/form-data',
-        // },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
       return response.data;
     } catch (error) {

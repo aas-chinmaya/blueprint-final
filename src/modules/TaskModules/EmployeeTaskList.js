@@ -443,9 +443,9 @@ const AllTasksList = () => {
         <div className="mt-0 bg-white rounded-lg shadow-md border border-gray-200">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-50">
+              <TableRow className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
                 <TableHead
-                  className="w-[100px] text-gray-800 cursor-pointer"
+                  className="w-[100px] text-gray-800 cursor-pointer text-white"
                   onClick={() => handleSort('task_id')}
                 >
                   ID
@@ -453,32 +453,32 @@ const AllTasksList = () => {
                     (sortDirection === 'asc' ? <FiArrowUp className="inline ml-1" /> : <FiArrowDown className="inline ml-1" />)}
                 </TableHead>
                 <TableHead
-                  className="text-gray-800 cursor-pointer"
+                  className="text-gray-800 cursor-pointer text-white"
                   onClick={() => handleSort('title')}
                 >
                   Task Name
                   {sortField === 'title' &&
                     (sortDirection === 'asc' ? <FiArrowUp className="inline ml-1" /> : <FiArrowDown className="inline ml-1" />)}
                 </TableHead>
-                <TableHead className="text-gray-800">Project Name</TableHead>
+                <TableHead className="text-gray-800 text-white">Project Name</TableHead>
                 <TableHead
-                  className="text-gray-800 cursor-pointer"
+                  className="text-gray-800 cursor-pointer text-white"
                   onClick={() => handleSort('status')}
                 >
                   Status
                   {sortField === 'status' &&
                     (sortDirection === 'asc' ? <FiArrowUp className="inline ml-1" /> : <FiArrowDown className="inline ml-1" />)}
                 </TableHead>
-                <TableHead className="text-gray-800">deadline</TableHead>
+                <TableHead className="text-gray-800 text-white">deadline</TableHead>
                 <TableHead
-                  className="text-gray-800 cursor-pointer"
+                  className="text-gray-800 cursor-pointer text-white"
                   onClick={() => handleSort('priority')}
                 >
                   Priority
                   {sortField === 'priority' &&
                     (sortDirection === 'asc' ? <FiArrowUp className="inline ml-1" /> : <FiArrowDown className="inline ml-1" />)}
                 </TableHead>
-                <TableHead className="text-gray-800">Actions</TableHead>
+                <TableHead className="text-gray-800 text-white">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

@@ -1,6 +1,3 @@
-
-
-
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
@@ -69,7 +66,7 @@ export default function ProjectEditForm({ projectId }) {
       { opacity: 1, y: 0, duration: 1, ease: 'power4.out' }
     );
   }, []);
-
+  
   // Update form data when project data is fetched, only if not initialized
   useEffect(() => {
     if (project && project.data && !isFormInitialized && status.fetchProject === 'succeeded') {

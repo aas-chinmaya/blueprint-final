@@ -1,4 +1,5 @@
 "use client";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,6 +46,7 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
+  Edit,
 } from "lucide-react";
 
 export default function Industry() {
@@ -185,7 +187,7 @@ export default function Industry() {
           }}
         >
           <DialogTrigger asChild>
-            <Button className="bg-primary text-white">
+            <Button className="bg-blue-800 hover:bg-blue-800 text-white">
               <Plus className="h-4 w-4 mr-2" /> Add Industry
             </Button>
           </DialogTrigger>
@@ -215,7 +217,7 @@ export default function Industry() {
                     Cancel
                   </Button>
                 </DialogClose>
-                <Button onClick={handleSubmit}>
+                <Button onClick={handleSubmit} className="bg-blue-700 hover:bg-blue-700">
                   {selectedIndustryId ? "Save Changes" : "Create"}
                 </Button>
               </DialogFooter>
@@ -228,11 +230,11 @@ export default function Industry() {
       <div className="bg-card rounded-lg border overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader className="bg-muted">
+            <TableHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
               <TableRow>
-                <TableHead className="text-center w-20">S.No.</TableHead>
+                <TableHead className="text-center w-20 text-white">S.No.</TableHead>
                 <TableHead
-                  className="text-center cursor-pointer"
+                  className="text-center cursor-pointer text-white"
                   onClick={() => handleSort("industryId")}
                 >
                   <div className="flex items-center justify-center">
@@ -245,7 +247,7 @@ export default function Industry() {
                   </div>
                 </TableHead>
                 <TableHead
-                  className="text-center cursor-pointer"
+                  className="text-center cursor-pointer text-white"
                   onClick={() => handleSort("Industryname")}
                 >
                   <div className="flex items-center justify-center">
@@ -257,7 +259,7 @@ export default function Industry() {
                     )}
                   </div>
                 </TableHead>
-                <TableHead className="text-center w-32">Actions</TableHead>
+                <TableHead className="text-center w-32 text-white">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -290,26 +292,45 @@ export default function Industry() {
                       {industry.Industryname}
                     </TableCell>
                     <TableCell className="text-center">
-                      <div className="flex justify-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => openEditModal(industry.industryId)}
-                        >
-                          <Tag className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-danger"
-                          onClick={() => {
-                            setIndustryToDelete(industry.industryId);
-                            setIsDeleteConfirmOpen(true);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+
+                      <TooltipProvider>
+                        <div className="flex justify-center space-x-6">
+
+                          {/* Edit Button with Tooltip */}
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="px-4 py-2 text-blue-600  hover:text-blue-800 hover:border-blue-800"
+                                onClick={() => openEditModal(industry.industryId)}
+                              >
+                                <Edit className="h-5 w-5" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Edit</TooltipContent>
+                          </Tooltip>
+
+                          {/* Delete Button with Tooltip */}
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="px-4 py-2 text-red-600  hover:text-red-800 hover:border-red-800"
+                                onClick={() => {
+                                  setIndustryToDelete(industry.industryId);
+                                  setIsDeleteConfirmOpen(true);
+                                }}
+                              >
+                                <Trash2 className="h-5 w-5" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Delete</TooltipContent>
+                          </Tooltip>
+
+                        </div>
+                      </TooltipProvider>
                     </TableCell>
                   </TableRow>
                 ))

@@ -1,4 +1,7 @@
 
+
+
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -48,8 +51,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export default function ProjectBugs({ projectId }) {
+  const router =useRouter()
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(() =>
@@ -178,27 +183,7 @@ export default function ProjectBugs({ projectId }) {
         </div>
         <h3 className="text-xl font-semibold text-danger mb-2">Error loading bugs</h3>
         <p className="text-muted-foreground mb-6 max-w-md mx-auto">{error.bugsByProjectId}</p>
-        <Button
-          onClick={() => dispatch(fetchBugByProjectId(projectId))}
-          variant="outline"
-          className="flex items-center gap-2"
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            ></path>
-          </svg>
-          Retry
-        </Button>
+        
       </div>
     );
   }
@@ -206,7 +191,63 @@ export default function ProjectBugs({ projectId }) {
   // Empty state
   if (!bugsByProjectId || bugsByProjectId.length === 0) {
     return (
+      <>
+{/* Header */}
+       <Button
+        variant="back"
+        size="sm"
+        onClick={() => router.back()}
+        className="mb-5 cursor-pointer border border-green-300 text-green-700 hover:bg-green-50"
+      >
+        <ArrowLeft className="h-5 w-5 mr-2" />
+        Back
+      </Button>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl font-bold">Reported Issues {projectId}</h1>
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                <span className="hidden sm:inline">Filter</span>
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => handleStatusFilter('all')}>
+                <div className="flex justify-between w-full">
+                  <span>All Statuses</span>
+                  <Badge variant="secondary">{bugStats.total}</Badge>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleStatusFilter('open')}>
+                <div className="flex justify-between w-full">
+                  <div className="flex items-center">
+                    <span className="mr-1.5 text-red-500">●</span>
+                    Open
+                  </div>
+                  <Badge variant="secondary">{bugStats.open}</Badge>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleStatusFilter('resolved')}>
+                <div className="flex justify-between w-full">
+                  <div className="flex items-center">
+                    <span className="mr-1.5 text-green-500">●</span>
+                    Resolved
+                  </div>
+                  <Badge variant="secondary">{bugStats.resolved}</Badge>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={clearFilters} className="justify-center">
+                Clear Filter
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
       <div className="mt-8 text-center bg-card p-6 rounded-lg border h-[80vh]">
+      
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted text-muted-foreground mb-4">
           <AlertCircle className="h-6 w-6" />
         </div>
@@ -215,6 +256,7 @@ export default function ProjectBugs({ projectId }) {
           No bugs are available for this project.
         </p>
       </div>
+      </>
     );
   }
 
@@ -225,7 +267,7 @@ export default function ProjectBugs({ projectId }) {
         variant="back"
         size="sm"
         onClick={() => router.back()}
-        className="mb-5 border border-green-300 text-green-700 hover:bg-green-50"
+        className="mb-5 cursor-pointer border border-green-300 text-green-700 hover:bg-green-50"
       >
         <ArrowLeft className="h-5 w-5 mr-2" />
         Back
@@ -300,16 +342,16 @@ export default function ProjectBugs({ projectId }) {
         <div className="bg-card rounded-lg border overflow-hidden">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted">
+              <TableHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
                 <TableRow>
-                  <TableHead className="text-center">S.No.</TableHead>
-                  <TableHead className="text-center">Bug ID</TableHead>
-                  <TableHead className="text-center">Title</TableHead>
-                  <TableHead className="text-center">Task Ref</TableHead>
-                  <TableHead className="text-center">Priority</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
-                  <TableHead className="text-center">Created At</TableHead>
-                  <TableHead className="text-center">Actions</TableHead>
+                  <TableHead className="text-center text-white">S.No.</TableHead>
+                  <TableHead className="text-center text-white">Bug ID</TableHead>
+                  <TableHead className="text-center text-white">Title</TableHead>
+                  <TableHead className="text-center text-white">Task Ref</TableHead>
+                  <TableHead className="text-center text-white">Priority</TableHead>
+                  <TableHead className="text-center text-white">Status</TableHead>
+                  <TableHead className="text-center text-white">Created At</TableHead>
+                  <TableHead className="text-center text-white">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -506,7 +548,7 @@ export default function ProjectBugs({ projectId }) {
       {selectedBug?.status.toLowerCase() !== 'resolved' && (
         <Button
           onClick={() => handleResolveBug(selectedBug.bug_id)}
-          className="bg-primary text-white hover:bg-primary/90"
+          className="bg-blue-700 text-white "
           disabled={loading.bugResolve}
         >
           {loading.bugResolve ? (
@@ -523,6 +565,7 @@ export default function ProjectBugs({ projectId }) {
     </div>
   );
 }
+
 
 
 

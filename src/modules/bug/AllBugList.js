@@ -2,6 +2,9 @@
 
 
 
+
+
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -309,41 +312,8 @@ export default function AllBugList() {
                 </div>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => handleSort('projectName')}>
-                <div className="flex justify-between w-full">
-                  <span>Project Name</span>
-                  {sortField === 'projectName' &&
-                    (sortDirection === 'asc' ? (
-                      <ArrowUp className="h-4 w-4 ml-2" />
-                    ) : (
-                      <ArrowDown className="h-4 w-4 ml-2" />
-                    ))}
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSort('teamLeadName')}>
-                <div className="flex justify-between w-full">
-                  <span>Team Lead</span>
-                  {sortField === 'teamLeadName' &&
-                    (sortDirection === 'asc' ? (
-                      <ArrowUp className="h-4 w-4 ml-2" />
-                    ) : (
-                      <ArrowDown className="h-4 w-4 ml-2" />
-                    ))}
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSort('status')}>
-                <div className="flex justify-between w-full">
-                  <span>Status</span>
-                  {sortField === 'status' &&
-                    (sortDirection === 'asc' ? (
-                      <ArrowUp className="h-4 w-4 ml-2" />
-                    ) : (
-                      <ArrowDown className="h-4 w-4 ml-2" />
-                    ))}
-                </div>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
+             
+             
               <DropdownMenuItem onClick={clearFilters} className="justify-center">
                 Clear All Filters
               </DropdownMenuItem>
@@ -375,64 +345,69 @@ export default function AllBugList() {
         <div className="bg-card rounded-lg border overflow-hidden">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted">
-                <TableRow>
-                  <TableHead
-                    className="text-center cursor-pointer"
-                    onClick={() => handleSort('projectName')}
-                  >
-                    Project Name
-                    {sortField === 'projectName' &&
-                      (sortDirection === 'asc' ? (
-                        <ArrowUp className="inline ml-1 h-4 w-4" />
-                      ) : (
-                        <ArrowDown className="inline ml-1 h-4 w-4" />
-                      ))}
-                  </TableHead>
-                  <TableHead
-                    className="text-center cursor-pointer"
-                    onClick={() => handleSort('teamLeadName')}
-                  >
-                    Team Lead
-                    {sortField === 'teamLeadName' &&
-                      (sortDirection === 'asc' ? (
-                        <ArrowUp className="inline ml-1 h-4 w-4" />
-                      ) : (
-                        <ArrowDown className="inline ml-1 h-4 w-4" />
-                      ))}
-                  </TableHead>
-                  <TableHead className="text-center">Category</TableHead>
-                  <TableHead
-                    className="text-center cursor-pointer"
-                    onClick={() => handleSort('status')}
-                  >
-                    Status
-                    {sortField === 'status' &&
-                      (sortDirection === 'asc' ? (
-                        <ArrowUp className="inline ml-1 h-4 w-4" />
-                      ) : (
-                        <ArrowDown className="inline ml-1 h-4 w-4" />
-                      ))}
-                  </TableHead>
-                  <TableHead className="text-center">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
+            <TableHeader className="bg-gradient-to-r from-blue-600 to-indigo-600">
+  <TableRow>
+    <TableHead
+      className="text-left text-white cursor-pointer"
+      onClick={() => handleSort('projectName')}
+    >
+      Project Name
+      {sortField === 'projectName' &&
+        (sortDirection === 'asc' ? (
+          <ArrowUp className="inline ml-1 h-4 w-4" />
+        ) : (
+          <ArrowDown className="inline ml-1 h-4 w-4" />
+        ))}
+    </TableHead>
+
+    <TableHead
+      className="text-left text-white cursor-pointer"
+      onClick={() => handleSort('teamLeadName')}
+    >
+      Team Lead
+      {sortField === 'teamLeadName' &&
+        (sortDirection === 'asc' ? (
+          <ArrowUp className="inline ml-1 h-4 w-4" />
+        ) : (
+          <ArrowDown className="inline ml-1 h-4 w-4" />
+        ))}
+    </TableHead>
+
+    <TableHead className="text-left text-white">Category</TableHead>
+
+    <TableHead
+      className="text-left text-white cursor-pointer"
+      onClick={() => handleSort('status')}
+    >
+      Status
+      {sortField === 'status' &&
+        (sortDirection === 'asc' ? (
+          <ArrowUp className="inline ml-1 h-4 w-4" />
+        ) : (
+          <ArrowDown className="inline ml-1 h-4 w-4" />
+        ))}
+    </TableHead>
+
+    <TableHead className="text-left text-white">Actions</TableHead>
+  </TableRow>
+</TableHeader>
+
               <TableBody>
                 {currentProjects.map((project, index) => (
                   <TableRow key={project.projectId}>
-                    <TableCell className="text-center">
+                    <TableCell className="text-left ml-4">
                       {indexOfFirstProject + index + 1}. {project.projectName || 'N/A'}
                     </TableCell>
-                    <TableCell className="text-center">{project.teamLeadName || 'N/A'}</TableCell>
-                    <TableCell className="text-center">{project.category || 'N/A'}</TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-left ">{project.teamLeadName || 'N/A'}</TableCell>
+                    <TableCell className="text-left ">{project.category || 'N/A'}</TableCell>
+                    <TableCell className="text-left ">
                       <Badge
                         className={`${statusColors[project.status?.toLowerCase()] || 'bg-gray-100 text-gray-800 border-gray-200'} border capitalize`}
                       >
                         {project.status || 'N/A'}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-center">
+                    <TableCell className="text-left ">
                       <Button
                         variant="outline"
                         size="sm"

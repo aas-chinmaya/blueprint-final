@@ -189,11 +189,11 @@ export default function MyWorkedProject({ employeeId }) {
 
   return (
     <div className="mx-auto min-h-screen">
-      <div className="text-green-700 border-b border-border">
+      <div className="text-[#1447e6] border-b border-border">
         <div className="mx-auto py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Briefcase className="w-8 h-8 text-green-700" />
+              <Briefcase className="w-8 h-8 text-[#1447e6]" />
               <h1 className="text-2xl sm:text-3xl font-bold text-black">MY Projects</h1>
             </div>
 
@@ -353,7 +353,7 @@ export default function MyWorkedProject({ employeeId }) {
                     }}
                     aria-label={`View project ${project.projectName}`}
                   >
-                    <FiEye className="w-5 h-5 text-muted-foreground group-hover:text-primary" />
+                    <FiEye className="w-5 h-5 text-[#38b000] group-hover:text-primary" />
                   </Button>
                 </div>
 
@@ -364,14 +364,14 @@ export default function MyWorkedProject({ employeeId }) {
                 <div className="space-y-3">
                   <div className="flex items-center text-muted-foreground group-hover:text-foreground">
                     <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center mr-3 group-hover:bg-primary/10">
-                      <Briefcase className="w-4 h-4 text-muted-foreground group-hover:text-primary" aria-hidden="true" />
+                      <Briefcase className="w-4 h-4 text-[#1447e6] group-hover:text-primary" aria-hidden="true" />
                     </div>
                     <span className="text-sm font-medium">ID: {project.projectId}</span>
                   </div>
 
                   <div className="flex items-center text-muted-foreground group-hover:text-foreground">
                     <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center mr-3 group-hover:bg-primary/10">
-                      <FiUser className="w-4 h-4 text-muted-foreground group-hover:text-primary" aria-hidden="true" />
+                      <FiUser className="w-4 h-4 text-[#1447e6] group-hover:text-primary" aria-hidden="true" />
                     </div>
                     <span className="text-sm font-medium">{project.teamLeadName || 'Unassigned'}</span>
                   </div>
@@ -406,10 +406,10 @@ export default function MyWorkedProject({ employeeId }) {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="border-t border-border">
+              <CardFooter className="p-3 border-t border-border">
                 <Button
                   variant="link"
-                  className="w-full justify-between text-primary text-sm font-medium group-hover:text-primary-dark"
+                  className="w-full justify-between text-[#1447e6] text-md font-bold group-hover:text-primary-dark"
                   onClick={() => handleViewProject(project.projectId)}
                   aria-label={`View details for project ${project.projectName}`}
                 >

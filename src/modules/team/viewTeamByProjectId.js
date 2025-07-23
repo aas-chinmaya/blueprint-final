@@ -268,21 +268,22 @@ const ViewTeamByProjectId = ({ projectId,project }) => {
     );
   }
 
-  if (status === "failed") {
-    return (
-      <div className="p-4 sm:p-6 bg-red-50 rounded-lg max-w-4xl mx-auto">
-        <p className="text-red-600 text-center text-sm sm:text-base">{error}</p>
-      </div>
-    );
-  }
 
-  if (!teams?.length) {
-    return (
-      <div className="text-center py-8 sm:py-10 text-gray-500 text-sm sm:text-base">
-        No teams found for this project
-      </div>
-    );
-  }
+
+if (!teams?.length || status === "failed") {
+  return (
+    <div className="flex flex-col items-center justify-center h-[80vh] px-4 text-center">
+      <h2 className="text-2xl font-semibold text-gray-700 mb-2">
+        No Teams Found
+      </h2>
+      <p className="text-sm text-gray-500 mb-4 max-w-md">
+        We couldn't find any teams for this project. Either no teams have been created yet.
+      </p>
+
+    
+    </div>
+  );
+}
 
   return (
     <div className="px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-8 max-w-7xl">

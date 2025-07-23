@@ -34,6 +34,7 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
+  BadgeInfo, Mail, Badge
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -126,18 +127,20 @@ const CpcTeamList = () => {
               <Button
                 variant="outline"
                 size="sm"
-                className="border-green-600 text-green-600 hover:bg-green-50"
+                className="bg-[#1447e6] text-white hover:bg-[#5c8cff] hover:text-white"
               >
                 <Users className="h-4 w-4 mr-2" />
                 View Members
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[800px] bg-white">
+
+            <DialogContent className="sm:max-w-[800px] bg-white rounded-xl shadow-xl">
               <DialogHeader>
-                <DialogTitle className="text-green-700">
+                <DialogTitle className="text-[#1447e6] text-xl font-semibold">
                   Team Members - {row.original.teamId}
                 </DialogTitle>
               </DialogHeader>
+
               <motion.div
                 className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4"
                 initial={{ opacity: 0 }}
@@ -147,22 +150,33 @@ const CpcTeamList = () => {
                 {row.original.teamMembers.map((member) => (
                   <Card
                     key={member._id}
-                    className="border-green-200 shadow-md hover:shadow-lg transition-shadow"
+                    className="border border-[#c3d4ff] shadow-sm hover:shadow-lg transition-shadow duration-200 rounded-lg"
                   >
-                    <CardHeader className="bg-green-50">
-                      <CardTitle className="text-lg text-green-800">
+                    <CardHeader className="bg-[#e5edff] rounded-t-lg px-4 py-3">
+                      <CardTitle className="text-base text-[#1447e6] font-semibold flex items-center gap-2">
+                        <BadgeInfo className="h-4 w-4 text-[#1447e6]" />
                         {member.memberName}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-2">
-                      <p className="text-sm">
-                        <strong>Role:</strong> {member.role}
+
+                    <CardContent className="space-y-2 px-4 py-3 text-sm text-gray-700">
+                      <p className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-[#1447e6]" />
+                        <span>
+                          <strong className="text-[#1447e6]">Role:</strong> {member.role}
+                        </span>
                       </p>
-                      <p className="text-sm">
-                        <strong>Email:</strong> {member.email}
+                      <p className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-[#1447e6]" />
+                        <span>
+                          <strong className="text-[#1447e6]">Email:</strong> {member.email}
+                        </span>
                       </p>
-                      <p className="text-sm">
-                        <strong>Member ID:</strong> {member.memberId}
+                      <p className="flex items-center gap-2">
+                        <Badge className="h-4 w-4 text-[#1447e6]" />
+                        <span>
+                          <strong className="text-[#1447e6]">Member ID:</strong> {member.memberId}
+                        </span>
                       </p>
                     </CardContent>
                   </Card>
@@ -170,6 +184,7 @@ const CpcTeamList = () => {
               </motion.div>
             </DialogContent>
           </Dialog>
+
         ),
       },
     ],
@@ -194,146 +209,139 @@ const CpcTeamList = () => {
   });
 
   return (
-  
-      <Card className="shadow-lg border-green-300">
-        <CardHeader className="">
-          <CardTitle className="text-2xl font-bold text-green-800">
-            All Teams
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6 h-screen">
-          {/* Search and Filter Controls */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-600" />
-              <Input
-                placeholder="Search by team ID or project..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 border-green-300 focus:ring-green-500"
-              />
-            </div>
-            <Select
-              value={projectFilter}
-              onValueChange={setProjectFilter}
-              className="w-full sm:w-48"
-            >
-              <SelectTrigger className="border-green-300 text-green-700">
-                <SelectValue placeholder="Filter by project" />
-              </SelectTrigger>
-              <SelectContent>
-                {projectOptions.map((project) => (
-                  <SelectItem key={project} value={project}>
-                    {project === "all" ? "All Projects" : project}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+    <Card className="shadow-lg border border-gray-200 rounded-xl">
+      <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-xl px-6 py-4">
+        <CardTitle className="text-2xl font-bold text-white">
+          Collaborated Teams
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent className="space-y-6 px-6 py-4 h-screen">
+        {/* Search and Filter Controls */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-600" />
+            <Input
+              placeholder="Search by team ID or project..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            />
           </div>
+          <Select
+            value={projectFilter}
+            onValueChange={setProjectFilter}
+            className="w-full sm:w-48"
+          >
+            <SelectTrigger className="border-gray-300 text-blue-700 focus:ring-blue-500 focus:border-blue-500">
+              <SelectValue placeholder="Filter by project" />
+            </SelectTrigger>
+            <SelectContent>
+              {projectOptions.map((project) => (
+                <SelectItem key={project} value={project}>
+                  {project === "all" ? "All Projects" : project}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-          {/* Loading and Error States */}
-          {status === "loading" && (
-            <div className="flex items-center justify-center py-4">
-              <Loader2 className="h-6 w-6 animate-spin text-green-600" />
-              <span className="ml-2 text-green-700">Loading...</span>
-            </div>
-          )}
-          {error && (
-            <p className="text-red-600 text-sm bg-red-50 p-2 rounded">
-              {error}
-            </p>
-          )}
-          {status === "succeeded" && filteredTeams.length === 0 && (
-            <p className="text-gray-500 text-center py-4">No teams found.</p>
-          )}
+        {/* Loading and Error States */}
+        {status === "loading" && (
+          <div className="flex items-center justify-center py-6">
+            <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+            <span className="ml-2 text-blue-700">Loading...</span>
+          </div>
+        )}
+        {error && (
+          <p className="text-red-600 text-sm bg-red-50 p-3 rounded border border-red-200">
+            {error}
+          </p>
+        )}
+        {status === "succeeded" && filteredTeams.length === 0 && (
+          <p className="text-gray-500 text-center py-6">No teams found.</p>
+        )}
 
-          {/* Teams Table */}
-          {status === "succeeded" && filteredTeams.length > 0 && (
-            <div>
-              <Table>
-                <TableHeader>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id} className="border-green-200">
-                      {headerGroup.headers.map((header) => (
-                        <TableHead
-                          key={header.id}
-                          className="text-green-800 font-semibold"
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          <div className="flex items-center cursor-pointer">
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                            {{
-                              asc: " ↑",
-                              desc: " ↓",
-                            }[header.column.getIsSorted()] ?? null}
-                          </div>
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  <AnimatePresence>
-                    {table.getRowModel().rows.map((row) => (
-                      <motion.tr
-                        key={row.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                        className="border-green-100 hover:bg-green-50"
+        {/* Teams Table */}
+        {status === "succeeded" && filteredTeams.length > 0 && (
+          <div className="overflow-x-auto">
+            <Table className="w-full border border-blue-100 rounded-xl">
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id} className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+                    {headerGroup.headers.map((header) => (
+                      <TableHead
+                        key={header.id}
+                        className="px-4 py-3 font-semibold text-white text-sm"
+                        onClick={header.column.getToggleSortingHandler()}
                       >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        ))}
-                      </motion.tr>
+                        <div className="flex items-center cursor-pointer select-none">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {{ "asc": " ↑", "desc": " ↓" }[header.column.getIsSorted()] ?? null}
+                        </div>
+                      </TableHead>
                     ))}
-                  </AnimatePresence>
-                </TableBody>
-              </Table>
+                  </TableRow>
+                ))}
+              </TableHeader>
 
-              {/* Pagination Controls */}
-              <div className="flex items-center justify-between mt-4">
-                <div className="text-sm text-green-700">
-                  Page {table.getState().pagination.pageIndex + 1} of{" "}
-                  {table.getPageCount()}
-                </div>
-                <div className="space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                    className="border-green-300 text-green-700 hover:bg-green-50"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    Prev
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                    className="border-green-300 text-green-700 hover:bg-green-50"
-                  >
-                    Next
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
+              <TableBody>
+                <AnimatePresence>
+                  {table.getRowModel().rows.map((row) => (
+                    <motion.tr
+                      key={row.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="hover:bg-blue-50 border-b border-blue-100"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id} className="px-4 py-3 text-sm text-gray-700">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
+              </TableBody>
+            </Table>
+
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-between mt-4 text-sm">
+              <div className="text-blue-700">
+                Page {table.getState().pagination.pageIndex + 1} of{" "}
+                {table.getPageCount()}
+              </div>
+              <div className="space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => table.previousPage()}
+                  disabled={!table.getCanPreviousPage()}
+                  className="border-gray-300 text-blue-700 hover:bg-blue-50"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Prev
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => table.nextPage()}
+                  disabled={!table.getCanNextPage()}
+                  className="border-gray-300 text-blue-700 hover:bg-blue-50"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
               </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
-   
+          </div>
+        )}
+      </CardContent>
+    </Card>
+
+
   );
 };
 

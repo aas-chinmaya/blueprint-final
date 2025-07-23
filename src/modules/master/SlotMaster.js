@@ -158,7 +158,7 @@ export default function SlotMaster() {
           }}
         >
           <DialogTrigger asChild>
-            <Button className="bg-primary text-white">
+            <Button className="bg-blue-800 hover:bg-blue-800 text-white">
               <Plus className="h-4 w-4 mr-2" /> Add Slot
             </Button>
           </DialogTrigger>
@@ -194,7 +194,7 @@ export default function SlotMaster() {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button onClick={handleCreate}>Save Slot</Button>
+                <Button className="bg-blue-800 hover:bg-blue-800 text-white" onClick={handleCreate}>Save Slot</Button>
               </DialogFooter>
             </div>
           </DialogContent>
@@ -205,13 +205,13 @@ export default function SlotMaster() {
       <div className="bg-card rounded-lg border overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader className="bg-muted">
+            <TableHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
               <TableRow>
-                <TableHead className="text-center w-20">S.No.</TableHead>
-                <TableHead className="text-center">Start Time</TableHead>
-                <TableHead className="text-center">End Time</TableHead>
-                <TableHead className="text-center">Shift</TableHead>
-                <TableHead className="text-center w-32">Actions</TableHead>
+                <TableHead className="text-center  text-white  w-20">S.No.</TableHead>
+                <TableHead className="text-center text-white ">Start Time</TableHead>
+                <TableHead className="text-center text-white ">End Time</TableHead>
+                <TableHead className="text-center text-white ">Shift</TableHead>
+                <TableHead className="text-center text-white  w-32">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

@@ -271,7 +271,7 @@ export default function AddClient() {
           <div className="sm:col-span-2 flex justify-center mt-6">
             <Button
               type="submit"
-              className="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2 rounded-lg"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg"
               disabled={addLoading || industriesLoading}
             >
               {addLoading ? "Submitting..." : "Onboard Client"}

@@ -141,19 +141,8 @@ const ProjectWiseBugList = ({ project, projectId, teamLeadId }) => {
     }
   };
 
-  // // Handle download for individual report modal
-  // const handleModalDownload = async () => {
-  //   if (modalTeamMember) {
-  //     dispatch(downloadBugsByMemberId({ projectId, memberId: modalTeamMember }));
-  //     toast.success('Individual report downloaded');
-  //     if(error){
-  //       toast.error(error);
+   // Handle download for individual report modal
 
-  //     }
-  //     setIsIndividualModalOpen(false);
-  //     setModalTeamMember('');
-  //   }
-  // };
 
 const handleModalDownload = async () => {
   if (modalTeamMember) {
@@ -165,7 +154,7 @@ const handleModalDownload = async () => {
       toast.success('Individual report downloaded successfully');
     } else {
       console.log(result); // Helpful for debugging
-      toast.error(result.payload || 'Download failed');
+      toast.error('No bugs found or error occurred');
     }
 
     setIsIndividualModalOpen(false);
@@ -194,7 +183,7 @@ const handleModalDownload = async () => {
   return (
     <div className="p-2 sm:p-4">
       {/* Header Section */}
-      <div className="bg-blue-100 p-4 rounded-lg mb-4 flex flex-col gap-4">
+      <div className="  rounded-lg mb-4 flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
           <div className="flex flex-col sm:flex-row gap-2 items-center w-full">
             <Input
@@ -220,14 +209,14 @@ const handleModalDownload = async () => {
             <Button
               onClick={handleDownload}
               disabled={bugLoading.bugDownload || bugLoading.memberBugDownload}
-              className="bg-blue-600 hover:bg-blue-700 text-black font-semibold text-sm disabled:bg-blue-300"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm disabled:bg-blue-300"
             >
               <Download className="h-4 w-4 mr-2" />
               {bugLoading.bugDownload || bugLoading.memberBugDownload ? 'Downloading...' : 'Download Report'}
             </Button>
             <Button
               onClick={() => setIsIndividualModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-black font-semibold text-sm"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm"
             >
               <User className="h-4 w-4 mr-2" />
               Individual Report
@@ -274,7 +263,7 @@ const handleModalDownload = async () => {
             <Button
               onClick={handleModalDownload}
               disabled={!modalTeamMember || bugLoading.memberBugDownload}
-              className="bg-blue-600 hover:bg-blue-700 text-black font-semibold disabled:bg-blue-300 text-sm"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold disabled:bg-blue-300 text-sm"
             >
               <Download className="h-4 w-4 mr-2" />
               {bugLoading.memberBugDownload ? 'Downloading...' : 'Download'}
@@ -370,9 +359,9 @@ const handleModalDownload = async () => {
       {/* Bug Table */}
       <div className="bg-white rounded-lg border border-blue-200 overflow-x-auto">
         <Table>
-          <TableHeader className="bg-blue-100">
+          <TableHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
             <TableRow>
-              <TableHead className="text-black font-bold text-center cursor-pointer" onClick={() => handleSort('bug_id')}>
+              <TableHead className="text-black font-bold text-center cursor-pointer  text-white" onClick={() => handleSort('bug_id')}>
                 <div className="flex items-center justify-center">
                   Bug ID
                   {sortField === 'bug_id' ? (
@@ -382,7 +371,7 @@ const handleModalDownload = async () => {
                   )}
                 </div>
               </TableHead>
-              <TableHead className="text-black font-bold text-center cursor-pointer" onClick={() => handleSort('title')}>
+              <TableHead className="text-black font-bold text-center cursor-pointer text-white" onClick={() => handleSort('title')}>
                 <div className="flex items-center justify-center">
                   Title
                   {sortField === 'title' ? (
@@ -392,7 +381,7 @@ const handleModalDownload = async () => {
                   )}
                 </div>
               </TableHead>
-              <TableHead className="text-black font-bold text-center cursor-pointer" onClick={() => handleSort('status')}>
+              <TableHead className="text-black font-bold text-center text-white cursor-pointer" onClick={() => handleSort('status')}>
                 <div className="flex items-center justify-center">
                   Status
                   {sortField === 'status' ? (
@@ -403,7 +392,7 @@ const handleModalDownload = async () => {
                 </div>
               </TableHead>
               <TableHead className="text-black font-bold text-center cursor-pointer" onClick={() => handleSort('assignedToDetails')}>
-                <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center text-white">
                   Assigned To
                   {sortField === 'assignedToDetails' ? (
                     sortOrder === 'asc' ? <ArrowUp className="h-4 w-4 ml-2" /> : <ArrowDown className="h-4 w-4 ml-2" />
@@ -412,7 +401,7 @@ const handleModalDownload = async () => {
                   )}
                 </div>
               </TableHead>
-              <TableHead className="text-black font-bold text-center cursor-pointer" onClick={() => handleSort('priority')}>
+              <TableHead className="text-black font-bold text-center cursor-pointer text-white" onClick={() => handleSort('priority')}>
                 <div className="flex items-center justify-center">
                   Priority
                   {sortField === 'priority' ? (
@@ -422,7 +411,7 @@ const handleModalDownload = async () => {
                   )}
                 </div>
               </TableHead>
-              <TableHead className="text-black font-bold text-center cursor-pointer" onClick={() => handleSort('createdAt')}>
+              <TableHead className="text-black font-bold text-center cursor-pointer text-white" onClick={() => handleSort('createdAt')}>
                 <div className="flex items-center justify-center">
                   Created At
                   {sortField === 'createdAt' ? (
@@ -432,7 +421,7 @@ const handleModalDownload = async () => {
                   )}
                 </div>
               </TableHead>
-              <TableHead className="text-black font-bold text-center">Actions</TableHead>
+              <TableHead className="text-black font-bold text-center text-white">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
