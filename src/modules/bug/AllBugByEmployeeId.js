@@ -502,12 +502,12 @@ export default function AllBugByEmployeeId() {
           </Button>
         </div>
       ) : (
-        <div className="mt-0 bg-white rounded-lg shadow-md border border-gray-200">
+        <div className="mt-0 bg-white rounded-md shadow-md border border-gray-200">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-50">
+              <TableRow className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
                 <TableHead
-                  className="w-[100px] text-gray-800 cursor-pointer"
+                  className="w-[100px] text-gray-800 cursor-pointer  text-white"
                   onClick={() => handleSort("bug_id")}
                 >
                   Bug ID
@@ -519,7 +519,7 @@ export default function AllBugByEmployeeId() {
                     ))}
                 </TableHead>
                 <TableHead
-                  className="text-gray-800 cursor-pointer"
+                  className="text-gray-800 cursor-pointer text-white"
                   onClick={() => handleSort("title")}
                 >
                   Title
@@ -530,9 +530,9 @@ export default function AllBugByEmployeeId() {
                       <ArrowDown className="inline ml-1" />
                     ))}
                 </TableHead>
-                <TableHead className="text-gray-800">Project Name</TableHead>
+                <TableHead className="text-gray-800 text-white">Project Name</TableHead>
                 <TableHead
-                  className="text-gray-800 cursor-pointer"
+                  className="text-gray-800 cursor-pointer text-white"
                   onClick={() => handleSort("status")}
                 >
                   Status
@@ -543,9 +543,9 @@ export default function AllBugByEmployeeId() {
                       <ArrowDown className="inline ml-1" />
                     ))}
                 </TableHead>
-                <TableHead className="text-gray-800">Created At</TableHead>
+                <TableHead className="text-gray-800   text-white">Created At</TableHead>
                 <TableHead
-                  className="text-gray-800 cursor-pointer"
+                  className="text-gray-800 cursor-pointer text-white"
                   onClick={() => handleSort("priority")}
                 >
                   Priority
@@ -556,7 +556,7 @@ export default function AllBugByEmployeeId() {
                       <ArrowDown className="inline ml-1" />
                     ))}
                 </TableHead>
-                <TableHead className="text-gray-800">Actions</TableHead>
+                <TableHead className="text-gray-800 text-white">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -697,111 +697,112 @@ export default function AllBugByEmployeeId() {
             </DialogTitle>
           </DialogHeader>
 
-          {selectedBug && (
-            <div className="flex flex-col space-y-4 py-2 px-1 sm:px-2">
-              {[
-                { label: "Bug ID", value: selectedBug.bug_id },
-                { label: "Title", value: selectedBug.title },
-                {
-                  label: "Description",
-                  value: selectedBug.description || "No description provided",
-                },
-                { label: "Task Ref", value: selectedBug.taskRef },
-                { label: "Project Id", value: selectedBug.projectId },
-                {
-                  label: "Assigned To",
-                  value:
-                    selectedBug?.assignedToDetails?.memberName || "Unassigned",
-                },
-                {
-                  label: "Status",
-                  value: (
-                    <Badge
-                      className={`${
-                        statusColors[selectedBug.status.toLowerCase()]
-                      } capitalize`}
-                    >
-                      {selectedBug.status}
-                    </Badge>
-                  ),
-                },
-                {
-                  label: "Review Status",
-                  value: (
-                    <Badge
-                      className={`${
-                        reviewStatusColors[selectedBug.reviewStatus]
-                      } capitalize`}
-                    >
-                      {selectedBug.reviewStatus}
-                    </Badge>
-                  ),
-                },
-                {
-                  label: "Priority",
-                  value: (
-                    <Badge
-                      className={`${
-                        priorityColors[selectedBug.priority]
-                      } capitalize`}
-                    >
-                      {selectedBug.priority}
-                    </Badge>
-                  ),
-                },
-                {
-                  label: "Deadline",
-                  value: new Date(selectedBug.deadline).toLocaleDateString(
-                    "en-IN"
-                  ),
-                },
-                {
-                  label: "Created At",
-                  value: new Date(selectedBug.createdAt).toLocaleDateString(
-                    "en-IN"
-                  ),
-                },
-                {
-                  label: "Delay reason",
-                  value: selectedBug.delayReason,
-                },
-              ].map(({ label, value }, idx) => (
-                <div key={idx} className="flex flex-col sm:flex-row">
-                  <div className="w-full sm:w-1/2 font-semibold text-sm text-gray-800 mb-1 sm:mb-0 sm:pr-4">
-                    {label}
-                  </div>
-                  <div className="w-full sm:w-1/2 text-sm text-gray-800 whitespace-pre-wrap break-words">
-                    {value}
-                  </div>
-                </div>
-              ))}
+{selectedBug && (
+  <div className="flex flex-col space-y-4 py-2 px-1 sm:px-2">
+    {[
+      { label: "Bug ID", value: selectedBug.bug_id },
+      { label: "Title", value: selectedBug.title },
+      {
+        label: "Description",
+        value: selectedBug.description || "No description provided",
+      },
+      { label: "Task Ref", value: selectedBug.taskRef },
+      { label: "Project Id", value: selectedBug.projectId },
+      {
+        label: "Assigned To",
+        value:
+          selectedBug?.assignedToDetails?.memberName || "Unassigned",
+      },
+      {
+        label: "Status",
+        value: (
+          <Badge
+            className={`${
+              statusColors[selectedBug.status.toLowerCase()]
+            } capitalize`}
+          >
+            {selectedBug.status}
+          </Badge>
+        ),
+      },
+      {
+        label: "Review Status",
+        value: (
+          <Badge
+            className={`${
+              reviewStatusColors[selectedBug.reviewStatus]
+            } capitalize`}
+          >
+            {selectedBug.reviewStatus}
+          </Badge>
+        ),
+      },
+      {
+        label: "Priority",
+        value: (
+          <Badge
+            className={`${
+              priorityColors[selectedBug.priority]
+            } capitalize`}
+          >
+            {selectedBug.priority}
+          </Badge>
+        ),
+      },
+      {
+        label: "Deadline",
+        value: new Date(selectedBug.deadline).toLocaleDateString("en-IN"),
+      },
+      {
+        label: "Created At",
+        value: new Date(selectedBug.createdAt).toLocaleDateString("en-IN"),
+      },
+      // Only include Delay Reason if it exists
+      selectedBug.delayReason && {
+        label: "Delay reason",
+        value: selectedBug.delayReason,
+      },
+    ]
+      .filter(Boolean) // Remove falsy (null/undefined) entries
+      .map(({ label, value }, idx) => (
+        <div key={idx} className="flex flex-col sm:flex-row">
+          <div className="w-full sm:w-1/2 font-semibold text-sm text-gray-800 mb-1 sm:mb-0 sm:pr-4">
+            {label}
+          </div>
+          <div className="w-full sm:w-1/2 text-sm text-gray-800 whitespace-pre-wrap break-words">
+            {value}
+          </div>
+        </div>
+      ))}
 
-              {/* Delay Reason */}
-              {selectedBug.status.toLowerCase() !== "resolved" &&
-                new Date() > new Date(selectedBug.deadline) && (
-                  <div className="flex flex-col sm:flex-row">
-                    <div className="w-full sm:w-1/2 font-semibold text-sm text-gray-800 mb-1 sm:mb-0 sm:pr-4">
-                      Delay Reason
-                    </div>
-                    <div className="w-full sm:w-1/2">
-                      <Input
-                        className="w-full border-gray-300 text-gray-800 placeholder:text-gray-400 focus:ring-[#1447e6]"
-                        value={delayReason}
-                        onChange={(e) => setDelayReason(e.target.value)}
-                        placeholder="Enter reason for delay"
-                      />
-                    </div>
-                  </div>
-                )}
+    {/* Delay Reason Input - only if overdue, not resolved, and no delay reason */}
+    {selectedBug.status.toLowerCase() !== "resolved" &&
+      new Date() > new Date(selectedBug.deadline) &&
+      !selectedBug.delayReason && (
+        <div className="flex flex-col sm:flex-row">
+          <div className="w-full sm:w-1/2 font-semibold text-sm text-gray-800 mb-1 sm:mb-0 sm:pr-4">
+            Delay Reason
+          </div>
+          <div className="w-full sm:w-1/2">
+            <Input
+              className="w-full border-gray-300 text-gray-800 placeholder:text-gray-400 focus:ring-[#1447e6]"
+              value={delayReason}
+              onChange={(e) => setDelayReason(e.target.value)}
+              placeholder="Enter reason for delay"
+            />
+          </div>
+        </div>
+    )}
 
-              {/* Error Message */}
-              {error.bugResolve && (
-                <div className="text-gray-800 text-sm font-medium bg-gray-100 border border-gray-300 rounded p-3">
-                  {error.bugResolve}
-                </div>
-              )}
-            </div>
-          )}
+    {/* Error Message */}
+    {error.bugResolve && (
+      <div className="text-gray-800 text-sm font-medium bg-gray-100 border border-gray-300 rounded p-3">
+        {error.bugResolve}
+      </div>
+    )}
+  </div>
+)}
+
 
           <DialogFooter>
             {selectedBug?.status.toLowerCase() !== "resolved" && (

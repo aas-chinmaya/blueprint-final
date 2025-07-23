@@ -48,9 +48,10 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import TeamMeetingCreateForm from "../meetings/team-meetings/TeamMeetingCreateForm";
+// import TeamMeetingCreateForm from "../meetings/team-meetings/TeamMeetingCreateForm";
 // import ProjectWiseTeamMeet from "../meetings/team-meetings/ProjectWiseTeamMeet";
 import ProjectWisebugList from "../bug/ProjectWisebugList";
+import Spinner from "@/components/loader/Spinner";
 
 export default function ViewProjectById({ projectId }) {
   const router = useRouter();
@@ -160,19 +161,23 @@ export default function ViewProjectById({ projectId }) {
   const isTasksTeamDisabled = currentUser?.role !== "CPC" && !isTeamLead;
   const isBugDisabled = currentUser?.role !== "CPC" && !isTeamLead;
 
-  if (status.fetchProject === "loading") {
+
+    const [showLoader, setShowLoader] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 2000); // 2 seconds delay
+
+    return () => clearTimeout(timer);
+  }, []);
+  if (status.fetchProject === 'loading' || showLoader) {
     return (
-      <div className="container mx-auto px-4 py-16 flex justify-center items-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-14 w-14 border-b-3 border-t-3 border-blue-600 mx-auto mb-6"></div>
-          <p className="text-blue-700 font-medium text-lg">
-            Loading project details...
-          </p>
-        </div>
+       <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-64px)]"> {/* adjust height if header is fixed */}
+        <Spinner />
       </div>
     );
   }
-
   if (status.fetchProject === "failed") {
     return (
       <div className="w-full h-full">
@@ -201,16 +206,27 @@ export default function ViewProjectById({ projectId }) {
         <CardHeader className="border-b border-gray-100">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
-              <Button
-           
-                size="sm"
-                onClick={() => router.back()}
-                className="text-white bg-blue-700 hover:bg-blue-600 font-semibold"
-                aria-label="Go back"
-              >
-                <FiArrowLeft className="h-5 w-5 mr-2" aria-hidden="true" />
-                Back
-              </Button>
+            
+                      <button
+  onClick={() => router.back()}
+  className="inline-flex cursor-pointer items-center gap-2 bg-blue-700 text-white font-medium text-sm px-4 py-2 rounded-full shadow-md hover:bg-blue-800 hover:shadow-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+>
+  <svg
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M15 19l-7-7 7-7"
+    />
+  </svg>
+  Back
+</button>
               <CardTitle className="text-2xl font-bold text-black">
                 {project.data.projectName || "Unnamed Project"}
               </CardTitle>
@@ -429,18 +445,15 @@ export default function ViewProjectById({ projectId }) {
 
             <TabsContent value="team" className="min-h-[calc(100vh-200px)]" >
               <div className="space-y-4">
-                <div className="flex items-center justify-between relative">
-                  {/* <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <FiUsers className="h-5 w-5 text-blue-600" />
-                    Team
-                  </h3> */}
+                <div className="flex items-center justify-between relative gap-3">
+                 
                   {
                     (currentUser?.role === "cpc" || isTeamLead) && (
 
                       <Button
                         size="sm"
                         onClick={() => setIsTeamFormOpen(true)}
-                        className="bg-blue-600 text-white hover:bg-blue-700 absolute top-0 right-0"
+                        className="bg-blue-600 text-white  hover:bg-blue-700 absolute top-0 right-0"
                         aria-label="Create new team"
                       >
                         <FiPlus className="h-5 w-5 mr-2" />
@@ -588,7 +601,7 @@ export default function ViewProjectById({ projectId }) {
       </Dialog>
 
       {/* Meeting Creation Modal */}
-      <Dialog open={isMeetingModalOpen} onOpenChange={setIsMeetingModalOpen}>
+      {/* <Dialog open={isMeetingModalOpen} onOpenChange={setIsMeetingModalOpen}>
         <DialogContent className="bg-white rounded-lg shadow-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-gray-900">
@@ -600,7 +613,7 @@ export default function ViewProjectById({ projectId }) {
             onSubmit={() => setIsMeetingModalOpen(false)}
           />
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 }

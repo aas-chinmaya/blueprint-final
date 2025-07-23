@@ -44,6 +44,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'; // Added Dialog components for confirmation modal
+import Spinner from '@/components/loader/Spinner';
 
 const statusColors = {
   Planned: 'bg-amber-100 text-amber-800 border-amber-200',
@@ -173,17 +174,23 @@ export default function FetchAllProjects() {
     }
   };
 
-  if (status.fetchAllProjects === 'loading') {
+
+    const [showLoader, setShowLoader] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 2000); // 2 seconds delay
+
+    return () => clearTimeout(timer);
+  }, []);
+  if (status.fetchAllProjects === 'loading' || showLoader) {
     return (
-      <div className="container mx-auto flex justify-center items-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-14 w-14 border-b-2 border-t-2 border-primary mx-auto mb-6"></div>
-          <p className="text-muted-foreground font-medium text-lg">Loading your projects...</p>
-        </div>
+       <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-64px)]"> {/* adjust height if header is fixed */}
+        <Spinner />
       </div>
     );
   }
-
   if (status.fetchAllProjects === 'failed') {
     return (
       <div className="container mx-auto">
@@ -226,140 +233,142 @@ export default function FetchAllProjects() {
   return (
     <div className="mx-auto min-h-screen">
       {/* Header */}
-      <div className="text-green-700 border-b border-border overflow-x-auto">
-        <div className="mx-auto py-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-bold text-black">All Projects</h1>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-              {/* Search Input */}
-              <div className="relative w-full sm:w-64 md:w-60">
-                <FiSearch
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-                  aria-hidden="true"
-                />
-                <Input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search projects..."
-                  className="pl-10"
-                  aria-label="Search projects"
-                />
-                {searchTerm && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setSearchTerm('')}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                    aria-label="Clear search"
-                  >
-                    <FiX className="h-5 w-5" />
-                  </Button>
-                )}
-              </div>
-
-              {/* Filter Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="text-blue-800 flex items-center gap-2" aria-label="Filter and sort projects">
-                    <FiFilter aria-hidden="true" />
-                    <span className="hidden sm:inline">Filter</span>
-                    <FiChevronDown aria-hidden="true" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64">
-                  <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => handleStatusFilter('all')}>
-                    <div className="flex justify-between w-full">
-                      <span>All Projects</span>
-                      <Badge variant="secondary">{projectStats.total}</Badge>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusFilter('Planned')}>
-                    <div className="flex justify-between w-full">
-                      <div className="flex items-center">
-                        <FiClock className="mr-1.5 text-amber-500" aria-hidden="true" />
-                        Planned
-                      </div>
-                      <Badge variant="secondary">{projectStats.planned}</Badge>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusFilter('In Progress')}>
-                    <div className="flex justify-between w-full">
-                      <div className="flex items-center">
-                        <FiAlertCircle className="mr-1.5 text-blue-500" aria-hidden="true" />
-                        In Progress
-                      </div>
-                      <Badge variant="secondary">{projectStats.inProgress}</Badge>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusFilter('Completed')}>
-                    <div className="flex justify-between w-full">
-                      <div className="flex items-center">
-                        <FiCheckCircle className="mr-1.5 text-emerald-500" aria-hidden="true" />
-                        Completed
-                      </div>
-                      <Badge variant="secondary">{projectStats.completed}</Badge>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => handleSort('projectName')}>
-                    <div className="flex justify-between w-full">
-                      <span>Project Name</span>
-                      {sortField === 'projectName' &&
-                        (sortDirection === 'asc' ? (
-                          <FiArrowUp className="ml-2" aria-hidden="true" />
-                        ) : (
-                          <FiArrowDown className="ml-2" aria-hidden="true" />
-                        ))}
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleSort('projectId')}>
-                    <div className="flex justify-between w-full">
-                      <span>Project ID</span>
-                      {sortField === 'projectId' &&
-                        (sortDirection === 'asc' ? (
-                          <FiArrowUp className="ml-2" aria-hidden="true" />
-                        ) : (
-                          <FiArrowDown className="ml-2" aria-hidden="true" />
-                        ))}
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleSort('status')}>
-                    <div className="flex justify-between w-full">
-                      <span>Status</span>
-                      {sortField === 'status' &&
-                        (sortDirection === 'asc' ? (
-                          <FiArrowUp className="ml acidic-2" aria-hidden="true" />
-                        ) : (
-                          <FiArrowDown className="ml-2" aria-hidden="true" />
-                        ))}
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={clearFilters} className="justify-center">
-                    Clear All Filters
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Create Button */}
-              <Button
-                onClick={handleOnboarding}
-                className="flex items-center gap-2 bg-blue-700 hover:bg-blue-600 text-white"
-                aria-label="Create new project"
-              >
-                <FiPlus aria-hidden="true" />
-                <span className="hidden sm:inline">Create</span>
-              </Button>
-            </div>
-          </div>
-        </div>
+  
+<div className="text-green-700 border-b border-border overflow-x-auto">
+  <div className="mx-auto py-4">
+    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+      {/* Title */}
+      <div className="flex items-center gap-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-black">All Projects</h1>
       </div>
+
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+        {/* Search Input */}
+        <div className="relative w-full sm:w-[200px] md:w-[220px]">
+          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+          <Input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search projects..."
+            className="pl-10 w-full"
+            aria-label="Search projects"
+          />
+          {searchTerm && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSearchTerm('')}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              aria-label="Clear search"
+            >
+              <FiX className="h-5 w-5" />
+            </Button>
+          )}
+        </div>
+
+        {/* Filter Dropdown */}
+        <div className="w-full sm:w-[200px] ">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="w-full flex items-center justify-between text-blue-800" aria-label="Filter and sort projects">
+                <FiFilter aria-hidden="true" />
+                <span className="">Filter</span>
+                <FiChevronDown aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => handleStatusFilter('all')}>
+                <div className="flex justify-between w-full">
+                  <span>All Projects</span>
+                  <Badge variant="secondary">{projectStats.total}</Badge>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleStatusFilter('Planned')}>
+                <div className="flex justify-between w-full">
+                  <div className="flex items-center">
+                    <FiClock className="mr-1.5 text-amber-500" />
+                    Planned
+                  </div>
+                  <Badge variant="secondary">{projectStats.planned}</Badge>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleStatusFilter('In Progress')}>
+                <div className="flex justify-between w-full">
+                  <div className="flex items-center">
+                    <FiAlertCircle className="mr-1.5 text-blue-500" />
+                    In Progress
+                  </div>
+                  <Badge variant="secondary">{projectStats.inProgress}</Badge>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleStatusFilter('Completed')}>
+                <div className="flex justify-between w-full">
+                  <div className="flex items-center">
+                    <FiCheckCircle className="mr-1.5 text-emerald-500" />
+                    Completed
+                  </div>
+                  <Badge variant="secondary">{projectStats.completed}</Badge>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => handleSort('projectName')}>
+                <div className="flex justify-between w-full">
+                  <span>Project Name</span>
+                  {sortField === 'projectName' &&
+                    (sortDirection === 'asc' ? (
+                      <FiArrowUp className="ml-2" />
+                    ) : (
+                      <FiArrowDown className="ml-2" />
+                    ))}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSort('projectId')}>
+                <div className="flex justify-between w-full">
+                  <span>Project ID</span>
+                  {sortField === 'projectId' &&
+                    (sortDirection === 'asc' ? (
+                      <FiArrowUp className="ml-2" />
+                    ) : (
+                      <FiArrowDown className="ml-2" />
+                    ))}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSort('status')}>
+                <div className="flex justify-between w-full">
+                  <span>Status</span>
+                  {sortField === 'status' &&
+                    (sortDirection === 'asc' ? (
+                      <FiArrowUp className="ml-2" />
+                    ) : (
+                      <FiArrowDown className="ml-2" />
+                    ))}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={clearFilters} className="justify-center">
+                Clear All Filters
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Create Button */}
+        <Button
+          onClick={handleOnboarding}
+          className="w-full sm:w-[200px]  bg-blue-700 hover:bg-blue-600 text-white flex items-center justify-center gap-2"
+          aria-label="Create new project"
+        >
+          <FiPlus />
+          <span className="">Create</span>
+        </Button>
+      </div>
+    </div>
+  </div>
+</div>
 
       {/* Delete Confirmation Modal */}
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>

@@ -146,9 +146,29 @@ export default function EditClientForm() {
     <Card className="border shadow-xl">
       <CardHeader className="border-b">
         <div className="flex items-center justify-between">
-          <Button variant="outline" onClick={() => router.back()} className="rounded-full text-gray-700 border border-gray-300 hover:bg-gray-100 px-3 py-1">
+          {/* <Button variant="outline" onClick={() => router.back()} className="rounded-full text-gray-700 border border-gray-300 hover:bg-gray-100 px-3 py-1">
             <ArrowLeft className="h-4 w-4 mr-1" /> Back
-          </Button>
+          </Button> */}
+                  <button
+  onClick={() => router.back()}
+  className="inline-flex cursor-pointer items-center gap-2 bg-blue-700 text-white font-medium text-sm px-4 py-2 rounded-full shadow-md hover:bg-blue-800 hover:shadow-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+>
+  <svg
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M15 19l-7-7 7-7"
+    />
+  </svg>
+  Back
+</button>
           <CardTitle className="text-xl font-semibold text-gray-800">Edit Client</CardTitle>
           <div className="w-20" />
         </div>

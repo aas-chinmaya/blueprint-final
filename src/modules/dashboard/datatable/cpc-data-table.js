@@ -345,13 +345,13 @@ export function DataTable() {
               <TabsList className="flex w-full sm:w-auto bg-transparent border border-border rounded-lg p-1">
                 <TabsTrigger
                   value="task"
-                  className="flex-1 text-sm font-medium text-foreground data-[state=active]:bg-[#1447e6] data-[state=active]:text-white rounded-md py-2 px-3 transition-all duration-200 hover:bg-muted"
+                  className="flex-1 cursor-pointer text-sm font-medium text-foreground data-[state=active]:bg-[#1447e6] data-[state=active]:text-white rounded-md py-2 px-3 transition-all duration-200 hover:bg-muted"
                 >
                   <LucideCalendar className="h-4 w-4 mr-2" /> Tasks
                 </TabsTrigger>
                 <TabsTrigger
                   value="projects"
-                  className="flex-1 text-sm font-medium text-foreground data-[state=active]:bg-[#1447e6] data-[state=active]:text-white rounded-md py-2 px-3 transition-all duration-200 hover:bg-muted"
+                  className="flex-1 text-sm cursor-pointer font-medium text-foreground data-[state=active]:bg-[#1447e6] data-[state=active]:text-white rounded-md py-2 px-3 transition-all duration-200 hover:bg-muted"
                 >
                   <LucideFolder className="h-4 w-4 mr-2" /> Projects
                   <Badge
@@ -363,7 +363,7 @@ export function DataTable() {
                 </TabsTrigger>
                 <TabsTrigger
                   value="team"
-                  className="flex-1 text-sm font-medium text-foreground data-[state=active]:bg-[#1447e6] data-[state=active]:text-white rounded-md py-2 px-3 transition-all duration-200 hover:bg-muted"
+                  className="flex-1 cursor-pointer text-sm font-medium text-foreground data-[state=active]:bg-[#1447e6] data-[state=active]:text-white rounded-md py-2 px-3 transition-all duration-200 hover:bg-muted"
                 >
                   <LucideUsers className="h-4 w-4 mr-2" /> Teams
                   <Badge
@@ -421,7 +421,7 @@ export function DataTable() {
                                   {task.title}
                                 </h3>
                                 <p className="text-xs text-muted-foreground">
-                                  ID: {task.task_id}
+                                 Task ID: {task.task_id}
                                 </p>
                               </div>
                             </div>
@@ -438,7 +438,7 @@ export function DataTable() {
                         </DialogTrigger>
                         <DialogContent className="bg-background border-border rounded-lg max-w-lg">
                           <DialogHeader>
-                            <DialogTitle className="flex items-center justify-center gap-3 text-[22px] text-bold sm:text-left bg-green-100 p-4 rounded-2xl text-green-800">
+                            <DialogTitle className="flex items-center justify-center gap-3 text-[22px] text-bold sm:text-left bg-blue-100 text-blue-800 p-4 rounded-2xl ">
                               Task Details
                             </DialogTitle>
                           </DialogHeader>
@@ -504,7 +504,7 @@ export function DataTable() {
                         </DialogTrigger>
                         <DialogContent className="bg-background border-border rounded-lg max-w-lg">
                           <DialogHeader>
-                            <DialogTitle className="flex items-center justify-center gap-3 text-[22px] text-bold sm:text-left bg-green-100 p-4 rounded-2xl text-green-800">
+                            <DialogTitle className="flex items-center justify-center gap-3 text-[22px] text-bold sm:text-left  p-4 rounded-2xl bg-blue-100 text-blue-800">
                               {" "}
                               <NotebookPen />
                               Project Details

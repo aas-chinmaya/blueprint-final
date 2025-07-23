@@ -1,6 +1,3 @@
-
-
-
 "use client";
 
 import React, { useEffect } from "react";
@@ -22,6 +19,7 @@ import {
   CheckCircle,
   Clock,
   List,
+  IdCardIcon,
 } from "lucide-react";
 import {
   fetchClientById,
@@ -32,6 +30,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Typography from "@/components/ui/typography";
+import Spinner from "@/components/loader/Spinner";
 
 const statusConfig = {
   Planned: {
@@ -74,6 +73,7 @@ export default function ClientDetails() {
 
   const clientFields = [
     { key: "clientName", label: "Client Name", icon: User },
+    { key: "clientId", label: "Client Id", icon: IdCardIcon },
     { key: "industryType", label: "Industry", icon: Briefcase },
     { key: "contactEmail", label: "Email", icon: Mail },
     { key: "contactNo", label: "Phone", icon: Phone },
@@ -86,12 +86,7 @@ export default function ClientDetails() {
   if (loading || projectsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="p-6 bg-card rounded-xl shadow border border-border text-center space-y-3">
-          <div className="w-10 h-10 border-4 border-muted rounded-full animate-spin border-t-primary mx-auto" />
-          <Typography variant="h3" className="text-muted-foreground">
-            Loading Client...
-          </Typography>
-        </div>
+        <Spinner />
       </div>
     );
   }
@@ -120,40 +115,57 @@ export default function ClientDetails() {
     <div className="px-4 space-y-6">
       {/* Top Header */}
       <div className="flex justify-between items-center mb-4">
-        <Button
-             variant="outline"
-             onClick={() => router.back()}
-             className="rounded-full text-gray-700 border border-gray-300 hover:bg-gray-100 px-3 py-1 flex-shrink-0"
-           >
-             <ArrowLeft className="h-4 w-4 mr-1" /> Back
-           </Button>
-    
+        {/* <Button
+          onClick={() => router.back()}
+          className="rounded-full bg-blue-800 hover:bg-blue-800  px-3 py-1 flex-shrink-0"
+        >
+          <ArrowLeft className="h-4 w-4 mr-1" /> Back
+        </Button> */}
+        <button
+  onClick={() => router.back()}
+  className="inline-flex cursor-pointer items-center gap-2 bg-blue-700 text-white font-medium text-sm px-4 py-2 rounded-full shadow-md hover:bg-blue-800 hover:shadow-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+>
+  <svg
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M15 19l-7-7 7-7"
+    />
+  </svg>
+  Back
+</button>
       </div>
 
       {/* Main Split Layout */}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left: Client Info */}
-        <Card className="p-2 border border-border shadow-sm rounded-xl">
-          <CardHeader className="pb-0">
-            <Typography variant="h3" className="text-lg font-semibold">
+        <div className="p-4 border  shadow-lg rounded-xl bg-white">
+          <div className="pb-2">
+            <h3 className="text-xl font-bold text-blue-700">
               Client Information
-            </Typography>
-          </CardHeader>
-          <CardContent className="space-y-2">
+            </h3>
+          </div>
+          <div className="space-y-4">
             {clientFields.map(({ key, label, icon: Icon }) => (
-              <div key={key} className="flex items-start gap-3">
-                <div className="bg-muted p-2 rounded-md">
-                  <Icon className="w-4 h-4 text-muted-foreground" />
+              <div key={key} className="flex items-start gap-4">
+                <div className="bg-blue-100 p-2 rounded-lg">
+                  <Icon className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <Typography variant="small" className="text-muted-foreground">
-                    {label}
-                  </Typography>
-                  <Typography variant="p" className="text-foreground text-sm">
+                  <p className="text-sm font-bold text-blue-800">{label}</p>
+                  <p className="text-sm text-gray-700">
                     {key === "website" && formData[key] ? (
                       <a
                         href={formData[key]}
-                        className="text-primary hover:underline"
+                        className="text-blue-500 hover:underline font-medium"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -162,62 +174,85 @@ export default function ClientDetails() {
                     ) : (
                       formData[key] || "Not provided"
                     )}
-                  </Typography>
+                  </p>
                 </div>
               </div>
             ))}
-
             {/* Attached Files */}
-            {formData.fileData?.length > 0 && (
-              <div className="pt-4">
-                <Typography variant="h4" className="mb-2">
-                  Attached Files ({formData.fileData.length})
-                </Typography>
-                <div className="space-y-2">
-                  {formData.fileData.map((file, idx) => (
+            {formData.fileDownloadLinks?.length > 0 && (
+              <div className="pt-6">
+                <h4 className="text-lg font-bold text-blue-700 mb-3">
+                  Attached Files ({formData.fileDownloadLinks.length})
+                </h4>
+                <div className="space-y-3">
+                  {formData.fileDownloadLinks.map((file, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-between bg-muted px-3 py-2 rounded-md"
+                      className="flex items-center justify-between bg-blue-50 px-4 py-3 rounded-lg border border-blue-200"
                     >
-                      <Typography variant="small" className="truncate">
+                      <p className="text-sm text-gray-700 truncate">
                         {file.name}
-                      </Typography>
-                      <Button asChild size="icon" variant="outline">
-                        <a href={file.downloadLink} target="_blank">
-                          <Download className="w-4 h-4" />
-                        </a>
+                      </p>
+
+                      <Button
+                        onClick={() => {
+                          const link = document.createElement("a");
+                          link.href = file.url;
+                          link.download = file.name || "download"; // optional: rename downloaded file
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        }}
+                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md transition text-sm font-medium"
+                      >
+                        <svg
+                          className="w-4 h-4 text-blue-200 font-bold"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                          />
+                        </svg>
+                        Download
                       </Button>
                     </div>
                   ))}
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Right: Projects */}
-        <Card className="p-2 border border-border shadow-sm rounded-xl">
-          <CardHeader className="pb-0">
-            <Typography variant="h3" className="text-lg font-semibold">
+        <div className="p-4 border  shadow-lg rounded-xl bg-white">
+          <div className="pb-2">
+            <h3 className="text-xl font-bold text-blue-700">
               Recent Projects ({projects.length})
-            </Typography>
-          </CardHeader>
-          <CardContent>
+            </h3>
+          </div>
+          <div>
             {projects?.length > 0 ? (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {projects.map((project) => {
-                  const status = statusConfig[project.status] || statusConfig.Planned;
+                  const status =
+                    statusConfig[project.status] || statusConfig.Planned;
                   return (
                     <div
                       key={project.projectId}
                       onClick={() => handleProjectClick(project.projectId)}
-                      className="cursor-pointer p-3 rounded-lg hover:bg-muted transition flex justify-between items-start border border-border"
+                      className="cursor-pointer p-4 rounded-lg hover:bg-blue-50 transition flex justify-between items-start border border-blue-200"
                     >
                       <div>
-                        <Typography variant="h4" className="text-sm font-semibold">
+                        <h4 className="text-sm font-bold text-blue-800">
                           {project.projectName}
-                        </Typography>
-                        <div className="text-xs text-muted-foreground space-y-1">
+                        </h4>
+                        <div className="text-xs text-gray-600 space-y-1">
                           <div>ID: {project.projectId}</div>
                           <div>
                             {project.startDate} → {project.endDate}
@@ -225,27 +260,42 @@ export default function ClientDetails() {
                           <div>Lead: {project.teamLeadName}</div>
                         </div>
                       </div>
-                      <Badge className={`${status.color} text-xs flex items-center gap-1`}>
+                      <span
+                        className={`${status.color} text-xs font-medium px-2 py-1 rounded-full flex items-center gap-1`}
+                      >
                         {status.icon}
                         {project.status}
-                      </Badge>
+                      </span>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <div className="text-center py-10">
-                <List className="w-8 h-8 mx-auto text-muted mb-2" />
-                <Typography variant="h4" className="text-muted-foreground">
+              <div className="text-center py-12">
+                <svg
+                  className="w-10 h-10 mx-auto text-blue-500 mb-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
+                <h4 className="text-lg font-bold text-blue-700">
                   No Projects Found
-                </Typography>
-                <Typography variant="p" className="text-muted-foreground text-sm">
+                </h4>
+                <p className="text-sm text-gray-600">
                   This client has no associated projects yet.
-                </Typography>
+                </p>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

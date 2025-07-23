@@ -572,7 +572,7 @@ export default function ProjectOnboarding() {
                   </p>
                 </div>
                 {formData.attachments.length > 0 && (
-                  <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 max-h-40 overflow-y-auto p-2">
+                  <div className="mt-3 cursor-pointer grid grid-cols-2 sm:grid-cols-4 gap-2 max-h-40 overflow-y-auto p-2">
                     {formData.attachments.map((file, index) => {
                       const fileName = file.name;
                       const extension = fileName.split(".").pop().toLowerCase();
@@ -677,7 +677,7 @@ export default function ProjectOnboarding() {
                 </>
               ) : (
                 <>
-                  <FiSave aria-hidden="true" />
+                  {/* <FiSave aria-hidden="true" /> */}
                   Create Project
                 </>
               )}

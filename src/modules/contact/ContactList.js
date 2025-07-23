@@ -55,7 +55,10 @@ import {
   Clock,
   Tag,
   X,
+  Edit,
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 import { cn } from "@/lib/utils";
 import { format, isWithinInterval, parseISO } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -425,37 +428,57 @@ const ContactsList = () => {
                           : "N/A"}
                       </TableCell>
                       <TableCell>
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="border-success text-success  hover:bg-success hover:text-white"
-                            onClick={() => handleViewContact(contact.contactId)}
-                            title="View"
-                          >
-                            <Eye className="h-4 w-4 " />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="border-info text-info hover:bg-info hover:text-white"
-                            onClick={() => openStatusModal(contact.contactId)}
-                            disabled={contact.status === "Accepted"}
-                            title="Update Status"
-                          >
-                            <Tag className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="border-danger text-danger hover:bg-danger hover:text-white"
-                            onClick={() => openDeleteModal(contact.contactId)}
-                            title="Delete"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        
+                     
+                        <TooltipProvider>
+  <div className="flex space-x-2">
+    {/* View Button with Tooltip */}
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon"
+          className=" text-green-600 "
+          onClick={() => handleViewContact(contact.contactId)}
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>View</TooltipContent>
+    </Tooltip>
+
+    {/* Edit Button with Tooltip */}
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon"
+          className=" text-blue-600 "
+          onClick={() => openStatusModal(contact.contactId)}
+          disabled={contact.status === "Accepted"}
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>Update Status</TooltipContent>
+    </Tooltip>
+
+    {/* Delete Button with Tooltip */}
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon"
+          className=" text-red-600 "
+          onClick={() => openDeleteModal(contact.contactId)}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>Delete</TooltipContent>
+    </Tooltip>
+  </div>
+</TooltipProvider>
+
                       </TableCell>
                     </TableRow>
                   ))
@@ -524,7 +547,7 @@ const ContactsList = () => {
       {/* View Contact Modal */}
       <Dialog open={isViewModalOpen} onOpenChange={closeViewModal}>
         <DialogContent className="max-w-full sm:max-w-4xl max-h-[85vh] overflow-y-auto rounded-lg">
-          <DialogHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-lg ">
+          <DialogHeader className="bg-blue-100 text-blue-800 p-4 rounded-t-lg ">
             <DialogTitle className="text-2xl font-bold flex items-center">
               <User className="h-6 w-6 mr-2 text-success" />
               Contact Details
@@ -654,7 +677,7 @@ const ContactsList = () => {
       {/* Update Status Modal */}
       <Dialog open={isStatusModalOpen} onOpenChange={() => setIsStatusModalOpen(false)}>
         <DialogContent className="max-w-full sm:max-w-md rounded-lg">
-          <DialogHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-lg">
+          <DialogHeader className="bg-blue-100 text-blue-800 p-4 rounded-t-lg">
             <DialogTitle className="text-xl font-bold flex items-center">
               <Tag className="h-5 w-5 mr-2 text-success" />
               Update Contact Status
@@ -704,7 +727,7 @@ const ContactsList = () => {
       {/* Delete Confirmation Modal */}
       <Dialog open={isDeleteModalOpen} onOpenChange={() => setIsDeleteModalOpen(false)}>
         <DialogContent className="max-w-full sm:max-w-md rounded-lg">
-          <DialogHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-lg">
+          <DialogHeader className="bg-blue-100 text-blue-800 p-4 rounded-t-lg">
             <DialogTitle className="text-xl font-bold flex items-center">
               <Trash2 className="h-5 w-5 mr-2 text-danger" />
               Confirm Deletion

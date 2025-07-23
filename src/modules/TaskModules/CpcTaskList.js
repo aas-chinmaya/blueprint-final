@@ -557,7 +557,7 @@ export default function Task() {
                   ),
                 },
                 {
-                  label: 'deadline:',
+                  label: 'Deadline:',
                   value: viewTask.deadline
                     ? new Date(viewTask.deadline).toLocaleDateString('en-IN')
                     : 'N/A',

@@ -9,6 +9,7 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -262,7 +263,7 @@ const handleViewQuotation = async (quotationNumber) => {
         <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <div className="flex justify-between items-center">
-              <DialogTitle className="text-green-700 text-xl font-semibold">
+              <DialogTitle className="text-blue-700 text-xl font-semibold">
                 {showPdf ? "Quotation PDF Preview" : "Quotation Details"}
               </DialogTitle>
               {computedQuotation?.Status === "final" && (
@@ -292,7 +293,7 @@ const handleViewQuotation = async (quotationNumber) => {
             }`}
           >
             {loadingQuotation ? (
-              <p className="text-gray-500">Loading quotation details...</p>
+              <p className="text-gray-500">Loading quotation...</p>
             ) : computedQuotation?._id ? (
               showPdf ? (
                 pdfUrl ? (
@@ -330,23 +331,25 @@ const handleViewQuotation = async (quotationNumber) => {
                         clientStatus?.onboardStatus === "notonboard" && (
                           <Button
                             title="Onboard Client"
-                            variant="outline"
-                            onClick={() =>
-                              router.push(
-                                `/client/onboarding/auto?contactId=${computedQuotation?.contactDetails?.contactId}`
-                              )
-                            }
-                            className="flex items-center justify-center gap-2 text-green-600 border border-green-600 hover:bg-green-50 mx-auto"
+                            variant=""
+                             onClick={async (e) => {
+                const btn = e.currentTarget;
+                btn.innerHTML = "Redirecting...";
+                btn.disabled = true;
+                await router.push(`/client/onboarding/auto?contactId=${computedQuotation?.contactDetails?.contactId}`);
+              }}
+                                        className="flex items-center justify-center gap-2 text-blue-600 border border-blue-600 bg-blue-800 hover:bg-blue-800 text-white mx-auto"
                           >
                             <Plus className="h-4 w-4" />
                             <span>Onboard Client</span>
                           </Button>
                       )}
 
+
                   {/* Client & Provider Info */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-green-50 border border-green-200 rounded-md p-4 space-y-1">
-                      <h3 className="text-green-800 font-semibold text-sm mb-2">
+                    <div className="bg-blue-50 border border-blue-200 rounded-md p-4 space-y-1">
+                      <h3 className="text-blue-800 font-semibold text-sm mb-2">
                         Client Information
                       </h3>
                       <p>
@@ -367,8 +370,8 @@ const handleViewQuotation = async (quotationNumber) => {
                       </p>
                     </div>
 
-                    <div className="bg-green-50 border border-green-200 rounded-md p-4 space-y-1">
-                      <h3 className="text-green-800 font-semibold text-sm mb-2">
+                    <div className="bg-blue-50 border border-blue-200 rounded-md p-4 space-y-1">
+                      <h3 className="text-blue-800 font-semibold text-sm mb-2">
                         Prepared By
                       </h3>
                       <p>
@@ -388,7 +391,7 @@ const handleViewQuotation = async (quotationNumber) => {
 
                   {/* Project Info */}
                   <div className="space-y-1">
-                    <h3 className="text-green-800 font-semibold text-sm">
+                    <h3 className="text-blue-800 font-semibold text-sm">
                       Project Details
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
@@ -412,12 +415,12 @@ const handleViewQuotation = async (quotationNumber) => {
 
                   {/* Quotation Items */}
                   <div className="space-y-2">
-                    <h3 className="text-green-800 font-semibold text-sm">
+                    <h3 className="text-blue-800 font-semibold text-sm">
                       Quotation Items
                     </h3>
                     <div className="overflow-auto rounded-md border border-gray-200">
                       <table className="min-w-full text-sm">
-                        <thead className="bg-green-100 text-green-800">
+                        <thead className="bg-blue-100 text-blue-800">
                           <tr>
                             <th className="px-4 py-2 text-left">Service</th>
                             <th className="px-4 py-2 text-right">Sell Price</th>
@@ -439,8 +442,8 @@ const handleViewQuotation = async (quotationNumber) => {
 
                   {/* Totals Section */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="bg-green-50 border border-green-200 rounded-md p-4 space-y-2">
-                      <h3 className="text-green-800 font-semibold text-sm">
+                    <div className="bg-blue-50 border border-blue-200 rounded-md p-4 space-y-2">
+                      <h3 className="text-blue-800 font-semibold text-sm">
                         Payment & Tax Info
                       </h3>
                       <p>
@@ -457,8 +460,8 @@ const handleViewQuotation = async (quotationNumber) => {
                       </p>
                     </div>
 
-                    <div className="bg-green-50 border border-green-200 rounded-md p-4 space-y-2">
-                      <h3 className="text-green-800 font-semibold text-sm">
+                    <div className="bg-blue-50 border border-blue-200 rounded-md p-4 space-y-2">
+                      <h3 className="text-blue-800 font-semibold text-sm">
                         Totals
                       </h3>
                       <p>
@@ -522,7 +525,7 @@ const handleViewQuotation = async (quotationNumber) => {
       </Dialog>
 
       {/* Quotation Table */}
-      <div className="bg-white rounded-lg border border-green-200 overflow-hidden min-h-[75vh]">
+      <div className="bg-white rounded-lg border border-blue-200 overflow-hidden min-h-[75vh]">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
@@ -589,24 +592,9 @@ const handleViewQuotation = async (quotationNumber) => {
                     <TableCell className="text-center">
                       <div className="flex justify-center space-x-2">
                      
-                       {/* {
-                        quotation.status.toLowerCase() === "accepted" && (
-                           <Button
-                          title="Onbaord client"
-                          variant="outline"
-                          size="icon"
-                          onClick={() =>   
-                            router.push(`/client/onboarding/auto?contactId=${quotation?.contactDetails?.contactId}`)                          
-                        }
-                        
-                          disabled={quotation.status === "Approved"}
-                        >
-                          <Plus className="h-4 w-4 text-green-600" />{" "}
-                        </Button>
-                        )
-                       } */}
+                 
 
-                        <Button
+                        {/* <Button
                           title="View Details"
                           variant="outline"
                           size="icon"
@@ -627,7 +615,45 @@ const handleViewQuotation = async (quotationNumber) => {
                           disabled={quotation.Status === "final"}
                         >
                           <Edit className="h-4 w-4" />
-                        </Button>
+                        </Button> */}
+                        <TooltipProvider>
+  <div className="flex items-center gap-2">
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          title="View Details"
+          variant="ghost"
+          size="icon"
+          onClick={() => handleViewQuotation(quotation.quotationNumber)}
+          className="text-blue-600 hover:text-blue-800"
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>View Quotation</p>
+      </TooltipContent>
+    </Tooltip>
+
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          title="Edit Quotation"
+          variant="ghost"
+          size="icon"
+          onClick={() => handleEditQuotation(quotation.quotationNumber)}
+          disabled={quotation.Status === "final"}
+          className="text-green-600 hover:text-green-800 disabled:opacity-50"
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Edit Quotation</p>
+      </TooltipContent>
+    </Tooltip>
+  </div>
+</TooltipProvider>
                       </div>
                     </TableCell>
                   </TableRow>

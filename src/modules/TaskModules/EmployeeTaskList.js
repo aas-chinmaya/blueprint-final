@@ -719,7 +719,7 @@ const AllTasksList = () => {
                 ),
               },
               {
-                label: 'deadline',
+                label: 'Deadline',
                 value: editTask ? new Date(editTask.deadline).toLocaleDateString('en-IN') : '',
               },
               {

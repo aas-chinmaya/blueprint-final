@@ -629,7 +629,7 @@ export default function ProjectEditForm({ projectId }) {
             </>
           ) : (
             <>
-              <FiSave />
+              
               Save Changes
             </>
           )}

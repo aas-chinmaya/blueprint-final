@@ -28,6 +28,7 @@ import { createTask } from "@/features/taskSlice";
 import { toast } from "sonner";
 import EditTeam from "./EditTeam";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import Spinner from "@/components/loader/Spinner";
 
 const ViewTeamByProjectId = ({ projectId,project }) => {
   const dispatch = useDispatch();
@@ -260,15 +261,30 @@ const ViewTeamByProjectId = ({ projectId,project }) => {
     }
   };
 
-  if (status === "loading" && !teams.length) {
+  // if (status === "loading" && !teams.length) {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-[200px]">
+  //       <FiLoader className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600 animate-spin" />
+  //     </div>
+  //   );
+  // }
+
+    const [showLoader, setShowLoader] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 1000); // 2 seconds delay
+
+    return () => clearTimeout(timer);
+  }, []);
+  if (status === "loading" && !teams.length || showLoader) {
     return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        <FiLoader className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600 animate-spin" />
+       <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-64px)]"> {/* adjust height if header is fixed */}
+        <Spinner />
       </div>
     );
   }
-
-
 
 if (!teams?.length || status === "failed") {
   return (
@@ -277,7 +293,7 @@ if (!teams?.length || status === "failed") {
         No Teams Found
       </h2>
       <p className="text-sm text-gray-500 mb-4 max-w-md">
-        We couldn't find any teams for this project. Either no teams have been created yet.
+        We couldn&apos;t find any teams for this project. Either no teams have been created yet.
       </p>
 
     
@@ -286,7 +302,7 @@ if (!teams?.length || status === "failed") {
 }
 
   return (
-    <div className="px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-8 max-w-7xl">
+    <div className=" py-4  sm:py-6  lg:py-8 max-w-7xl mt-5">
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
         {(teams || []).map((team) => (
           <div
@@ -302,34 +318,32 @@ if (!teams?.length || status === "failed") {
                   <p className="text-xs sm:text-sm text-gray-500 mt-0.5 font-medium">
                     Team ID: {team.teamId} {/* Display teamId */}
                   </p>
-                  <p className="text-xs sm:text-sm text-gray-500 mt-0.5 font-medium">
-                    Project ID: {team.projectId}
-                  </p>
+                  
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <button
                     onClick={() => handleViewClick(team.teamId)} // Use teamId
-                    className="p-1.5 sm:p-2 rounded-full hover:bg-blue-50 transition-colors duration-200 group"
+                    className="p-1.5 sm:p-2 cursor-pointer  rounded-full hover:bg-blue-50 transition-colors duration-200 group"
                     title="View Team"
                   >
-                    <FiEye className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-gray-500 group-hover:text-blue-600" />
+                    <FiEye className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-blue-600" />
                   </button>
                   {
                     (useCurrentUser?.role === "CPC" || isTeamLead ) &&(
                       <>
                   <button
                     onClick={() => handleEditClick(team.teamId)} // Use teamId
-                    className="p-1.5 sm:p-2 rounded-full hover:bg-blue-50 transition-colors duration-200 group"
+                    className="p-1.5 sm:p-2 cursor-pointer  rounded-full hover:bg-blue-50 transition-colors duration-200 group"
                     title="Edit Team"
                   >
-                    <FiEdit className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-gray-500 group-hover:text-blue-600" />
+                    <FiEdit className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-green-600" />
                   </button>
                   <button
                     onClick={() => handleDeleteClick(team.teamId)} // Use teamId
-                    className="p-1.5 sm:p-2 rounded-full hover:bg-red-50 transition-colors duration-200 group"
+                    className="p-1.5 sm:p-2 cursor-pointer rounded-full hover:bg-red-50 transition-colors duration-200 group"
                     title="Delete Team"
                   >
-                    <FiTrash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-gray-500 group-hover:text-red-600" />
+                    <FiTrash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-red-600" />
                   </button>
                       </>
 
@@ -401,14 +415,14 @@ if (!teams?.length || status === "failed") {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-3 py-2 sm:px-4 sm:py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm sm:text-base"
+                className="px-3 py-2 cursor-pointer  sm:px-4 sm:py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
                 disabled={deleteTeamStatus === "loading"} // Use deleteTeamStatus
-                className="px-3 py-2 sm:px-4 sm:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base flex items-center"
+                className="px-3 py-2 cursor-pointer  sm:px-4 sm:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base flex items-center"
               >
                 {deleteTeamStatus === "loading" ? (
                   <>
@@ -579,6 +593,7 @@ if (!teams?.length || status === "failed") {
               </div>
             </div>
           )}
+          
           <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
             onClick={closeTeamDetails}
@@ -597,9 +612,7 @@ if (!teams?.length || status === "failed") {
                     <p className="text-xs sm:text-sm text-gray-600">
                       Team ID: {selectedTeam.teamId} {/* Display teamId */}
                     </p>
-                    <p className="text-xs sm:text-sm text-gray-600">
-                      Project ID: {selectedTeam.projectId}
-                    </p>
+                   
                   </div>
                   <button onClick={closeTeamDetails}>
                     <FiX className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 hover:text-gray-700" />
@@ -608,10 +621,7 @@ if (!teams?.length || status === "failed") {
               </div>
               <div className="p-4 sm:p-6 space-y-6">
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6">
-                  <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-800 mb-4 flex items-center">
-                    <FiUser className="mr-2 w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
-                    Team Lead
-                  </h3>
+                 
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center">
                       <span className="text-sm sm:text-lg font-semibold text-blue-600">
@@ -620,7 +630,8 @@ if (!teams?.length || status === "failed") {
                     </div>
                     <div>
                       <p className="text-sm sm:text-base font-semibold text-gray-800">
-                        {selectedTeam.teamLeadName}
+                    {`${selectedTeam.teamLeadName} ( Team Lead )`}
+
                       </p>
                       <p className="text-xs sm:text-sm text-gray-600">
                         Team Lead ID: {selectedTeam.teamLeadId}
@@ -630,7 +641,6 @@ if (!teams?.length || status === "failed") {
                 </div>
                 <div>
                   <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-800 mb-4 flex items-center">
-                    <FiUsers className="mr-2 w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                     Team Members ({selectedTeam.teamMembers?.length || 0})
                   </h3>
                   <div className="space-y-3">
@@ -669,7 +679,7 @@ if (!teams?.length || status === "failed") {
                             }));
                             setShowCreateTask(true);
                           }}
-                          className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm sm:text-base"
+                          className="w-full cursor-pointer  sm:w-auto px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm sm:text-base"
                         >
                           Assign Task
                         </button>
@@ -681,11 +691,13 @@ if (!teams?.length || status === "failed") {
               </div>
             </div>
           </div>
+          
         </>
       )}
       {showEditTeam && selectedTeam && !showTeamDetails && (
         <EditTeam
           selectedTeam={selectedTeam}
+          projectId={projectId}
           setShowEditTeam={setShowEditTeam}
           setShowTeamDetails={setShowTeamDetails}
           setSelectedTeam={setSelectedTeam}

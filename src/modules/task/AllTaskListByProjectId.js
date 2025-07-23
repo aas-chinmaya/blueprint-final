@@ -14,6 +14,7 @@ import {
 import { ArrowLeft, Eye, Edit, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useLoggedinUser } from "@/hooks/useLoggedinUser";
+import Spinner from "@/components/loader/Spinner";
 
 const AllTaskListByProjectId = ({ projectId, project }) => {
   const { currentUser, isTeamLead } = useLoggedinUser(project?.teamLeadId);
@@ -68,10 +69,28 @@ const AllTaskListByProjectId = ({ projectId, project }) => {
     setTaskIdToDelete(null);
   };
 
-  if (status === "loading") {
+  // if (status === "loading") {
+  //   return (
+  //     <div className="flex items-center justify-center h-40">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  //     </div>
+  //   );
+  // }
+
+
+      const [showLoader, setShowLoader] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 1000); // 2 seconds delay
+
+    return () => clearTimeout(timer);
+  }, []);
+  if (status.status === 'loading' || showLoader) {
     return (
-      <div className="flex items-center justify-center h-40">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+       <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-64px)]"> {/* adjust height if header is fixed */}
+        <Spinner />
       </div>
     );
   }

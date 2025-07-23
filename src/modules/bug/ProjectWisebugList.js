@@ -12,6 +12,7 @@ import { ChevronLeft, ChevronRight, Eye, Edit, Download, User, ArrowUpDown, Arro
 import { fetchBugByProjectId, clearProjectBugs, downloadBugsByProjectId, downloadBugsByMemberId } from '@/features/bugSlice';
 import { getTeamMembersByProjectId } from '@/features/teamSlice';
 import { toast } from 'sonner';
+import Spinner from '@/components/loader/Spinner';
 const ProjectWiseBugList = ({ project, projectId, teamLeadId }) => {
   const dispatch = useDispatch();
   const {
@@ -74,15 +75,30 @@ const ProjectWiseBugList = ({ project, projectId, teamLeadId }) => {
   const bugs = bugsByProjectId || [];
 
   // Handle loading and error states for bugs and team members
- if (bugLoading.bugsByProjectId || teamStatus === 'loading') {
-  return (
-    <div className="p-4 flex flex-col items-center justify-center gap-2 text-center">
-      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
-}
+//  if (bugLoading.bugsByProjectId || teamStatus === 'loading') {
+//   return (
+//     <div className="p-4 flex flex-col items-center justify-center gap-2 text-center">
+//       <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+//     </div>
+//   );
+// }
 
- 
+     const [showLoader, setShowLoader] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 1000); // 2 seconds delay
+
+    return () => clearTimeout(timer);
+  }, []);
+  if (bugLoading.bugsByProjectId || teamStatus === 'loading' || showLoader) {
+    return (
+       <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-64px)]"> {/* adjust height if header is fixed */}
+        <Spinner />
+      </div>
+    );
+  }
 
 
   // Team members for filter (from Redux store)
@@ -153,7 +169,7 @@ const handleModalDownload = async () => {
     if (result.type.includes('fulfilled')) {
       toast.success('Individual report downloaded successfully');
     } else {
-      console.log(result); // Helpful for debugging
+      // console.log(result); // Helpful for debugging
       toast.error('No bugs found or error occurred');
     }
 
@@ -181,9 +197,9 @@ const handleModalDownload = async () => {
   };
 
   return (
-    <div className="p-2 sm:p-4">
+    <div className="py-2 ">
       {/* Header Section */}
-      <div className="  rounded-lg mb-4 flex flex-col gap-4">
+      <div className="  rounded-lg mb-4 flex flex-col gap-4 ">
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
           <div className="flex flex-col sm:flex-row gap-2 items-center w-full">
             <Input
@@ -205,23 +221,26 @@ const handleModalDownload = async () => {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex gap-2">
-            <Button
-              onClick={handleDownload}
-              disabled={bugLoading.bugDownload || bugLoading.memberBugDownload}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm disabled:bg-blue-300"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              {bugLoading.bugDownload || bugLoading.memberBugDownload ? 'Downloading...' : 'Download Report'}
-            </Button>
-            <Button
-              onClick={() => setIsIndividualModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm"
-            >
-              <User className="h-4 w-4 mr-2" />
-              Individual Report
-            </Button>
-          </div>
+        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-lg">
+  <Button
+    onClick={handleDownload}
+    disabled={bugLoading.bugDownload || bugLoading.memberBugDownload}
+    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm disabled:bg-blue-300 w-full sm:w-1/2 lg:w-auto px-4 py-2"
+  >
+    <Download className="h-4 w-4 sm:mr-2 hidden sm:block" />
+    {bugLoading.bugDownload || bugLoading.memberBugDownload
+      ? 'Downloading...'
+      : 'Download Report'}
+  </Button>
+  <Button
+    onClick={() => setIsIndividualModalOpen(true)}
+    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm w-full sm:w-1/2 lg:w-auto px-4 py-2"
+  >
+    <User className="h-4 w-4 sm:mr-2 hidden sm:block" />
+    Individual Report
+  </Button>
+</div>
+
         </div>
       
       </div>

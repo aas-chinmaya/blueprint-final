@@ -239,13 +239,13 @@ export function DataTableEmployee({ employeeId }) {
             <TabsList className="flex w-full sm:w-auto bg-transparent border rounded-lg p-1">
               <TabsTrigger
                 value="task"
-                className="flex-1 text-sm font-medium data-[state=active]:bg-[#1447e6] data-[state=active]:text-white py-2 px-3 rounded-md"
+                className="flex-1 text-sm font-medium cursor-pointer data-[state=active]:bg-[#1447e6] data-[state=active]:text-white py-2 px-3 rounded-md"
               >
                 <LucideCalendar className="h-4 w-4 mr-2" /> Tasks
               </TabsTrigger>
               <TabsTrigger
                 value="projects"
-                className="flex-1 text-sm font-medium data-[state=active]:bg-[#1447e6] data-[state=active]:text-white py-2 px-3 rounded-md"
+                className="flex-1 text-sm font-medium cursor-pointer data-[state=active]:bg-[#1447e6] data-[state=active]:text-white py-2 px-3 rounded-md"
               >
                 <LucideFolder className="h-4 w-4 mr-2" /> Projects
                 <Badge className="ml-2 bg-muted text-muted-foreground">
@@ -254,7 +254,7 @@ export function DataTableEmployee({ employeeId }) {
               </TabsTrigger>
               <TabsTrigger
                 value="team"
-                className="flex-1 text-sm font-medium data-[state=active]:bg-[#1447e6] data-[state=active]:text-white py-2 px-3 rounded-md"
+                className="flex-1 text-sm cursor-pointer font-medium data-[state=active]:bg-[#1447e6] data-[state=active]:text-white py-2 px-3 rounded-md"
               >
                 <LucideUsers className="h-4 w-4 mr-2" /> Teams
                 <Badge className="ml-2 bg-muted text-muted-foreground">
@@ -298,7 +298,7 @@ export function DataTableEmployee({ employeeId }) {
                 </DialogTrigger>
                 <DialogContent className="bg-background rounded-lg max-w-lg">
                   <DialogHeader>
-                    <DialogTitle className="flex items-center justify-center gap-3 text-lg font-bold bg-green-100 p-4 rounded-2xl text-green-800">
+                    <DialogTitle className="flex items-center justify-center gap-3 text-lg font-bold bg-blue-100  p-4 rounded-2xl text-blue-800">
                       Task Details
                     </DialogTitle>
                   </DialogHeader>
@@ -328,7 +328,7 @@ export function DataTableEmployee({ employeeId }) {
                           {project.projectName}
                         </h3>
                         <p className="text-xs text-muted-foreground">
-                          ID: {project.projectId}
+                          Project ID: {project.projectId}
                         </p>
                       </div>
                     </div>
@@ -346,7 +346,7 @@ export function DataTableEmployee({ employeeId }) {
                 </DialogTrigger>
                 <DialogContent className="bg-background rounded-lg max-w-lg">
                   <DialogHeader>
-                    <DialogTitle className="flex items-center justify-center gap-3 text-lg font-bold bg-green-100 p-4 rounded-2xl text-green-800">
+                    <DialogTitle className="flex items-center justify-center gap-3 text-lg font-bold bg-blue-100 p-4 rounded-2xl text-blue-800">
                       <NotebookPen /> Project Details
                     </DialogTitle>
                   </DialogHeader>
@@ -385,7 +385,7 @@ export function DataTableEmployee({ employeeId }) {
                 </DialogTrigger>
                 <DialogContent className="bg-background rounded-lg max-w-lg">
                   <DialogHeader>
-                    <DialogTitle className="text-lg font-semibold">
+                    <DialogTitle className="text-lg text-blue-800 font-semibold">
                       Team Details
                     </DialogTitle>
                   </DialogHeader>

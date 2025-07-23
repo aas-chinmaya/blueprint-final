@@ -51,7 +51,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 export default function AllBugList() {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -231,7 +231,7 @@ export default function AllBugList() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold">Bug Reports</h1>
+        <h1 className="text-2xl font-bold">All Bug Reports</h1>
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -255,7 +255,7 @@ export default function AllBugList() {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button variant="outline" className="flex items-center gap-2 text-blue-700 font-bold hover:text-blue-700">
                 <Filter className="h-4 w-4" />
                 <span className="hidden sm:inline">Filter</span>
                 <ChevronDown className="h-4 w-4" />
@@ -408,14 +408,24 @@ export default function AllBugList() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-left ">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => router.push(`/bug/projectId/?projectId=${project.projectId}`)}
-                        aria-label={`View project ${project.projectName}`}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
+                    <TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button
+        variant="icon"
+        size="sm"
+        onClick={() => router.push(`/bug/projectId/?projectId=${project.projectId}`)}
+        aria-label={`View project ${project.projectName}`}
+        className="hover:bg-blue-50 cursor-pointer"
+      >
+        <Eye className="h-4 w-4 text-blue-600" />
+      </Button>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>View Bugs</p>
+    </TooltipContent>
+  </Tooltip>
+</TooltipProvider>
                     </TableCell>
                   </TableRow>
                 ))}

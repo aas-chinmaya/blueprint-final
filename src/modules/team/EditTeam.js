@@ -140,6 +140,7 @@ useEffect(() => {
 
       const result = await dispatch(
         updateTeam({ teamId: selectedTeam.teamId, teamData })
+        
       ).unwrap();
 
       if (result) {

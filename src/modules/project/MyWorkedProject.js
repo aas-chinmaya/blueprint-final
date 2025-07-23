@@ -33,6 +33,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import Spinner from '@/components/loader/Spinner';
 
 // Constants for styling
 const statusColors = {
@@ -136,17 +137,23 @@ export default function MyWorkedProject({ employeeId }) {
     setSortField('projectName');
     setSortDirection('asc');
   };
+    const [showLoader, setShowLoader] = useState(true);
 
-  if (status.fetchEmployeeProjects === 'loading') {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 2000); // 2 seconds delay
+
+    return () => clearTimeout(timer);
+  }, []);
+  if (status.fetchEmployeeProjects === 'loading' || showLoader) {
     return (
-      <div className="container mx-auto flex justify-center items-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-14 w-14 border-b-2 border-t-2 border-primary mx-auto mb-6"></div>
-          <p className="text-muted-foreground font-medium text-lg">Loading your projects...</p>
-        </div>
+       <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-64px)]"> {/* adjust height if header is fixed */}
+        <Spinner />
       </div>
     );
   }
+
 
   if (status.fetchEmployeeProjects === 'failed') {
     return (
@@ -189,129 +196,135 @@ export default function MyWorkedProject({ employeeId }) {
 
   return (
     <div className="mx-auto min-h-screen">
-      <div className="text-[#1447e6] border-b border-border">
-        <div className="mx-auto py-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Briefcase className="w-8 h-8 text-[#1447e6]" />
-              <h1 className="text-2xl sm:text-3xl font-bold text-black">MY Projects</h1>
-            </div>
+     
+<div className="text-[#1447e6] border-b border-border">
+  <div className="mx-auto py-4">
+    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+      {/* Title */}
+      <div className="flex items-center gap-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-black">MY Projects</h1>
+      </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-              <div className="relative w-full sm:w-64 md:w-80">
-                <FiSearch
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-                  aria-hidden="true"
-                />
-                <Input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search projects..."
-                  className="pl-10"
-                  aria-label="Search projects by name, ID, or team lead"
-                />
-                {searchTerm && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setSearchTerm('')}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                    aria-label="Clear search"
-                  >
-                    <FiX className="h-5 w-5" />
-                  </Button>
-                )}
-              </div>
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+        {/* Search Input */}
+        <div className="relative w-full sm:w-[200px] md:w-[220px]">
+          <FiSearch
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <Input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search projects..."
+            className="pl-10 w-full"
+            aria-label="Search projects by name, ID, or team lead"
+          />
+          {searchTerm && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSearchTerm('')}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              aria-label="Clear search"
+            >
+              <FiX className="h-5 w-5" />
+            </Button>
+          )}
+        </div>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="flex items-center gap-2" aria-label="Filter and sort projects">
-                    <FiFilter aria-hidden="true" />
-                    <span className="hidden sm:inline">Filter</span>
-                    <FiChevronDown aria-hidden="true" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64">
-                  <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => handleStatusFilter('all')}>
-                    <div className="flex justify-between w-full">
-                      <span>All Projects</span>
-                      <Badge variant="secondary">{projectStats.total}</Badge>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusFilter('Planned')}>
-                    <div className="flex justify-between w-full">
-                      <div className="flex items-center">
-                        <FiClock className="mr-1.5 text-amber-500" aria-hidden="true" />
-                        Planned
-                      </div>
-                      <Badge variant="secondary">{projectStats.planned}</Badge>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusFilter('In Progress')}>
-                    <div className="flex justify-between w-full">
-                      <div className="flex items-center">
-                        <FiAlertCircle className="mr-1.5 text-blue-500" aria-hidden="true" />
-                        In Progress
-                      </div>
-                      <Badge variant="secondary">{projectStats.inProgress}</Badge>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleStatusFilter('Completed')}>
-                    <div className="flex justify-between w-full">
-                      <div className="flex items-center">
-                        <FiCheckCircle className="mr-1.5 text-emerald-500" aria-hidden="true" />
-                        Completed
-                      </div>
-                      <Badge variant="secondary">{projectStats.completed}</Badge>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => handleSort('projectName')}>
-                    <div className="flex justify-between w-full">
-                      <span>Project Name</span>
-                      {sortField === 'projectName' &&
-                        (sortDirection === 'asc' ? (
-                          <FiArrowUp className="ml-2" aria-hidden="true" />
-                        ) : (
-                          <FiArrowDown className="ml-2" aria-hidden="true" />
-                        ))}
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleSort('projectId')}>
-                    <div className="flex justify-between w-full">
-                      <span>Project ID</span>
-                      {sortField === 'projectId' &&
-                        (sortDirection === 'asc' ? (
-                          <FiArrowUp className="ml-2" aria-hidden="true" />
-                        ) : (
-                          <FiArrowDown className="ml-2" aria-hidden="true" />
-                        ))}
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleSort('status')}>
-                    <div className="flex justify-between w-full">
-                      <span>Status</span>
-                      {sortField === 'status' &&
-                        (sortDirection === 'asc' ? (
-                          <FiArrowUp className="ml-2" aria-hidden="true" />
-                        ) : (
-                          <FiArrowDown className="ml-2" aria-hidden="true" />
-                        ))}
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={clearFilters} className="justify-center">
-                    Clear All Filters
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
+        {/* Filter Dropdown */}
+        <div className="w-full sm:w-[200px] md:w-[220px]">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="w-full flex items-center justify-between" aria-label="Filter and sort projects">
+                <FiFilter aria-hidden="true" />
+                <span className="">Filter</span>
+                <FiChevronDown aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => handleStatusFilter('all')}>
+                <div className="flex justify-between w-full">
+                  <span>All Projects</span>
+                  <Badge variant="secondary">{projectStats.total}</Badge>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleStatusFilter('Planned')}>
+                <div className="flex justify-between w-full">
+                  <div className="flex items-center">
+                    <FiClock className="mr-1.5 text-amber-500" />
+                    Planned
+                  </div>
+                  <Badge variant="secondary">{projectStats.planned}</Badge>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleStatusFilter('In Progress')}>
+                <div className="flex justify-between w-full">
+                  <div className="flex items-center">
+                    <FiAlertCircle className="mr-1.5 text-blue-500" />
+                    In Progress
+                  </div>
+                  <Badge variant="secondary">{projectStats.inProgress}</Badge>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleStatusFilter('Completed')}>
+                <div className="flex justify-between w-full">
+                  <div className="flex items-center">
+                    <FiCheckCircle className="mr-1.5 text-emerald-500" />
+                    Completed
+                  </div>
+                  <Badge variant="secondary">{projectStats.completed}</Badge>
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => handleSort('projectName')}>
+                <div className="flex justify-between w-full">
+                  <span>Project Name</span>
+                  {sortField === 'projectName' &&
+                    (sortDirection === 'asc' ? (
+                      <FiArrowUp className="ml-2" />
+                    ) : (
+                      <FiArrowDown className="ml-2" />
+                    ))}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSort('projectId')}>
+                <div className="flex justify-between w-full">
+                  <span>Project ID</span>
+                  {sortField === 'projectId' &&
+                    (sortDirection === 'asc' ? (
+                      <FiArrowUp className="ml-2" />
+                    ) : (
+                      <FiArrowDown className="ml-2" />
+                    ))}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSort('status')}>
+                <div className="flex justify-between w-full">
+                  <span>Status</span>
+                  {sortField === 'status' &&
+                    (sortDirection === 'asc' ? (
+                      <FiArrowUp className="ml-2" />
+                    ) : (
+                      <FiArrowDown className="ml-2" />
+                    ))}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={clearFilters} className="justify-center">
+                Clear All Filters
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
       {sortedProjects.length === 0 ? (
         <Card className="mt-8 text-center">
