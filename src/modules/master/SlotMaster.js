@@ -246,9 +246,9 @@ export default function SlotMaster() {
                     <TableCell className="text-center">{slot.shift}</TableCell>
                     <TableCell className="text-center">
                       <Button
-                        variant="outline"
+                        variant="icon"
                         size="sm"
-                        className="text-danger"
+                        className="text-red-500 hover:text-red-600 cursor-pointer"
                         onClick={() => {
                           setSlotToDelete(slot.slotNo);
                           setOpenDelete(true);

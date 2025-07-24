@@ -23,7 +23,7 @@ import {
   FiEdit,
   FiPaperclip,
 } from "react-icons/fi";
-import { Briefcase, TrendingUp, FileStack, BugIcon } from "lucide-react";
+import { Briefcase, TrendingUp, FileStack, BugIcon, CheckCircle, Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ViewTeamByProjectId from "@/modules/team/viewTeamByProjectId";
 import CreateTeamForm from "@/modules/team/createTeam";
@@ -52,6 +52,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 // import ProjectWiseTeamMeet from "../meetings/team-meetings/ProjectWiseTeamMeet";
 import ProjectWisebugList from "../bug/ProjectWisebugList";
 import Spinner from "@/components/loader/Spinner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 export default function ViewProjectById({ projectId }) {
   const router = useRouter();
@@ -128,7 +129,7 @@ export default function ViewProjectById({ projectId }) {
     }
   };
 
-  const statusOptions = ["In Progress", "Completed", "Planned"];
+  const statusOptions = ["In Progress", "Completed"];
 
   const tabs = [
     {
@@ -159,8 +160,8 @@ export default function ViewProjectById({ projectId }) {
   ];
 
   const isTasksTeamDisabled = currentUser?.role !== "CPC" && !isTeamLead;
-  const isBugDisabled = currentUser?.role !== "CPC" && !isTeamLead;
-
+  const isBugDisabled = currentUser?.role?.toLowerCase() !== "cpc" && !isTeamLead;
+// console.log("wrfgwr",isBugDisabled, currentUser?.role)
 
     const [showLoader, setShowLoader] = useState(true);
 
@@ -180,7 +181,7 @@ export default function ViewProjectById({ projectId }) {
   }
   if (status.fetchProject === "failed") {
     return (
-      <div className="w-full h-full">
+      <div className="w-full h-full ">
         <Card className="border border-red-200 shadow-lg h-[100vh] w-[100vw]">
           <CardContent className="p-6">
             <p className="font-semibold text-lg text-red-700 mb-2">
@@ -199,6 +200,7 @@ export default function ViewProjectById({ projectId }) {
   }
 
   if (!project || !project.data) return null;
+const canEditStatus = currentUser?.role?.toLowerCase() === "cpc" || isTeamLead;
 
   return (
     <div className="min-h-[100vh]">
@@ -313,7 +315,7 @@ export default function ViewProjectById({ projectId }) {
                       <span className="font-semibold text-gray-900 w-28">
                         Status:
                       </span>
-                      <Badge
+                      {/* <Badge
                         onClick={() => {
                           if (currentUser?.role === "cpc" || isTeamLead) {
                             setIsStatusModalOpen(true);
@@ -330,7 +332,47 @@ export default function ViewProjectById({ projectId }) {
                         aria-label={`Change status from ${project.data.status}`}
                       >
                         {project.data.status}
-                      </Badge>
+                      </Badge> */}
+             <TooltipProvider>
+  {canEditStatus ? (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div
+          onClick={() => setIsStatusModalOpen(true)}
+          className={`inline-flex items-center gap-1 cursor-pointer px-3 py-1 rounded-md text-sm font-medium ${
+            project.data.status === "Completed"
+              ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
+              : project.data.status === "In Progress"
+              ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
+              : project.data.status === "Cancelled"
+              ? "bg-red-100 text-red-800 hover:bg-red-200"
+              : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+          }`}
+        >
+          {project.data.status}
+          <Pencil className="w-4 h-4 opacity-70" />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Click to update project status</p>
+      </TooltipContent>
+    </Tooltip>
+  ) : (
+    <div
+      className={`inline-block px-3 py-1 rounded-md text-sm font-medium ${
+        project.data.status === "Completed"
+          ? "bg-blue-100 text-blue-800"
+          : project.data.status === "In Progress"
+          ? "bg-blue-100 text-blue-800"
+          : project.data.status === "Cancelled"
+          ? "bg-red-100 text-red-800"
+          : "bg-gray-100 text-gray-800"
+      }`}
+    >
+      {project.data.status}
+    </div>
+  )}
+</TooltipProvider>
                     </div>
                     <div className="flex items-center gap-3">
                       <FiUser className="h-4 w-4 text-[#38b000]" />
@@ -526,7 +568,7 @@ export default function ViewProjectById({ projectId }) {
       <Dialog open={isStatusModalOpen} onOpenChange={setIsStatusModalOpen}>
         <DialogContent className="bg-white rounded-lg shadow-2xl max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-gray-900">
+            <DialogTitle className="text-lg font-semibold text-blue-900">
               Update Project Status
             </DialogTitle>
           </DialogHeader>

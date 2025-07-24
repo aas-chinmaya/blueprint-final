@@ -693,7 +693,7 @@ export default function ProjectBugs({ projectId }) {
             </div>
           )}
 
-          <div className="flex justify-end gap-2">
+          {/* <div className="flex justify-end gap-2">
             {selectedBug?.status.toLowerCase() !== "resolved" && (
               <Button
                 onClick={() => handleResolveBug(selectedBug.bug_id)}
@@ -707,7 +707,7 @@ export default function ProjectBugs({ projectId }) {
                 )}
               </Button>
             )}
-          </div>
+          </div> */}
         </DialogContent>
       </Dialog>
     </div>
