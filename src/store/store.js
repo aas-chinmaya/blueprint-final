@@ -44,6 +44,9 @@ import projectMeetingsReducer from "@/features/projetMeetingSlice"
 
 import projectMeetReducer from "@/features/projectmeetSlice"
 
+
+import projectMeetingMomReducer from '@/features/projectmeetingmomSlice'; // Adjust path as needed
+
 const store = configureStore({
   reducer: {
     sidebar:sidebarReducer,
@@ -90,7 +93,8 @@ teammeetingMom:teammeetingMomReducer,
 
 
   //project meeting
-  projectMeet:projectMeetReducer
+  projectMeet:projectMeetReducer,
+     projectMeetingMom: projectMeetingMomReducer,
   
   },
 })

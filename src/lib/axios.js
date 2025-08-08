@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // 🌍 Root Domain from .env
-// const BASE_ROOT = 'https://bluapi.aas.technology';
+// const BASE_ROOT = 'https://blubac.aas.technology';
 const BASE_ROOT = "http://localhost:8080" || 'https://bluapi.aas.technology';
 
 // 1️⃣ Instance 1 - Root domain - /api

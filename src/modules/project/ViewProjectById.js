@@ -53,6 +53,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import ProjectWisebugList from "../bug/ProjectWisebugList";
 import Spinner from "@/components/loader/Spinner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import ProjectwiseAllMeetingAndMom from "../meetings/project/ProjectwiseAllmeeting&Mom";
 
 export default function ViewProjectById({ projectId }) {
   const router = useRouter();
@@ -156,6 +157,11 @@ export default function ViewProjectById({ projectId }) {
       id: "bug",
       label: "Bug",
       icon: <BugIcon className="h-5 w-5" />,
+    },
+    {
+      id: "meeting",
+      label: "Meeting",
+      icon: <FiUsers className="h-5 w-5" />,
     },
   ];
 
@@ -315,24 +321,7 @@ const canEditStatus = currentUser?.role?.toLowerCase() === "cpc" || isTeamLead;
                       <span className="font-semibold text-gray-900 w-28">
                         Status:
                       </span>
-                      {/* <Badge
-                        onClick={() => {
-                          if (currentUser?.role === "cpc" || isTeamLead) {
-                            setIsStatusModalOpen(true);
-                          }
-                        }}
-                        className={`cursor-pointer px-3 py-1 text-sm font-medium ${project.data.status === "Completed"
-                          ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
-                          : project.data.status === "In Progress"
-                            ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
-                            : project.data.status === "Cancelled"
-                              ? "bg-red-100 text-red-800 hover:bg-red-200"
-                              : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-                          }`}
-                        aria-label={`Change status from ${project.data.status}`}
-                      >
-                        {project.data.status}
-                      </Badge> */}
+                
              <TooltipProvider>
   {canEditStatus ? (
     <Tooltip>
@@ -555,6 +544,15 @@ const canEditStatus = currentUser?.role?.toLowerCase() === "cpc" || isTeamLead;
 
 
                 <ProjectWisebugList project={project.data} projectId={projectId} teamLeadId={project?.data?.teamLeadId} />
+              </div>
+            </TabsContent>
+
+
+            <TabsContent value="meeting" className="min-h-[calc(100vh-200px)]">
+              <div className="space-y-4">
+
+
+                <ProjectwiseAllMeetingAndMom project={project.data} projectId={projectId} teamLeadId={project?.data?.teamLeadId} />
               </div>
             </TabsContent>
 
