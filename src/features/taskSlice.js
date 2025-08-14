@@ -307,6 +307,110 @@ export const updateTaskReviewStatus = createAsyncThunk(
   }
 );
 
+// export const downloadTasksReport = createAsyncThunk(
+//   'task/downloadTasksReport',
+//   async (payload, { rejectWithValue }) => {
+//     try {
+//       const response = await axiosInstance.post('/task/report', payload, {
+//         responseType: 'blob',
+//         timeout: 10000,
+//         validateStatus: (status) => status >= 200 && status < 500,
+//       });
+
+//       // If response is not Blob, it means backend sent error JSON/text
+//       if (!(response.data instanceof Blob)) {
+//         const textData = await response.data.text();
+//         try {
+//           const parsed = JSON.parse(textData);
+//           throw new Error(parsed.message || textData);
+//         } catch {
+//           throw new Error(textData || 'Unknown error from server');
+//         }
+//       }
+
+//       // Extract file name from header or fallback
+//       let fileName = `tasks_report_${payload.projectId}_${new Date().toISOString().split('T')[0]}.xlsx`;
+//       const contentDisposition = response.headers['content-disposition'];
+//       if (contentDisposition) {
+//         const match = contentDisposition.match(/filename="(.+)"/);
+//         if (match?.[1]) {
+//           fileName = match[1];
+//         }
+//       }
+
+//       // Download file
+//       const blob = new Blob([response.data], {
+//         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+//       });
+//       const url = URL.createObjectURL(blob);
+//       const link = document.createElement('a');
+//       link.href = url;
+//       link.download = fileName;
+//       document.body.appendChild(link);
+//       link.click();
+//       link.remove();
+//       URL.revokeObjectURL(url);
+
+//       return true;
+//     } catch (error) {
+//       // Always use backend’s error message if available
+//       return rejectWithValue(error.message || 'Error from server');
+//     }
+//   }
+// );
+export const downloadTasksReport = createAsyncThunk(
+  'task/downloadTasksReport',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post('/task/export-tasks', payload, {
+        responseType: 'blob',
+        timeout: 10000,
+        validateStatus: (status) => status >= 200 && status < 500, // let us handle errors manually
+      });
+
+      // If it's NOT an Excel file, treat it as an error and parse JSON
+      const contentType = response.headers['content-type'] || '';
+      if (!contentType.includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+        // Convert blob to text
+        const text = await response.data.text();
+
+        try {
+          // If backend sent JSON, extract its message
+          const parsed = JSON.parse(text);
+          return rejectWithValue(parsed.message || text);
+        } catch {
+          // If backend sent plain text, just use that
+          return rejectWithValue(text);
+        }
+      }
+
+      // ✅ Excel file case → download
+      let fileName = `tasks_report_${payload.projectId}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      const contentDisposition = response.headers['content-disposition'];
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="(.+)"/);
+        if (match?.[1]) fileName = match[1];
+      }
+
+      const blob = new Blob([response.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+
+      return true;
+    } catch (error) {
+      return rejectWithValue(error.message || 'Error from server');
+    }
+  }
+);
+
 const initialState = {
   tasks: [], // All tasks
   currentTask: null, // Single task for viewing/editing
@@ -522,6 +626,22 @@ const taskSlice = createSlice({
       .addCase(updateTaskReviewStatus.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      
+      
+      
+      
+      
+      .addCase(downloadTasksReport.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(downloadTasksReport.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(downloadTasksReport.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || "Failed to download report";
       });
   },
 });

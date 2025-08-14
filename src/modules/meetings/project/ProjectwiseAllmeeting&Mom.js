@@ -1,16 +1,4 @@
-// import React from 'react';
 
-// const ProjectwiseAllMeetingAndMom = () => {
-//   return (
-//     <div className="p-4">
-//       <h2 className="text-xl font-semibold mb-2">Projectwise All Meetings & MOM</h2>
-//       <p className="text-gray-600">This component will display all meetings and MOM (Minutes of Meeting) related to each project.</p>
-//       {/* You can add future UI here */}
-//     </div>
-//   );
-// };
-
-// export default ProjectwiseAllMeetingAndMom;
 
 
 
@@ -91,27 +79,31 @@ const ProjectwiseAllMeetingAndMom = () => {
   const [openViewModal, setOpenViewModal] = useState(false);
   const [momToDelete, setMomToDelete] = useState(null);
   const [formErrors, setFormErrors] = useState({});
+useEffect(() => {
+  dispatch(
+    fetchAllProjectMoms({
+      search: searchQuery,
+      sort: sortField,
+      order: sortOrder,
+      filter: filters,
+    })
+  )
+    .unwrap()
+    .catch((error) => {
+      toast.error(
+        error?.status === 404
+          ? 'No meeting MoMs found for the given criteria.'
+          : error?.message || 'Failed to fetch MoMs.'
+      );
+    });
+}, [dispatch, searchQuery, sortField, sortOrder, filters]);
 
-  useEffect(() => {
-    dispatch(fetchAllProjectMoms({ search: searchQuery, sort: sortField, order: sortOrder, filter: filters }))
-      .unwrap()
-      .catch((error) => {
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: error.status === 404 ? 'No meeting MoMs found for the given criteria.' : error.message || 'Failed to fetch MoMs.',
-          className: 'bg-red-100 dark:bg-red-900 border-red-500 text-red-700 dark:text-red-200',
-        });
-      });
-  }, [dispatch, searchQuery, sortField, sortOrder, filters]);
 
   useEffect(() => {
     if (deleteSuccess) {
-      toast({
-        title: 'Success',
-        description: 'MoM deleted successfully!',
-        className: 'bg-green-100 dark:bg-green-900 border-green-500 text-green-700 dark:text-green-200',
-      });
+      toast.success(
+         'MoM deleted successfully!'
+     );
     }
   }, [deleteSuccess]);
 
@@ -148,28 +140,19 @@ const ProjectwiseAllMeetingAndMom = () => {
     try {
       if (isEditing) {
         await dispatch(updateProjectMeetingMom({ momId: selectedMom.id, updatedData: data })).unwrap();
-        toast({
-          title: 'Success',
-          description: 'MoM updated successfully!',
-          className: 'bg-green-100 dark:bg-green-900 border-green-500 text-green-700 dark:text-green-200',
-        });
+        toast.success('MoM updated successfully!'
+      );
       } else {
         await dispatch(createProjectMeetingMom(data)).unwrap();
-        toast({
-          title: 'Success',
-          description: 'MoM created successfully!',
-          className: 'bg-green-100 dark:bg-green-900 border-green-500 text-green-700 dark:text-green-200',
-        });
+        toast.success( 'MoM created successfully!'
+      );
       }
       setOpenCreateUpdateModal(false);
       resetForm();
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: error.message || 'Failed to save MoM.',
-        className: 'bg-red-100 dark:bg-red-900 border-red-500 text-red-700 dark:text-red-200',
-      });
+      toast(
+        error.message || 'Failed to save MoM.',
+     );
     }
   };
 
@@ -199,12 +182,9 @@ const ProjectwiseAllMeetingAndMom = () => {
     setIsEditing(true);
     setOpenCreateUpdateModal(true);
     dispatch(fetchMeetingMomById(mom.id)).catch((error) => {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: error.status === 404 ? 'The selected MoM was not found.' : error.message || 'Failed to fetch MoM details.',
-        className: 'bg-red-100 dark:bg-red-900 border-red-500 text-red-700 dark:text-red-200',
-      });
+      toast(
+   error.status === 404 ? 'The selected MoM was not found.' : error.message || 'Failed to fetch MoM details.',
+     );
     });
   };
 
@@ -214,12 +194,8 @@ const ProjectwiseAllMeetingAndMom = () => {
       setOpenDeleteModal(false);
       setMomToDelete(null);
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: error.status === 404 ? 'The MoM to delete was not found.' : error.message || 'Failed to delete MoM.',
-        className: 'bg-red-100 dark:bg-red-900 border-red-500 text-red-700 dark:text-red-200',
-      });
+      toast( error.status === 404 ? 'The MoM to delete was not found.' : error.message || 'Failed to delete MoM.',
+    );
     }
   };
 
@@ -228,12 +204,8 @@ const ProjectwiseAllMeetingAndMom = () => {
       await dispatch(fetchMeetingMomView(momId)).unwrap();
       setOpenViewModal(true);
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: error.status === 404 ? 'The MoM PDF was not found.' : error.message || 'Failed to load PDF.',
-        className: 'bg-red-100 dark:bg-red-900 border-red-500 text-red-700 dark:text-red-200',
-      });
+      toast(error.status === 404 ? 'The MoM PDF was not found.' : error.message || 'Failed to load PDF.',
+   );
     }
   };
 
