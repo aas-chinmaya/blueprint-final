@@ -320,7 +320,7 @@
 
 
 "use client";
-
+import { format, parseISO } from "date-fns";
 import { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -343,7 +343,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+
 
 const AllTaskListByProjectId = ({ projectId, project }) => {
   const { currentUser, isTeamLead } = useLoggedinUser(project?.teamLeadId);
@@ -526,7 +526,8 @@ const AllTaskListByProjectId = ({ projectId, project }) => {
       search: searchQuery || undefined,
       priority: priorityFilter !== "all" ? priorityFilter : undefined,
       status: statusFilter !== "all" ? statusFilter : undefined,
-      assignedTo: assignedToFilter !== "all" ? assignedToFilter : undefined,
+      assignedTo: assignedToFilter !== "all" ? assignedMembersMap[assignedToFilter] : undefined,
+      // assignedTo: assignedToFilter !== "all" ? assignedToFilter : undefined,
       dateFrom: dateFrom ? format(dateFrom, "yyyy-MM-dd") : undefined,
       dateTo: dateTo ? format(dateTo, "yyyy-MM-dd") : undefined,
     };
@@ -535,11 +536,12 @@ const AllTaskListByProjectId = ({ projectId, project }) => {
       ? `${sortConfig.key}_${sortConfig.direction}`
       : undefined;
 
-    const employeeId = assignedToFilter !== "all" ? assignedMembersMap[assignedToFilter] : undefined;
+    const assignedTo = assignedToFilter !== "all" ? assignedMembersMap[assignedToFilter] : undefined;
+    // const employeeId = assignedToFilter !== "all" ? assignedMembersMap[assignedToFilter] : undefined;
 
     const payload = {
       projectId,
-      employeeId,
+      assignedTo,
       filterObj,
       sortKey,
     };
@@ -741,11 +743,11 @@ const AllTaskListByProjectId = ({ projectId, project }) => {
                       {task.priority || "N/A"}
                     </span>
                   </TableCell>
-                  <TableCell className="px-4 py-3 text-sm sm:text-base">
-                    {task.deadline
-                      ? format(new Date(task.deadline), "dd/MM/yyyy")
-                      : "N/A"}
-                  </TableCell>
+                
+                <TableCell className="px-4 py-3 text-sm sm:text-base">
+  {task.deadline ? new Date(task.deadline).toISOString().split("T")[0] : "N/A"}
+</TableCell>
+
                   <TableCell className="px-4 py-3">
                     <span
                       className={cn(

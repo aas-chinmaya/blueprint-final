@@ -53,7 +53,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import ProjectWisebugList from "../bug/ProjectWisebugList";
 import Spinner from "@/components/loader/Spinner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import ProjectwiseAllMeetingAndMom from "../meetings/project/ProjectwiseAllmeeting&Mom";
+import ProjectwiseAllMeetingAndMom from "../meetings/project/ProjectwiseAllmeetingMom";
 
 export default function ViewProjectById({ projectId }) {
   const router = useRouter();

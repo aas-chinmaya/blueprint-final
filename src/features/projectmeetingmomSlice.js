@@ -1,15 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { axiosInstance } from '@/lib/axios';
 
+/* ========== Async Thunks ========== */
+
 // Create MoM
 export const createProjectMeetingMom = createAsyncThunk(
-  'projectMeetingMom/createProjectMeetingMom',
+  'projectMeetingMom/create',
   async (momData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post('/mom/projectmom', momData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      const response = await axiosInstance.post('/projectmom/creatprojectmom', momData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       return response.data;
     } catch (error) {
@@ -18,18 +18,12 @@ export const createProjectMeetingMom = createAsyncThunk(
   }
 );
 
-// Fetch all MoMs (with optional search, sort, and filter)
+// Fetch all MoMs (by projectId)
 export const fetchAllProjectMoms = createAsyncThunk(
-  'projectMeetingMom/fetchAllProjectMoms',
-  async ({ search = '', sort = 'createdAt', order = 'desc', filter = {} }, { rejectWithValue }) => {
+  'projectMeetingMom/fetchAll',
+  async (projectId, { rejectWithValue }) => {
     try {
-      const params = new URLSearchParams({
-        search,
-        sort,
-        order,
-        ...filter, // e.g., { projectId: '123', meetingMode: 'online' }
-      });
-      const response = await axiosInstance.get(`/mom?${params.toString()}`);
+      const response = await axiosInstance.get(`/projectmom/fetchallmom/${projectId}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch MoMs');
@@ -37,12 +31,12 @@ export const fetchAllProjectMoms = createAsyncThunk(
   }
 );
 
-// Fetch MoM by momId
+// Fetch single MoM by ID
 export const fetchMeetingMomById = createAsyncThunk(
-  'projectMeetingMom/fetchMeetingMomById',
+  'projectMeetingMom/fetchById',
   async (momId, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get(`/mom/${momId}`);
+      const response = await axiosInstance.get(`/projectmom/${momId}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch MoM');
@@ -50,15 +44,13 @@ export const fetchMeetingMomById = createAsyncThunk(
   }
 );
 
-// Update MoM by momId
+// Update MoM by ID
 export const updateProjectMeetingMom = createAsyncThunk(
-  'projectMeetingMom/updateProjectMeetingMom',
+  'projectMeetingMom/update',
   async ({ momId, updatedData }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.put(`/mom/${momId}`, updatedData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      const response = await axiosInstance.put(`/projectmom/${momId}`, updatedData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       return response.data;
     } catch (error) {
@@ -67,25 +59,25 @@ export const updateProjectMeetingMom = createAsyncThunk(
   }
 );
 
-// Delete MoM by momId
+// Delete MoM by ID
 export const deleteProjectMeetingMom = createAsyncThunk(
-  'projectMeetingMom/deleteProjectMeetingMom',
+  'projectMeetingMom/delete',
   async (momId, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.delete(`/mom/${momId}`);
-      return response.data;
+      await axiosInstance.delete(`/projectmom/${momId}`);
+      return momId; // return deleted ID so we can remove from state
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to delete MoM');
     }
   }
 );
 
-// Fetch MoM PDF View
+// Fetch MoM PDF view
 export const fetchMeetingMomView = createAsyncThunk(
-  'projectMeetingMom/fetchMeetingMomView',
+  'projectMeetingMom/fetchPdf',
   async (momId, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get(`/mom/view/${momId}`, {
+      const response = await axiosInstance.get(`/projectmom/view/${momId}`, {
         responseType: 'blob',
       });
 
@@ -102,35 +94,26 @@ export const fetchMeetingMomView = createAsyncThunk(
   }
 );
 
+/* ========== Slice ========== */
+
 const projectMeetingMomSlice = createSlice({
   name: 'projectMeetingMom',
   initialState: {
-    moms: [], // List of all MoMs
+    moms: [], // list of all MoMs
     momsLoading: false,
     momsError: null,
+
     selectedMom: null,
     selectedMomLoading: false,
     selectedMomError: null,
+
     deleteSuccess: false,
+
     meetingMomView: null,
     meetingMomViewLoading: false,
     meetingMomViewError: null,
-    searchQuery: '',
-    sortField: 'createdAt',
-    sortOrder: 'desc',
-    filters: {},
   },
   reducers: {
-    setSearchQuery: (state, action) => {
-      state.searchQuery = action.payload;
-    },
-    setSort: (state, action) => {
-      state.sortField = action.payload.field;
-      state.sortOrder = action.payload.order;
-    },
-    setFilters: (state, action) => {
-      state.filters = action.payload;
-    },
     resetSelectedMom: (state) => {
       state.selectedMom = null;
       state.selectedMomLoading = false;
@@ -153,13 +136,14 @@ const projectMeetingMomSlice = createSlice({
       .addCase(createProjectMeetingMom.fulfilled, (state, action) => {
         state.selectedMomLoading = false;
         state.selectedMom = action.payload;
-        state.moms = [action.payload, ...state.moms]; // Add new MoM to list
+        state.moms.unshift(action.payload); // add new mom to top
       })
       .addCase(createProjectMeetingMom.rejected, (state, action) => {
         state.selectedMomLoading = false;
         state.selectedMomError = action.payload;
       })
-      // Fetch All MoMs
+
+      // Fetch all MoMs
       .addCase(fetchAllProjectMoms.pending, (state) => {
         state.momsLoading = true;
         state.momsError = null;
@@ -172,7 +156,8 @@ const projectMeetingMomSlice = createSlice({
         state.momsLoading = false;
         state.momsError = action.payload;
       })
-      // Fetch MoM by momId
+
+      // Fetch by ID
       .addCase(fetchMeetingMomById.pending, (state) => {
         state.selectedMomLoading = true;
         state.selectedMomError = null;
@@ -185,6 +170,7 @@ const projectMeetingMomSlice = createSlice({
         state.selectedMomLoading = false;
         state.selectedMomError = action.payload;
       })
+
       // Update MoM
       .addCase(updateProjectMeetingMom.pending, (state) => {
         state.selectedMomLoading = true;
@@ -201,6 +187,7 @@ const projectMeetingMomSlice = createSlice({
         state.selectedMomLoading = false;
         state.selectedMomError = action.payload;
       })
+
       // Delete MoM
       .addCase(deleteProjectMeetingMom.pending, (state) => {
         state.selectedMomLoading = true;
@@ -211,14 +198,15 @@ const projectMeetingMomSlice = createSlice({
         state.selectedMomLoading = false;
         state.selectedMom = null;
         state.deleteSuccess = true;
-        state.moms = state.moms.filter((mom) => mom.id !== action.meta.arg);
+        state.moms = state.moms.filter((mom) => mom.id !== action.payload);
       })
       .addCase(deleteProjectMeetingMom.rejected, (state, action) => {
         state.selectedMomLoading = false;
         state.selectedMomError = action.payload;
         state.deleteSuccess = false;
       })
-      // Fetch MoM PDF View
+
+      // Fetch MoM PDF
       .addCase(fetchMeetingMomView.pending, (state) => {
         state.meetingMomViewLoading = true;
         state.meetingMomViewError = null;
@@ -236,6 +224,5 @@ const projectMeetingMomSlice = createSlice({
   },
 });
 
-export const { setSearchQuery, setSort, setFilters, resetSelectedMom, resetMeetingMomView } =
-  projectMeetingMomSlice.actions;
+export const { resetSelectedMom, resetMeetingMomView } = projectMeetingMomSlice.actions;
 export default projectMeetingMomSlice.reducer;
