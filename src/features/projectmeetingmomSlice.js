@@ -24,7 +24,8 @@ export const fetchAllProjectMoms = createAsyncThunk(
   async (projectId, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(`/projectmom/fetchallmom/${projectId}`);
-      return response.data;
+      console.log(response.data.data);
+      return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch MoMs');
     }
@@ -36,7 +37,7 @@ export const fetchMeetingMomById = createAsyncThunk(
   'projectMeetingMom/fetchById',
   async (momId, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get(`/projectmom/${momId}`);
+      const response = await axiosInstance.get(`/projectmom/view/${momId}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch MoM');
