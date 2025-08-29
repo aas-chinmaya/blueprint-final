@@ -286,7 +286,7 @@ export function SectionCardCPC() {
     dispatch(fetchAllProjects());
     dispatch(getAllTaskList());
     dispatch(fetchAllTeams());
-  }, []); // ✅ Empty dependency = only on initial mount
+  }); 
 
   const counts = {
     projects: projects?.length || 0,

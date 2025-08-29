@@ -96,6 +96,7 @@ const updateTeam = createAsyncThunk(
       // console.log(`Updating tea/m ${teamId} with data:`, teamData);
       const response = await axiosInstance.put(`/team/updateteam/${teamId}`, {
         projectId: teamData.projectId,
+        teamName: teamData.teamName,
         projectName: teamData.projectName,
         teamLeadId: teamData.teamLeadId,
         teamLeadName: teamData.teamLeadName,

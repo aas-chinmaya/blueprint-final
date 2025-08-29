@@ -37,7 +37,7 @@ export const fetchMeetingMomById = createAsyncThunk(
   'projectMeetingMom/fetchById',
   async (momId, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get(`/projectmom/view/${momId}`);
+      const response = await axiosInstance.get(`/projectmom/getmombymomId/${momId}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch MoM');
@@ -50,7 +50,7 @@ export const updateProjectMeetingMom = createAsyncThunk(
   'projectMeetingMom/update',
   async ({ momId, updatedData }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.put(`/projectmom/${momId}`, updatedData, {
+      const response = await axiosInstance.post(`/projectmom/creatprojectmom`, updatedData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       return response.data;
@@ -227,3 +227,5 @@ const projectMeetingMomSlice = createSlice({
 
 export const { resetSelectedMom, resetMeetingMomView } = projectMeetingMomSlice.actions;
 export default projectMeetingMomSlice.reducer;
+
+

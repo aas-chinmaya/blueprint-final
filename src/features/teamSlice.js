@@ -76,6 +76,7 @@ export const createTeam = createAsyncThunk(
       // console.log('Creating team with data:', teamData);
       const response = await axiosInstance.post('/team/createteam', {
         projectId: teamData.projectId,
+        teamName: teamData.teamName,
         projectName: teamData.projectName,
         teamLeadId: teamData.teamLeadId,
         teamLeadName: teamData.teamLeadName,

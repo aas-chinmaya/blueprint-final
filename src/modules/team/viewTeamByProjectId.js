@@ -316,7 +316,7 @@ if (!teams?.length || status === "failed") {
                     {team.projectName}
                   </h3>
                   <p className="text-xs sm:text-sm text-gray-500 mt-0.5 font-medium">
-                    Team ID: {team.teamId} {/* Display teamId */}
+                    Team Name: {team.teamName} {/* Display teamId */}
                   </p>
                   
                 </div>
@@ -610,7 +610,7 @@ if (!teams?.length || status === "failed") {
                       {selectedTeam.projectName}
                     </h2>
                     <p className="text-xs sm:text-sm text-gray-600">
-                      Team ID: {selectedTeam.teamId} {/* Display teamId */}
+                      Team Name: {selectedTeam.teamName} {/* Display teamId */}
                     </p>
                    
                   </div>

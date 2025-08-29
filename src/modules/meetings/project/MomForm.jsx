@@ -1,357 +1,401 @@
-import React from 'react';
+
+
+import { cn } from '@/lib/utils';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format, parseISO, isValid } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
-import { Loader2, FileText, List, Calendar as CalendarIcon, Clock, Video, Users, Image as ImageIcon } from 'lucide-react';
-import { format, set, subYears, differenceInMinutes } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { fetchMeetingMomById, createProjectMeetingMom, updateProjectMeetingMom } from '@/features/projectmeetingmomSlice';
 
-const MomForm = ({
-  open,
-  onOpenChange,
-  formData,
-  setFormData,
-  formErrors,
-  setFormErrors,
-  editingMom,
-  selectedMomLoading,
-  currentUser,
-  projectName,
-  projectId,
-  handleSubmit,
-}) => {
-  const calculateDuration = (startTime, endTime, meetingDate) => {
-    if (startTime && endTime && meetingDate) {
-      const [startHours, startMinutes] = startTime.split(':').map(Number);
-      const [endHours, endMinutes] = endTime.split(':').map(Number);
-      const startDate = set(meetingDate, { hours: startHours, minutes: startMinutes });
-      const endDate = set(meetingDate, { hours: endHours, minutes: endMinutes });
-      const diffMinutes = differenceInMinutes(endDate, startDate);
-      if (diffMinutes <= 0) return '';
-      const hours = Math.floor(diffMinutes / 60);
-      const minutes = diffMinutes % 60;
-      return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+const MomForm = ({ open, onOpenChange, selectedMom, selectedMomLoading, selectedMomError, editingMom, currentUser, projectName, projectId }) => {
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    projectName: projectName || '',
+    projectId: projectId || '',
+    agenda: '',
+    meetingMode: 'offline',
+    meetingId: '',
+    title: '',
+    meetingDate: null,
+    startTime: '',
+    duration: '',
+    attendees: [],
+    summary: '',
+    notes: '',
+    createdBy: currentUser || '',
+    status: 'draft',
+    signature: null,
+    signatureUrl: '',
+  });
+  const [formErrors, setFormErrors] = useState({});
+  const [newAttendee, setNewAttendee] = useState('');
+
+  // Fetch MoM data when in edit mode
+  useEffect(() => {
+    if (editingMom && editingMom.momId) {
+      dispatch(fetchMeetingMomById(editingMom.momId));
     }
-    return '';
-  };
+  }, [editingMom, dispatch]);
+
+  // Handle API errors
+  useEffect(() => {
+    if (selectedMomError) {
+      toast.error(selectedMomError);
+    }
+  }, [selectedMomError]);
+
+  // Autofill form when selectedMom is updated
+  useEffect(() => {
+    if (editingMom && selectedMom && selectedMom.data) {
+      const momData = selectedMom.data;
+      const meetingDate = momData.date && isValid(parseISO(momData.date)) ? parseISO(momData.date) : null;
+      const startTime = momData.time || '';
+
+      setFormData({
+        projectName: projectName || momData.projectName || '',
+        projectId: projectId || momData.projectId || '',
+        agenda: momData.agenda || '',
+        meetingMode: momData.meetingMode || 'offline',
+        meetingId: momData.meetingId || '',
+        title: momData.title || momData.momId || '',
+        meetingDate,
+        startTime,
+        duration: momData.duration || '',
+        attendees: Array.isArray(momData.attendees) ? momData.attendees : [],
+        summary: momData.summary || '',
+        notes: momData.notes || '',
+        createdBy: currentUser || momData.createdBy || '',
+        status: momData.status || 'draft',
+        signature: null,
+        signatureUrl: momData.signature || '',
+      });
+      setFormErrors({});
+    } else if (!editingMom) {
+      // Reset form for create mode
+      setFormData({
+        projectName: projectName || '',
+        projectId: projectId || '',
+        agenda: '',
+        meetingMode: 'offline',
+        meetingId: '',
+        title: '',
+        meetingDate: null,
+        startTime: '',
+        duration: '',
+        attendees: [],
+        summary: '',
+        notes: '',
+        createdBy: currentUser || '',
+        status: 'draft',
+        signature: null,
+        signatureUrl: '',
+      });
+      setFormErrors({});
+    }
+  }, [editingMom, selectedMom, projectName, projectId, currentUser]);
 
   const validateForm = () => {
     const errors = {};
-    if (!formData.title.trim()) errors.title = 'Title is required';
-    if (!formData.agenda.trim()) errors.agenda = 'Agenda is required';
+    if (!formData.title) errors.title = 'Title is required';
+    if (!formData.agenda) errors.agenda = 'Agenda is required';
     if (!formData.meetingDate) errors.meetingDate = 'Meeting date is required';
     if (!formData.startTime) errors.startTime = 'Start time is required';
-    if (!formData.endTime) errors.endTime = 'End time is required';
-    if (formData.startTime && formData.endTime && formData.meetingDate) {
-      const [startHours, startMinutes] = formData.startTime.split(':').map(Number);
-      const [endHours, endMinutes] = formData.endTime.split(':').map(Number);
-      const startDate = set(formData.meetingDate, { hours: startHours, minutes: startMinutes });
-      const endDate = set(formData.meetingDate, { hours: endHours, minutes: endMinutes });
-      if (differenceInMinutes(endDate, startDate) <= 0) {
-        errors.endTime = 'End time must be after start time';
-      }
-    }
-    if (!formData.duration.trim()) errors.duration = 'Duration is required';
-    if (!formData.summary.trim()) errors.summary = 'Summary is required';
-    if (!formData.notes.trim()) errors.notes = 'Notes are required';
-    if (formData.meetingMode === 'online' && !formData.meetingId.trim()) errors.meetingId = 'Meeting ID/Link is required for online meetings';
-    if (!editingMom && !formData.signature) errors.signature = 'Signature file is required';
+    if (formData.attendees.length === 0) errors.attendees = 'At least one attendee is required';
+    if (formData.meetingMode === 'online' && !formData.meetingId) errors.meetingId = 'Meeting ID is required for online meetings';
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
+  const handleFormSubmit = (e, status) => {
+    e.preventDefault();
+    if (validateForm()) {
+      const formattedData = new FormData();
+      formattedData.append('projectName', formData.projectName);
+      formattedData.append('projectId', formData.projectId);
+      formattedData.append('agenda', formData.agenda);
+      formattedData.append('meetingMode', formData.meetingMode);
+      if (formData.meetingId) formattedData.append('meetingId', formData.meetingId);
+      formattedData.append('title', formData.title);
+      formattedData.append('date', formData.meetingDate ? format(formData.meetingDate, 'yyyy-MM-dd') : '');
+      // Format time as HH:mm:ss
+      formattedData.append('time', formData.startTime ? `${formData.startTime}:00` : '');
+      if (formData.duration) formattedData.append('duration', formData.duration);
+      // Append each attendee as a separate entry
+      formData.attendees.forEach((attendee) => {
+        formattedData.append('attendees', attendee);
+      });
+      if (formData.summary) formattedData.append('summary', formData.summary);
+      if (formData.notes) formattedData.append('notes', formData.notes);
+      formattedData.append('createdBy', formData.createdBy);
+      formattedData.append('status', status);
+      if (formData.signature) formattedData.append('signature', formData.signature);
+
+      if (editingMom && editingMom.momId) {
+        // Update mode
+        dispatch(updateProjectMeetingMom({ momId: editingMom.momId, updatedData: formattedData }))
+          .unwrap()
+          .then(() => {
+            toast.success('Meeting minute updated successfully');
+            onOpenChange(false);
+          })
+          .catch((error) => {
+            toast.error(error || 'Failed to update meeting minute');
+          });
+      } else {
+        // Create mode
+        dispatch(createProjectMeetingMom(formattedData))
+          .unwrap()
+          .then(() => {
+            toast.success('Meeting minute created successfully');
+            onOpenChange(false);
+          })
+          .catch((error) => {
+            toast.error(error || 'Failed to create meeting minute');
+          });
+      }
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => {
-      const newFormData = { ...prev, [name]: value };
-      if (name === 'startTime' || name === 'endTime') {
-        newFormData.duration = calculateDuration(newFormData.startTime, newFormData.endTime, newFormData.meetingDate);
-      }
-      return newFormData;
-    });
+    setFormData((prev) => ({ ...prev, [name]: value }));
     setFormErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && (file.type.includes('image') || file.type === 'application/pdf')) {
+    setFormData((prev) => ({ ...prev, signature: file }));
+  };
+
+  const handleAddAttendee = () => {
+    if (newAttendee.trim()) {
       setFormData((prev) => ({
         ...prev,
-        signature: file,
-        signatureUrl: URL.createObjectURL(file),
+        attendees: [...prev.attendees, newAttendee.trim()],
       }));
-      setFormErrors((prev) => ({ ...prev, signature: '' }));
-    } else {
-      toast.error('Please upload an image or PDF file');
+      setNewAttendee('');
+      setFormErrors((prev) => ({ ...prev, attendees: '' }));
     }
   };
 
-  const handleSelectChange = (name, value) => {
+  const handleRemoveAttendee = (index) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
-      ...(name === 'meetingMode' && value === 'offline' ? { meetingId: '' } : {}),
+      attendees: prev.attendees.filter((_, i) => i !== index),
     }));
-    setFormErrors((prev) => ({ ...prev, [name]: '' }));
-  };
-
-  const handleDateChange = (date) => {
-    setFormData((prev) => {
-      const newFormData = { ...prev, meetingDate: date };
-      newFormData.duration = calculateDuration(newFormData.startTime, newFormData.endTime, date);
-      return newFormData;
-    });
-    setFormErrors((prev) => ({ ...prev, meetingDate: '' }));
-  };
-
-  const handleFormSubmit = (e, status) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    handleSubmit(e, status);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-full sm:max-w-3xl max-h-[90vh] overflow-y-auto bg-white rounded-md p-4 sm:p-6 shadow-lg">
+      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto p-6">
         <DialogHeader>
-          <DialogTitle className="text-lg sm:text-xl font-semibold text-gray-800 flex items-center gap-2">
-            <FileText className="h-5 w-5 text-indigo-500" />
-            {editingMom ? 'Edit Meeting Minute' : 'Create New Meeting Minute'}
-          </DialogTitle>
+          <DialogTitle className="text-xl font-semibold">{editingMom ? 'Edit Meeting Minute' : 'Create Meeting Minute'}</DialogTitle>
         </DialogHeader>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="title" className="text-sm font-medium text-gray-700 flex items-center gap-1">
-              <FileText className="h-4 w-4 text-indigo-500" /> Title *
-            </Label>
+        {selectedMomLoading && <div className="text-center text-gray-500">Loading...</div>}
+        {selectedMomError && <div className="text-center text-red-500 mb-4">{selectedMomError}</div>}
+        <form className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Project Name</label>
             <Input
-              id="title"
+              name="projectName"
+              value={formData.projectName}
+              onChange={handleInputChange}
+              disabled
+              className="bg-gray-100 cursor-not-allowed"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Title</label>
+            <Input
               name="title"
               value={formData.title}
               onChange={handleInputChange}
-              placeholder="Enter meeting title..."
-              className={cn('bg-gray-50 border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500 transition-colors shadow-sm', formErrors.title && 'border-red-500')}
+              className={formErrors.title ? 'border-red-500' : ''}
             />
-            {formErrors.title && <p className="text-red-500 text-xs">{formErrors.title}</p>}
+            {formErrors.title && <p className="text-red-500 text-xs mt-1">{formErrors.title}</p>}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="agenda" className="text-sm font-medium text-gray-700 flex items-center gap-1">
-              <List className="h-4 w-4 text-indigo-500" /> Agenda *
-            </Label>
-            <Textarea
-              id="agenda"
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Agenda</label>
+            <Input
               name="agenda"
               value={formData.agenda}
               onChange={handleInputChange}
-              placeholder="Enter meeting agenda..."
-              className={cn('bg-gray-50 border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500 min-h-[100px] transition-colors shadow-sm', formErrors.agenda && 'border-red-500')}
+              className={formErrors.agenda ? 'border-red-500' : ''}
             />
-            {formErrors.agenda && <p className="text-red-500 text-xs">{formErrors.agenda}</p>}
+            {formErrors.agenda && <p className="text-red-500 text-xs mt-1">{formErrors.agenda}</p>}
           </div>
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700 flex items-center gap-1">
-              <CalendarIcon className="h-4 w-4 text-indigo-500" /> Meeting Date *
-            </Label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Meeting Mode</label>
+            <Select
+              value={formData.meetingMode}
+              onValueChange={(value) => setFormData((prev) => ({ ...prev, meetingMode: value }))}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="online">Online</SelectItem>
+                <SelectItem value="offline">Offline</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          {formData.meetingMode === 'online' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Meeting ID</label>
+              <Input
+                name="meetingId"
+                value={formData.meetingId}
+                onChange={handleInputChange}
+                className={formErrors.meetingId ? 'border-red-500' : ''}
+              />
+              {formErrors.meetingId && <p className="text-red-500 text-xs mt-1">{formErrors.meetingId}</p>}
+            </div>
+          )}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Meeting Date</label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   className={cn(
-                    'w-full justify-start text-left font-normal bg-gray-50 border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500 transition-colors shadow-sm',
+                    'w-full justify-start text-left font-normal',
+                    !formData.meetingDate && 'text-muted-foreground',
                     formErrors.meetingDate && 'border-red-500'
                   )}
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4 text-gray-400" />
-                  {formData.meetingDate ? format(formData.meetingDate, 'PPP') : <span className="text-gray-400">Select Date</span>}
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formData.meetingDate ? format(formData.meetingDate, 'PPP') : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 bg-white shadow-md rounded-md">
+              <PopoverContent className="w-auto p-0">
                 <Calendar
                   mode="single"
                   selected={formData.meetingDate}
-                  onSelect={handleDateChange}
+                  onSelect={(date) => {
+                    setFormData((prev) => ({ ...prev, meetingDate: date }));
+                    setFormErrors((prev) => ({ ...prev, meetingDate: '' }));
+                  }}
                   initialFocus
-                  disabled={{ before: subYears(new Date(), 5), after: new Date() }}
-                  className="bg-white rounded-md"
                 />
               </PopoverContent>
             </Popover>
-            {formErrors.meetingDate && <p className="text-red-500 text-xs">{formErrors.meetingDate}</p>}
+            {formErrors.meetingDate && <p className="text-red-500 text-xs mt-1">{formErrors.meetingDate}</p>}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="startTime" className="text-sm font-medium text-gray-700 flex items-center gap-1">
-              <Clock className="h-4 w-4 text-indigo-500" /> Start Time *
-            </Label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Start Time</label>
             <Input
-              id="startTime"
-              name="startTime"
               type="time"
+              name="startTime"
               value={formData.startTime}
               onChange={handleInputChange}
-              className={cn('bg-gray-50 border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500 transition-colors shadow-sm', formErrors.startTime && 'border-red-500')}
+              className={formErrors.startTime ? 'border-red-500' : ''}
             />
-            {formErrors.startTime && <p className="text-red-500 text-xs">{formErrors.startTime}</p>}
+            {formErrors.startTime && <p className="text-red-500 text-xs mt-1">{formErrors.startTime}</p>}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="endTime" className="text-sm font-medium text-gray-700 flex items-center gap-1">
-              <Clock className="h-4 w-4 text-indigo-500" /> End Time *
-            </Label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Duration</label>
             <Input
-              id="endTime"
-              name="endTime"
-              type="time"
-              value={formData.endTime}
-              onChange={handleInputChange}
-              className={cn('bg-gray-50 border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500 transition-colors shadow-sm', formErrors.endTime && 'border-red-500')}
-            />
-            {formErrors.endTime && <p className="text-red-500 text-xs">{formErrors.endTime}</p>}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="duration" className="text-sm font-medium text-gray-700 flex items-center gap-1">
-              <Clock className="h-4 w-4 text-indigo-500" /> Duration
-            </Label>
-            <Input
-              id="duration"
               name="duration"
               value={formData.duration}
-              readOnly
-              className="bg-gray-100 border-indigo-200 rounded-md shadow-sm"
-            />
-            {formErrors.duration && <p className="text-red-500 text-xs">{formErrors.duration}</p>}
-          </div>
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700 flex items-center gap-1">
-              <Video className="h-4 w-4 text-indigo-500" /> Meeting Mode
-            </Label>
-            <Select value={formData.meetingMode} onValueChange={(value) => handleSelectChange('meetingMode', value)}>
-              <SelectTrigger className="bg-gray-50 border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500 transition-colors shadow-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-white shadow-md rounded-md">
-                <SelectItem value="offline">Offline Meeting</SelectItem>
-                <SelectItem value="online">Online Meeting</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          {formData.meetingMode === 'online' && (
-            <div className="space-y-2">
-              <Label htmlFor="meetingId" className="text-sm font-medium text-gray-700 flex items-center gap-1">
-                <Video className="h-4 w-4 text-indigo-500" /> Meeting ID/Link *
-              </Label>
-              <Input
-                id="meetingId"
-                name="meetingId"
-                value={formData.meetingId}
-                onChange={handleInputChange}
-                placeholder="Enter meeting ID or link..."
-                className={cn('bg-gray-50 border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500 transition-colors shadow-sm', formErrors.meetingId && 'border-red-500')}
-              />
-              {formErrors.meetingId && <p className="text-red-500 text-xs">{formErrors.meetingId}</p>}
-            </div>
-          )}
-          <div className="space-y-2">
-            <Label htmlFor="attendees" className="text-sm font-medium text-gray-700 flex items-center gap-1">
-              <Users className="h-4 w-4 text-indigo-500" /> Attendees
-            </Label>
-            <Input
-              id="attendees"
-              name="attendees"
-              value={formData.attendees}
               onChange={handleInputChange}
-              placeholder="Enter attendees (comma separated)..."
-              className="bg-gray-50 border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500 transition-colors shadow-sm"
+              placeholder="e.g., 1 hour"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="signature" className="text-sm font-medium text-gray-700 flex items-center gap-1">
-              <ImageIcon className="h-4 w-4 text-indigo-500" /> Signature File *
-            </Label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Attendees</label>
+            <div className="flex gap-2">
+              <Input
+                value={newAttendee}
+                onChange={(e) => setNewAttendee(e.target.value)}
+                placeholder="e.g., John Doe"
+                className={formErrors.attendees ? 'border-red-500' : ''}
+              />
+              <Button
+                type="button"
+                onClick={handleAddAttendee}
+                className="bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Add
+              </Button>
+            </div>
+            {formErrors.attendees && <p className="text-red-500 text-xs mt-1">{formErrors.attendees}</p>}
+            <div className="mt-2 flex flex-wrap gap-2">
+              {formData.attendees.map((attendee, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-md text-sm"
+                >
+                  {attendee}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveAttendee(index)}
+                    className="p-1"
+                  >
+                    <X className="h-4 w-4 text-red-500" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Summary</label>
             <Input
-              id="signature"
-              name="signature"
-              type="file"
-              accept="image/*,application/pdf"
-              onChange={handleFileChange}
-              className={cn('bg-gray-50 border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500 transition-colors shadow-sm', formErrors.signature && 'border-red-500')}
-            />
-            {formData.signatureUrl && (
-              <div className="mt-2">
-                <p className="text-sm text-gray-600">Current Signature:</p>
-                {formData.signatureUrl.endsWith('.pdf') ? (
-                  <a href={formData.signatureUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">
-                    View PDF
-                  </a>
-                ) : (
-                  <img src={formData.signatureUrl} alt="Signature" className="h-20 w-auto border rounded-md" />
-                )}
-              </div>
-            )}
-            {formErrors.signature && <p className="text-red-500 text-xs">{formErrors.signature}</p>}
-          </div>
-          <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="summary" className="text-sm font-medium text-gray-700 flex items-center gap-1">
-              <FileText className="h-4 w-4 text-indigo-500" /> Summary *
-            </Label>
-            <Textarea
-              id="summary"
               name="summary"
               value={formData.summary}
               onChange={handleInputChange}
-              placeholder="Enter meeting summary..."
-              className={cn('bg-gray-50 border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500 min-h-[100px] transition-colors shadow-sm', formErrors.summary && 'border-red-500')}
             />
-            {formErrors.summary && <p className="text-red-500 text-xs">{formErrors.summary}</p>}
           </div>
-          <div className="space-y-2 sm:col-span-2">
-            <Label htmlFor="notes" className="text-sm font-medium text-gray-700 flex items-center gap-1">
-              <FileText className="h-4 w-4 text-indigo-500" /> Notes *
-            </Label>
-            <Textarea
-              id="notes"
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Notes</label>
+            <Input
               name="notes"
               value={formData.notes}
               onChange={handleInputChange}
-              placeholder="Enter additional notes..."
-              className={cn('bg-gray-50 border-indigo-200 rounded-md focus:ring-2 focus:ring-indigo-500 min-h-[100px] transition-colors shadow-sm', formErrors.notes && 'border-red-500')}
             />
-            {formErrors.notes && <p className="text-red-500 text-xs">{formErrors.notes}</p>}
           </div>
-        </div>
-        <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Signature</label>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            {formData.signatureUrl && (
+              <p className="text-sm text-gray-500 mt-1">
+                Current: <a href={formData.signatureUrl} target="_blank" rel="noopener noreferrer">View Signature</a>
+              </p>
+            )}
+          </div>
+        </form>
+        <DialogFooter className="flex justify-end gap-2">
           <Button
-            type="button"
             variant="outline"
             onClick={onOpenChange}
-            className="w-full sm:w-auto bg-gray-50 border-indigo-200 text-gray-600 rounded-md hover:bg-gray-100 transition-colors shadow-sm"
+            className="border-gray-300 text-gray-700 hover:bg-gray-100"
           >
             Cancel
           </Button>
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            <Button
-              type="submit"
-              onClick={(e) => handleFormSubmit(e, 'draft')}
-              disabled={selectedMomLoading}
-              className="w-full sm:w-auto bg-gray-600 text-white rounded-md hover:bg-gray-700 flex items-center gap-2 transition-colors shadow-sm hover:shadow-md"
-            >
-              {selectedMomLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-              Save as Draft
-            </Button>
-            <Button
-              type="submit"
-              onClick={(e) => handleFormSubmit(e, 'final')}
-              disabled={selectedMomLoading}
-              className="w-full sm:w-auto bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center gap-2 transition-colors shadow-sm hover:shadow-md"
-            >
-              {selectedMomLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-              Submit
-            </Button>
-          </div>
+          <Button
+            onClick={(e) => handleFormSubmit(e, 'draft')}
+            className="bg-blue-600 text-white hover:bg-blue-700"
+          >
+           Draft
+          </Button>
+          <Button
+            onClick={(e) => handleFormSubmit(e, 'final')}
+            className="bg-green-600 text-white hover:bg-green-700"
+          >
+            Save 
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -359,3 +403,7 @@ const MomForm = ({
 };
 
 export default MomForm;
+
+
+
+

@@ -1,3 +1,9 @@
+
+
+
+
+
+
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
@@ -22,18 +28,14 @@ const CreateTeamForm = ({ projectDetails, onSuccess }) => {
   );
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [memberRoles, setMemberRoles] = useState({});
+  const [teamName, setTeamName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(true);
 
-  // useEffect(() => {
-  //   if (membersStatus === "idle") {
-  //     dispatch(fetchTeamMembers());
-  //   }
-  // }, [dispatch, membersStatus]);
-useEffect(() => {
-  dispatch(fetchTeamMembers());
-}, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchTeamMembers());
+  }, [dispatch]);
 
   const memberOptions = useMemo(() => {
     if (!allMembers || !Array.isArray(allMembers)) return [];
@@ -45,7 +47,7 @@ useEffect(() => {
       firstName: member.firstName,
       lastName: member.lastName,
       id: member.employeeID,
-      designation: member.designation, // Include designation for use in role field
+      designation: member.designation,
     }));
   }, [allMembers]);
 
@@ -108,7 +110,6 @@ useEffect(() => {
     }),
   };
 
-  // Automatically set memberRoles when selectedMembers change
   useEffect(() => {
     const updatedRoles = {};
     selectedMembers.forEach((member) => {
@@ -123,6 +124,9 @@ useEffect(() => {
     setError("");
 
     try {
+      if (!teamName.trim()) {
+        throw new Error("Please enter a team name");
+      }
       if (selectedMembers.length === 0) {
         throw new Error("Please select at least one team member");
       }
@@ -141,13 +145,14 @@ useEffect(() => {
       const formattedTeamMembers = selectedMembers.map((member) => ({
         memberId: member.value,
         memberName: member.label,
-        role: memberRoles[member.value]?.value || member.designation, // Use designation as role
+        role: memberRoles[member.value]?.value || member.designation,
         email: member.email,
       }));
 
       const teamData = {
         projectId: projectDetails.id,
         projectName: projectDetails.name,
+        teamName: teamName.trim(),
         teamLeadId: projectDetails.teamLead.id,
         teamLeadName: projectDetails.teamLead.name,
         teamMembers: formattedTeamMembers,
@@ -158,6 +163,7 @@ useEffect(() => {
         toast.success("Team created successfully!");
         setSelectedMembers([]);
         setMemberRoles({});
+        setTeamName("");
         setIsModalOpen(false);
         onSuccess?.();
       }
@@ -189,6 +195,18 @@ useEffect(() => {
 
     return (
       <div className="space-y-3 sm:space-y-4">
+          <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-1.5">
+            <FiFolder className="h-4 w-4 text-gray-400" /> Team Name
+          </label>
+          <input
+            type="text"
+            value={teamName}
+            onChange={(e) => setTeamName(e.target.value)}
+            placeholder="Enter team name"
+            className="w-full p-2.5 sm:p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm sm:text-base text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-1.5">
             <FiHash className="h-4 w-4 text-gray-400" /> Project ID
@@ -201,9 +219,7 @@ useEffect(() => {
           <label className="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-1.5">
             <FiFolder className="h-4 w-4 text-gray-400" /> Project Name
           </label>
-          <div className="p-2.5 sm:p-3 bg-gray-50 rounded-lg border border-gray-200
-
- text-sm sm:text-base text-gray-700">
+          <div className="p-2.5 sm:p-3 bg-gray-50 rounded-lg border border-gray-200 text-sm sm:text-base text-gray-700">
             {projectDetails.name || "N/A"}
           </div>
         </div>
@@ -225,6 +241,7 @@ useEffect(() => {
             </div>
           </div>
         </div>
+      
       </div>
     );
   };

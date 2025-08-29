@@ -1,8 +1,5 @@
 
 
-
-
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -27,7 +24,7 @@ const EditTeam = ({
       value: member.memberId,
       label: member.memberName,
       email: member.email,
-      designation: member.role, // fall back to saved role as designation
+      designation: member.role,
     }))
   );
 
@@ -44,18 +41,14 @@ const EditTeam = ({
   const [formData, setFormData] = useState({
     projectId: selectedTeam.projectId,
     projectName: selectedTeam.projectName,
+    teamName: selectedTeam.teamName || '',
     teamLeadId: selectedTeam.teamLeadId,
     teamLeadName: selectedTeam.teamLeadName,
   });
 
-  // useEffect(() => {
-  //   if (membersStatus === 'idle') {
-  //     dispatch(fetchTeamMembers());
-  //   }
-  // }, [dispatch, membersStatus]);
-useEffect(() => {
-  dispatch(fetchTeamMembers());
-}, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchTeamMembers());
+  }, [dispatch]);
 
   const memberOptions =
     allMembers?.map((member) => ({
@@ -119,6 +112,9 @@ useEffect(() => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
+      if (!formData.teamName.trim()) {
+        throw new Error('Please enter a team name');
+      }
       if (selectedMembers.length === 0) {
         throw new Error('Please select at least one team member');
       }
@@ -133,6 +129,7 @@ useEffect(() => {
       const teamData = {
         projectId: formData.projectId,
         projectName: formData.projectName,
+        teamName: formData.teamName.trim(),
         teamLeadId: formData.teamLeadId,
         teamLeadName: formData.teamLeadName,
         teamMembers: formattedTeamMembers,
@@ -140,7 +137,6 @@ useEffect(() => {
 
       const result = await dispatch(
         updateTeam({ teamId: selectedTeam.teamId, teamData })
-        
       ).unwrap();
 
       if (result) {
@@ -230,6 +226,18 @@ useEffect(() => {
                     value={formData.projectName}
                     readOnly
                     className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-1.5">
+                    <FiFolder className="text-gray-400" /> Team Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.teamName}
+                    onChange={(e) => setFormData({ ...formData, teamName: e.target.value })}
+                    placeholder="Enter team name"
+                    className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>

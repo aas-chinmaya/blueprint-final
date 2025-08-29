@@ -1,3 +1,9 @@
+
+
+
+
+
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -46,29 +52,9 @@ const ProjectwiseAllmeetingMom = ({ project, projectId }) => {
     (state) => state.projectMeetingMom
   );
 
-  const [formData, setFormData] = useState({
-    projectName: projectName || '',
-    projectId: projectId || '',
-    agenda: '',
-    meetingMode: 'offline',
-    meetingId: '',
-    title: '',
-    meetingDate: null,
-    startTime: '',
-    endTime: '',
-    duration: '',
-    attendees: '',
-    summary: '',
-    notes: '',
-    createdBy: currentUser,
-    status: 'draft',
-    signature: null,
-    signatureUrl: '',
-  });
-  const [formErrors, setFormErrors] = useState({});
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingMom, setEditingMom] = useState(null);
-  const [viewingPdf, setViewingPdf] = useState(null); // Store momId instead of boolean
+  const [viewingPdf, setViewingPdf] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [dateRange, setDateRange] = useState({ from: null, to: null });
   const [searchQuery, setSearchQuery] = useState('');
@@ -79,59 +65,6 @@ const ProjectwiseAllmeetingMom = ({ project, projectId }) => {
   useEffect(() => {
     dispatch(fetchAllProjectMoms(projectId));
   }, [dispatch, projectId]);
-
-  // Fetch MoM details when editing
-  useEffect(() => {
-    if (editingMom) {
-      dispatch(fetchMeetingMomById(editingMom.momId));
-    }
-  }, [dispatch, editingMom]);
-
-  // Set form data when editing or creating
-  useEffect(() => {
-    if (editingMom && selectedMom) {
-      setFormData({
-        projectName: projectName || selectedMom.projectName || '',
-        projectId: projectId || selectedMom.projectId || '',
-        agenda: selectedMom.agenda || '',
-        meetingMode: selectedMom.meetingMode || 'offline',
-        meetingId: selectedMom.meetingId || '',
-        title: selectedMom.title || '',
-        meetingDate: selectedMom.meetingDate && isValid(parseISO(selectedMom.meetingDate)) ? parseISO(selectedMom.meetingDate) : null,
-        startTime: selectedMom.meetingDate && isValid(parseISO(selectedMom.meetingDate)) ? format(parseISO(selectedMom.meetingDate), 'HH:mm') : '',
-        endTime: selectedMom.endTime && isValid(parseISO(selectedMom.endTime)) ? format(parseISO(selectedMom.endTime), 'HH:mm') : '',
-        duration: selectedMom.duration || '',
-        attendees: selectedMom.participants?.join(', ') || '',
-        summary: selectedMom.summary || '',
-        notes: selectedMom.notes || '',
-        createdBy: currentUser,
-        status: selectedMom.status || 'draft',
-        signature: null,
-        signatureUrl: selectedMom.signature || '',
-      });
-    } else {
-      setFormData({
-        projectName: projectName || '',
-        projectId: projectId || '',
-        agenda: '',
-        meetingMode: 'offline',
-        meetingId: '',
-        title: '',
-        meetingDate: null,
-        startTime: '',
-        endTime: '',
-        duration: '',
-        attendees: '',
-        summary: '',
-        notes: '',
-        createdBy: currentUser,
-        status: 'draft',
-        signature: null,
-        signatureUrl: '',
-      });
-    }
-    setFormErrors({});
-  }, [editingMom, selectedMom, projectName, projectId, currentUser]);
 
   // Handle side effects for errors
   useEffect(() => {
@@ -178,7 +111,7 @@ const ProjectwiseAllmeetingMom = ({ project, projectId }) => {
     return result;
   }, [moms, searchQuery, filters, dateRange]);
 
-  const handleSubmit = async (e, status) => {
+  const handleSubmit = async (e, status, formData) => {
     e.preventDefault();
     const data = new FormData();
     const allowedFields = [
@@ -255,15 +188,20 @@ const ProjectwiseAllmeetingMom = ({ project, projectId }) => {
     setCurrentPage(1);
   };
 
-  const handleEdit = (mom) => {
+  const handleEdit = async (mom) => {
     setEditingMom(mom);
-    setShowCreateForm(true);
+    try {
+      await dispatch(fetchMeetingMomById(mom.momId)).unwrap();
+      setShowCreateForm(true);
+    } catch (error) {
+      toast.error('Failed to fetch meeting minute details');
+    }
   };
 
   const handleViewPdf = async (mom) => {
     try {
       await dispatch(fetchMeetingMomView(mom.momId)).unwrap();
-      setViewingPdf(mom); // Store the entire mom object to pass status
+      setViewingPdf(mom);
     } catch (error) {
       toast.error('PDF not found.');
     }
@@ -272,7 +210,6 @@ const ProjectwiseAllmeetingMom = ({ project, projectId }) => {
   const handleFormClose = () => {
     setShowCreateForm(false);
     setEditingMom(null);
-    setFormErrors({});
     dispatch(resetSelectedMom());
   };
 
@@ -358,7 +295,7 @@ const ProjectwiseAllmeetingMom = ({ project, projectId }) => {
           onClick={() => setShowCreateForm(true)}
           className="h-10 w-full sm:w-auto bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center gap-2 transition-colors shadow-sm hover:shadow-md"
         >
-          <Plus className="h-4 w-4" /> New Meeting Minute
+          <Plus className="h-4 w-4" /> Create
         </Button>
         {(searchQuery || filters.meetingMode !== 'all' || filters.status !== 'all' || dateRange.from) && (
           <Button
@@ -509,12 +446,10 @@ const ProjectwiseAllmeetingMom = ({ project, projectId }) => {
       <MomForm
         open={showCreateForm}
         onOpenChange={handleFormClose}
-        formData={formData}
-        setFormData={setFormData}
-        formErrors={formErrors}
-        setFormErrors={setFormErrors}
-        editingMom={editingMom}
+        selectedMom={selectedMom}
         selectedMomLoading={selectedMomLoading}
+        selectedMomError={selectedMomError}
+        editingMom={editingMom}
         currentUser={currentUser}
         projectName={projectName}
         projectId={projectId}
