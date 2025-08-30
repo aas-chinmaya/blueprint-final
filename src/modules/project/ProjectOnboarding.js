@@ -299,17 +299,17 @@ export default function ProjectOnboarding() {
 
     // Debug FormData contents
     if (process.env.NODE_ENV === "development") {
-      console.log("formData.attachments:", formData.attachments);
-      console.log("FormData contents:");
+      // console.log("formData.attachments:", formData.attachments);
+      // console.log("FormData contents:");
       for (let [key, value] of submissionData.entries()) {
-        console.log(`${key}: ${value instanceof File ? `${value.name} (${value.size} bytes)` : value}`);
+        // console.log(`${key}: ${value instanceof File ? `${value.name} (${value.size} bytes)` : value}`);
       }
     }
 
     try {
       await dispatch(createProject(submissionData)).unwrap();
     } catch (err) {
-      console.error("Project creation error:", err);
+      // console.error("Project creation error:", err);
       toast.error(`Failed to create project: ${err.message || "Unknown error"}`);
     }
   };

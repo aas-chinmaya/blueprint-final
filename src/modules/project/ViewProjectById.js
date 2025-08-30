@@ -167,6 +167,7 @@ export default function ViewProjectById({ projectId }) {
 
   const isTasksTeamDisabled = currentUser?.role !== "CPC" && !isTeamLead;
   const isBugDisabled = currentUser?.role?.toLowerCase() !== "cpc" && !isTeamLead;
+  const isMeetingDisabled = currentUser?.role?.toLowerCase() !== "cpc" && !isTeamLead;
 // console.log("wrfgwr",isBugDisabled, currentUser?.role)
 
     const [showLoader, setShowLoader] = useState(true);
@@ -258,7 +259,8 @@ const canEditStatus = currentUser?.role?.toLowerCase() === "cpc" || isTeamLead;
                   key={tab.id}
                   value={tab.id}
                   disabled={
-                    (tab.id === "bug" && isBugDisabled)
+                    //(tab.id === "bug" && isBugDisabled)
+                    ((tab.id === "bug" && isBugDisabled) || (tab.id === "meeting" && isMeetingDisabled))
                   }
                   className={`flex cursor-pointer items-center gap-2 rounded-full py-2 px-3 sm:px-4 text-sm font-medium transition-colors
         ${activeTab === tab.id ? "bg-blue text-black" : "text-gray-700 hover:bg-blue-100"}

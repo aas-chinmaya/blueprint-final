@@ -162,47 +162,5 @@ export function SectionCardEmployee({ employeeId }) {
 );
 
 
-  // return (
-  //   <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 xl:grid-cols-4 lg:px-6">
-  //     {allLoaded ? (
-  //       <AnimatePresence>
-  //         {cards.map((card, index) => (
-  //           <motion.div
-  //             key={index}
-  //             initial="hidden"
-  //             animate="visible"
-  //             exit="hidden"
-  //             variants={cardVariants}
-  //             transition={{ duration: 0.4, delay: index * 0.1 }}
-  //           >
-  //             <Card className="@container/card">
-  //               <CardHeader>
-  //                 <CardDescription>{card.title}</CardDescription>
-  //                 <CardTitle className="text-2xl font-semibold">{card.count}</CardTitle>
-  //                 <CardAction>
-  //                   {/* <Badge variant="outline">
-  //                     <IconTrendingUp className="size-4" /> {card.badge}
-  //                   </Badge> */}
-  //                 </CardAction>
-  //               </CardHeader>
-  //               <CardFooter className="flex-col items-start gap-1.5 text-sm">
-  //                 <div className="flex gap-2 font-medium">
-  //                   {card.footer} <IconTrendingUp className="size-4" />
-  //                 </div>
-  //                 <div className="text-muted-foreground">{card.note}</div>
-  //               </CardFooter>
-  //             </Card>
-  //           </motion.div>
-  //         ))}
-  //       </AnimatePresence>
-  //     ) : (
-  //       <>
-  //         <CardSkeleton />
-  //         <CardSkeleton />
-  //         <CardSkeleton />
-  //         <CardSkeleton />
-  //       </>
-  //     )}
-  //   </div>
-  // );
+
 }
