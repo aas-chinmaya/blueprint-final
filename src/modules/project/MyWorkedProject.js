@@ -74,7 +74,7 @@ export default function MyWorkedProject({ employeeId }) {
     }
   }, [dispatch, employeeProjects.length, status.fetchEmployeeProjects, employeeId]);
   
-  console.log(employeeProjects);
+  // console.log(employeeProjects);
   // Calculate project statistics
   const projectStats = Array.isArray(employeeProjects)
     ? {

@@ -3,8 +3,6 @@
 
 
 
-
-
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,7 +20,7 @@ import {
   FiEye,
   FiTrash2,
 } from "react-icons/fi";
-import { fetchTeamByProjectId, deleteTeam } from "@/features/teamSlice"; // Updated import
+import { fetchTeamByProjectId, deleteTeam } from "@/features/teamSlice";
 import { fetchTeamMembers } from "@/features/teamMembersSlice";
 import { createTask } from "@/features/taskSlice";
 import { toast } from "sonner";
@@ -30,9 +28,9 @@ import EditTeam from "./EditTeam";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import Spinner from "@/components/loader/Spinner";
 
-const ViewTeamByProjectId = ({ projectId,project }) => {
+const ViewTeamByProjectId = ({ projectId, project }) => {
   const dispatch = useDispatch();
-  const { teamsByProject: teams, status, deleteTeamStatus, error } = useSelector((state) => state.team); // Updated selector
+  const { teamsByProject: teams, status, deleteTeamStatus, error } = useSelector((state) => state.team);
   const { members, status: membersStatus } = useSelector((state) => state.teamMembers);
   const taskStatus = useSelector((state) => state.task?.status);
 
@@ -66,7 +64,7 @@ const ViewTeamByProjectId = ({ projectId,project }) => {
         assignedBy: selectedTeam.teamLeadName || "",
         projectId: selectedTeam.projectId || projectId,
         projectName: selectedTeam.projectName || "",
-        teamId: selectedTeam.teamId || "", // Use teamId instead of _id
+        teamId: selectedTeam.teamId || "",
       }));
     }
   }, [selectedTeam, projectId]);
@@ -151,7 +149,7 @@ const ViewTeamByProjectId = ({ projectId,project }) => {
   };
 
   const handleViewClick = (teamId) => {
-    const team = teams.find((team) => team.teamId === teamId); // Use teamId
+    const team = teams.find((team) => team.teamId === teamId);
     setSelectedTeam(team);
     setShowTeamDetails(true);
     setShowEditTeam(false);
@@ -159,7 +157,7 @@ const ViewTeamByProjectId = ({ projectId,project }) => {
   };
 
   const handleEditClick = (teamId) => {
-    const team = teams.find((team) => team.teamId === teamId); // Use teamId
+    const team = teams.find((team) => team.teamId === teamId);
     setSelectedTeam(team);
     setShowEditTeam(true);
     setShowTeamDetails(false);
@@ -167,14 +165,14 @@ const ViewTeamByProjectId = ({ projectId,project }) => {
   };
 
   const handleDeleteClick = (teamId) => {
-    setTeamToDelete(teamId); // Store teamId (e.g., "test-project-001")
+    setTeamToDelete(teamId);
     setShowDeleteConfirm(true);
   };
 
   const handleConfirmDelete = async () => {
     if (teamToDelete) {
       try {
-        console.log("Deleting team with teamId:", teamToDelete); // Debug
+        // console.log("Deleting team with teamId:", teamToDelete);
         const result = await dispatch(deleteTeam(teamToDelete)).unwrap();
         toast.success(result.message || "Team deleted successfully!");
         setShowDeleteConfirm(false);
@@ -215,19 +213,6 @@ const ViewTeamByProjectId = ({ projectId,project }) => {
     }));
   };
 
-  const handleSelectChange = (name) => (selectedOption) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: selectedOption?.value || "",
-      memberId: selectedOption?.memberId || "",
-    }));
-    setSelectedMember(
-      selectedOption
-        ? { memberId: selectedOption.memberId, memberName: selectedOption.label }
-        : null
-    );
-  };
-
   const validateForm = () => {
     const requiredFields = ["title", "assignedTo", "assignedBy", "projectId"];
     const missingFields = requiredFields.filter((field) => !formData[field]);
@@ -248,7 +233,7 @@ const ViewTeamByProjectId = ({ projectId,project }) => {
         ...formData,
         projectId: selectedTeam.projectId,
         projectName: selectedTeam.projectName,
-        teamId: selectedTeam.teamId, // Use teamId
+        teamId: selectedTeam.teamId,
         memberId: formData.memberId || selectedTeam.teamLeadId,
       };
       const result = await dispatch(createTask(taskData)).unwrap();
@@ -261,52 +246,43 @@ const ViewTeamByProjectId = ({ projectId,project }) => {
     }
   };
 
-  // if (status === "loading" && !teams.length) {
-  //   return (
-  //     <div className="flex items-center justify-center min-h-[200px]">
-  //       <FiLoader className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600 animate-spin" />
-  //     </div>
-  //   );
-  // }
-
-    const [showLoader, setShowLoader] = useState(true);
+  const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoader(false);
-    }, 1000); // 2 seconds delay
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
+
   if (status === "loading" && !teams.length || showLoader) {
     return (
-       <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-64px)]"> {/* adjust height if header is fixed */}
+      <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-64px)]">
         <Spinner />
       </div>
     );
   }
 
-if (!teams?.length || status === "failed") {
-  return (
-    <div className="flex flex-col items-center justify-center h-[80vh] px-4 text-center">
-      <h2 className="text-2xl font-semibold text-gray-700 mb-2">
-        No Teams Found
-      </h2>
-      <p className="text-sm text-gray-500 mb-4 max-w-md">
-        We couldn&apos;t find any teams for this project. Either no teams have been created yet.
-      </p>
-
-    
-    </div>
-  );
-}
+  if (!teams?.length || status === "failed") {
+    return (
+      <div className="flex flex-col items-center justify-center h-[80vh] px-4 text-center">
+        <h2 className="text-2xl font-semibold text-gray-700 mb-2">
+          No Teams Found
+        </h2>
+        <p className="text-sm text-gray-500 mb-4 max-w-md">
+          We couldn&apos;t find any teams for this project. Either no teams have been created yet.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className=" py-4  sm:py-6  lg:py-8 max-w-7xl mt-5">
+    <div className="py-4 sm:py-6 lg:py-8 max-w-7xl mt-5">
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
         {(teams || []).map((team) => (
           <div
-            key={team.teamId} // Use teamId as key
+            key={team.teamId}
             className="bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-md border border-gray-100 transition-all duration-200 hover:border-gray-200 overflow-hidden"
           >
             <div className="p-3 sm:p-4 lg:p-5 border-b border-gray-50">
@@ -316,39 +292,35 @@ if (!teams?.length || status === "failed") {
                     {team.projectName}
                   </h3>
                   <p className="text-xs sm:text-sm text-gray-500 mt-0.5 font-medium">
-                    Team Name: {team.teamName} {/* Display teamId */}
+                    Team Name: {team.teamName}
                   </p>
-                  
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <button
-                    onClick={() => handleViewClick(team.teamId)} // Use teamId
-                    className="p-1.5 sm:p-2 cursor-pointer  rounded-full hover:bg-blue-50 transition-colors duration-200 group"
+                    onClick={() => handleViewClick(team.teamId)}
+                    className="p-1.5 sm:p-2 cursor-pointer rounded-full hover:bg-blue-50 transition-colors duration-200 group"
                     title="View Team"
                   >
                     <FiEye className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-blue-600" />
                   </button>
-                  {
-                    (useCurrentUser?.role === "CPC" || isTeamLead ) &&(
-                      <>
-                  <button
-                    onClick={() => handleEditClick(team.teamId)} // Use teamId
-                    className="p-1.5 sm:p-2 cursor-pointer  rounded-full hover:bg-blue-50 transition-colors duration-200 group"
-                    title="Edit Team"
-                  >
-                    <FiEdit className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-green-600" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(team.teamId)} // Use teamId
-                    className="p-1.5 sm:p-2 cursor-pointer rounded-full hover:bg-red-50 transition-colors duration-200 group"
-                    title="Delete Team"
-                  >
-                    <FiTrash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-red-600" />
-                  </button>
-                      </>
-
-                    )
-                  }
+                  {(useCurrentUser?.role === "CPC" || isTeamLead) && (
+                    <>
+                      <button
+                        onClick={() => handleEditClick(team.teamId)}
+                        className="p-1.5 sm:p-2 cursor-pointer rounded-full hover:bg-blue-50 transition-colors duration-200 group"
+                        title="Edit Team"
+                      >
+                        <FiEdit className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-green-600" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(team.teamId)}
+                        className="p-1.5 sm:p-2 cursor-pointer rounded-full hover:bg-red-50 transition-colors duration-200 group"
+                        title="Delete Team"
+                      >
+                        <FiTrash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-red-600" />
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -415,14 +387,14 @@ if (!teams?.length || status === "failed") {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-3 py-2 cursor-pointer  sm:px-4 sm:py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm sm:text-base"
+                className="px-3 py-2 cursor-pointer sm:px-4 sm:py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm sm:text-base"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
-                disabled={deleteTeamStatus === "loading"} // Use deleteTeamStatus
-                className="px-3 py-2 cursor-pointer  sm:px-4 sm:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base flex items-center"
+                disabled={deleteTeamStatus === "loading"}
+                className="px-3 py-2 cursor-pointer sm:px-4 sm:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base flex items-center"
               >
                 {deleteTeamStatus === "loading" ? (
                   <>
@@ -497,18 +469,13 @@ if (!teams?.length || status === "failed") {
                         Assigned To
                       </label>
                       <div className="relative">
-                        <Select
-                          name="assignedTo"
-                          options={teamMemberOptions}
-                          value={teamMemberOptions.find(
+                        <input
+                          type="text"
+                          value={formData.assignedTo ? teamMemberOptions.find(
                             (option) => option.value === formData.assignedTo
-                          ) || null}
-                          onChange={handleSelectChange("assignedTo")}
-                          placeholder="Select team member..."
-                          className="text-sm sm:text-base"
-                          styles={customSelectStyles}
-                          isClearable
-                          isDisabled={!teamMemberOptions.length}
+                          )?.label || "" : ""}
+                          className="w-full p-2.5 sm:p-3 pl-9 sm:pl-10 border border-gray-200 rounded-lg bg-gray-50 text-sm sm:text-base"
+                          readOnly
                           required
                         />
                         <FiUser className="absolute left-3 top-3 h-4 w-4 sm:h-5 sm:w-5 text-blue-500 z-10" />
@@ -593,7 +560,7 @@ if (!teams?.length || status === "failed") {
               </div>
             </div>
           )}
-          
+
           <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
             onClick={closeTeamDetails}
@@ -610,9 +577,8 @@ if (!teams?.length || status === "failed") {
                       {selectedTeam.projectName}
                     </h2>
                     <p className="text-xs sm:text-sm text-gray-600">
-                      Team Name: {selectedTeam.teamName} {/* Display teamId */}
+                      Team Name: {selectedTeam.teamName}
                     </p>
-                   
                   </div>
                   <button onClick={closeTeamDetails}>
                     <FiX className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500 hover:text-gray-700" />
@@ -621,7 +587,6 @@ if (!teams?.length || status === "failed") {
               </div>
               <div className="p-4 sm:p-6 space-y-6">
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6">
-                 
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-100 flex items-center justify-center">
                       <span className="text-sm sm:text-lg font-semibold text-blue-600">
@@ -630,8 +595,7 @@ if (!teams?.length || status === "failed") {
                     </div>
                     <div>
                       <p className="text-sm sm:text-base font-semibold text-gray-800">
-                    {`${selectedTeam.teamLeadName} ( Team Lead )`}
-
+                        {`${selectedTeam.teamLeadName} ( Team Lead )`}
                       </p>
                       <p className="text-xs sm:text-sm text-gray-600">
                         Team Lead ID: {selectedTeam.teamLeadId}
@@ -667,23 +631,22 @@ if (!teams?.length || status === "failed") {
                             </p>
                           </div>
                         </div>
-                            {isTeamLead && (
-
-                        <button
-                          onClick={() => {
-                            setSelectedMember(member);
-                            setFormData((prev) => ({
-                              ...prev,
-                              assignedTo: member.memberId,
-                              memberId: member.memberId,
-                            }));
-                            setShowCreateTask(true);
-                          }}
-                          className="w-full cursor-pointer  sm:w-auto px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm sm:text-base"
-                        >
-                          Assign Task
-                        </button>
-                            )}
+                        {isTeamLead && (
+                          <button
+                            onClick={() => {
+                              setSelectedMember(member);
+                              setFormData((prev) => ({
+                                ...prev,
+                                assignedTo: member.memberId,
+                                memberId: member.memberId,
+                              }));
+                              setShowCreateTask(true);
+                            }}
+                            className="w-full cursor-pointer sm:w-auto px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm sm:text-base"
+                          >
+                            Assign Task
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -691,7 +654,6 @@ if (!teams?.length || status === "failed") {
               </div>
             </div>
           </div>
-          
         </>
       )}
       {showEditTeam && selectedTeam && !showTeamDetails && (

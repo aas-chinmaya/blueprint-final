@@ -157,7 +157,6 @@ const ProjectWiseBugList = ({ project, projectId, teamLeadId }) => {
     }
   };
 
-   // Handle download for individual report modal
 
 
 const handleModalDownload = async () => {

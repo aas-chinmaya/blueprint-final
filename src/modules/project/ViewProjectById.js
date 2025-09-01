@@ -30,6 +30,8 @@ import CreateTeamForm from "@/modules/team/createTeam";
 import AllTaskListByProjectId from "@/modules/task/AllTaskListByProjectId";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { LuFolderClock } from "react-icons/lu";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
@@ -139,14 +141,14 @@ export default function ViewProjectById({ projectId }) {
       icon: <FiInfo className="h-5 w-5" />,
     },
     {
-      id: "tasks",
-      label: "Tasks",
-      icon: <FiList className="h-5 w-5" />,
-    },
-    {
       id: "team",
       label: "Team",
       icon: <FiUsers className="h-5 w-5" />,
+    },
+    {
+      id: "tasks",
+      label: "Tasks",
+      icon: <FiList className="h-5 w-5" />,
     },
     // {
     //   id: "meeting",
@@ -161,21 +163,20 @@ export default function ViewProjectById({ projectId }) {
     {
       id: "meeting",
       label: "Meeting",
-      icon: <FiUsers className="h-5 w-5" />,
+      icon: <LuFolderClock className="h-5 w-5" />,
     },
   ];
 
   const isTasksTeamDisabled = currentUser?.role !== "CPC" && !isTeamLead;
   const isBugDisabled = currentUser?.role?.toLowerCase() !== "cpc" && !isTeamLead;
   const isMeetingDisabled = currentUser?.role?.toLowerCase() !== "cpc" && !isTeamLead;
-// console.log("wrfgwr",isBugDisabled, currentUser?.role)
 
     const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoader(false);
-    }, 2000); // 2 seconds delay
+    }, 1000); // 2 seconds delay
 
     return () => clearTimeout(timer);
   }, []);
@@ -259,8 +260,8 @@ const canEditStatus = currentUser?.role?.toLowerCase() === "cpc" || isTeamLead;
                   key={tab.id}
                   value={tab.id}
                   disabled={
-                    //(tab.id === "bug" && isBugDisabled)
-                    ((tab.id === "bug" && isBugDisabled) || (tab.id === "meeting" && isMeetingDisabled))
+                    (tab.id === "bug" && isBugDisabled)
+                    // ((tab.id === "bug" && isBugDisabled) || (tab.id === "meeting" && isMeetingDisabled))
                   }
                   className={`flex cursor-pointer items-center gap-2 rounded-full py-2 px-3 sm:px-4 text-sm font-medium transition-colors
         ${activeTab === tab.id ? "bg-blue text-black" : "text-gray-700 hover:bg-blue-100"}
@@ -418,6 +419,17 @@ const canEditStatus = currentUser?.role?.toLowerCase() === "cpc" || isTeamLead;
                           </div>
                         )}
                       </div>
+                      {project.data.expectedEndDate && (
+                        <div className="flex items-center gap-3">
+                          <FiCalendar className="h-4 w-4 text-[#38b000]" />
+                          <span className="font-semibold text-gray-900 w-35">
+                            Expected End Date:
+                          </span>
+                          <span>
+                            {new Date(project.data.startDate).toLocaleDateString()}
+                          </span>
+                        </div>
+                      )}
                       {project.data.attachments?.length > 0 && (
                         <div className="flex items-center gap-3 pl-7">
                           <FileStack className="h-4 w-4 text-[#38b000]" />

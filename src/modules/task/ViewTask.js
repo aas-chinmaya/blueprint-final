@@ -171,7 +171,9 @@ const ViewTask = () => {
 
   const isCPC = currentUser?.position === "CPC";
   const isTeamLead2 = task?.teamLeadId === currentUser?.employeeID;
+ 
   const canReportBug = (isCPC || isTeamLead2) && task?.status === "Completed";
+
 // console.log(task?.teamLeadId,currentUser?.employeeID);
 
   // if (loading) {
