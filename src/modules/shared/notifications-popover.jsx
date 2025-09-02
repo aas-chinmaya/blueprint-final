@@ -28,8 +28,10 @@ import {
   markAsRead,
   markAllAsRead,
 } from "@/features/shared/notificationSlice";
+import { useRouter } from "next/navigation";
 
 export default function NotificationsPopover({ recipientId }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const {
@@ -176,7 +178,10 @@ export default function NotificationsPopover({ recipientId }) {
 
         {notifications.length > 4 && (
           <div className="border-t pt-2 mt-2">
-            <Button variant="ghost" size="sm" className="w-full">
+            <Button variant="ghost" size="sm" className="w-full"  onClick={() => {
+        router.push('/notifications');
+      
+      }}>
               View all notifications
             </Button>
           </div>
