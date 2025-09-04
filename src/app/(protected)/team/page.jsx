@@ -19,7 +19,7 @@ const {currentUser}=useLoggedinUser()
 
   return (
     <div className="">
-      {currentUser.position === "CPC" ? (
+      {currentUser.role === "cpc" ? (
         <CpcTeamList   />
       ) : (
         <TeamListByEmployeeId  employeeId={currentUser.employeeID} />

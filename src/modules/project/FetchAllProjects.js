@@ -180,7 +180,7 @@ export default function FetchAllProjects() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoader(false);
-    }, 2000); // 2 seconds delay
+    }, 1000); // 2 seconds delay
 
     return () => clearTimeout(timer);
   }, []);

@@ -15,9 +15,10 @@ export default function AllTaskListByRole() {
 
 const currentUser = {
   // role: "employee", // Change to 'employee' or 'team_lead' for testing
-  role: employeeData?.designation, // Change to 'employee' or 'team_lead' for testing
+  role: employeeData?.role, // Change to 'employee' or 'team_lead' for testing
   name: employeeData?.name,
 };
+console.log("Current User:", currentUser);
   return (
     <div className="">
       {currentUser.role === "cpc" ? (

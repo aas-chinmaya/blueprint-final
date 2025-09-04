@@ -34,6 +34,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import Spinner from '@/components/loader/Spinner';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 // Constants for styling
 const statusColors = {
@@ -56,6 +57,8 @@ const progressColors = {
 
 export default function MyWorkedProject({ employeeId }) {
   // console.log('MyWorkedProject component rendered with employeeId:', employeeId);
+   
+  
   const dispatch = useDispatch();
   const router = useRouter();
   const { employeeProjects , status = {}, error = {} } = useSelector((state) => state.project || {});
@@ -74,7 +77,7 @@ export default function MyWorkedProject({ employeeId }) {
     }
   }, [dispatch, employeeProjects.length, status.fetchEmployeeProjects, employeeId]);
   
-  // console.log(employeeProjects);
+
   // Calculate project statistics
   const projectStats = Array.isArray(employeeProjects)
     ? {
@@ -142,7 +145,7 @@ export default function MyWorkedProject({ employeeId }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLoader(false);
-    }, 2000); // 2 seconds delay
+    }, 1000); // 1 seconds delay
 
     return () => clearTimeout(timer);
   }, []);
@@ -155,45 +158,8 @@ export default function MyWorkedProject({ employeeId }) {
   }
 
 
-  if (status.fetchEmployeeProjects === 'failed') {
-    return (
-      <div className="container mx-auto">
-        <Card className="bg-destructive/10 border-destructive/20 text-destructive p-6 mx-auto">
-          <CardHeader>
-            <h3 className="text-lg font-semibold">Unable to load projects</h3>
-          </CardHeader>
-          <CardContent>
-            <p>{error.fetchEmployeeProjects || 'We encountered an issue while loading your projects. Please try again.'}</p>
-          </CardContent>
-          <CardFooter>
-            <Button
-              variant="outline"
-              onClick={() => employeeId && dispatch(fetchProjectsByEmployeeId(employeeId))}
-              className="flex items-center gap-2"
-              aria-label="Retry loading projects"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                ></path>
-              </svg>
-              Retry
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    );
-  }
 
+  console.log(employeeProjects);
   return (
     <div className="mx-auto min-h-screen">
      

@@ -285,7 +285,9 @@ const canEditStatus = currentUser?.role?.toLowerCase() === "cpc" || isTeamLead;
                       <FiInfo className="h-5 w-5 text-blue-600" />
                       Project Details
                     </h3>
-                    {(currentUser?.role === "cpc" || isTeamLead) && (
+                  
+                    {(currentUser?.role === "cpc" ) && (
+                    // {(currentUser?.role === "cpc" || isTeamLead) && (
                       <Button
                         size="sm"
                         onClick={() => router.push(`/project/edit/${projectId}`)}
@@ -399,7 +401,7 @@ const canEditStatus = currentUser?.role?.toLowerCase() === "cpc" || isTeamLead;
                         {project.data.startDate && (
                           <div className="flex items-center gap-3">
                             <FiCalendar className="h-4 w-4 text-[#38b000]" />
-                            <span className="font-semibold text-gray-900 w-28">
+                            <span className="font-semibold text-gray-900 w-35">
                               Start Date:
                             </span>
                             <span>
@@ -410,7 +412,7 @@ const canEditStatus = currentUser?.role?.toLowerCase() === "cpc" || isTeamLead;
                         {project.data.endDate && (
                           <div className="flex items-center gap-3">
                             <FiCalendar className="h-4 w-4 text-[#38b000]" />
-                            <span className="font-semibold text-gray-900 w-28">
+                            <span className="font-semibold text-gray-900 w-35">
                               End Date:
                             </span>
                             <span>
@@ -419,6 +421,8 @@ const canEditStatus = currentUser?.role?.toLowerCase() === "cpc" || isTeamLead;
                           </div>
                         )}
                       </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600 pl-7">
+                      
                       {project.data.expectedEndDate && (
                         <div className="flex items-center gap-3">
                           <FiCalendar className="h-4 w-4 text-[#38b000]" />
@@ -426,10 +430,13 @@ const canEditStatus = currentUser?.role?.toLowerCase() === "cpc" || isTeamLead;
                             Expected End Date:
                           </span>
                           <span>
-                            {new Date(project.data.startDate).toLocaleDateString()}
+                            
+                            {new Date(project.data.expectedEndDate).toLocaleDateString()}
                           </span>
                         </div>
                       )}
+                      </div>
+                      
                       {project.data.attachments?.length > 0 && (
                         <div className="flex items-center gap-3 pl-7">
                           <FileStack className="h-4 w-4 text-[#38b000]" />

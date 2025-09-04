@@ -169,25 +169,14 @@ const ViewTask = () => {
       });
   };
 
-  const isCPC = currentUser?.position === "CPC";
+  const isCPC = currentUser?.role === "cpc";
   const isTeamLead2 = task?.teamLeadId === currentUser?.employeeID;
  
   const canReportBug = (isCPC || isTeamLead2) && task?.status === "Completed";
 
 // console.log(task?.teamLeadId,currentUser?.employeeID);
 
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-  //       <Card className="w-full max-w-md bg-white border border-gray-200 shadow-md">
-  //         <CardContent className="flex flex-col items-center p-6">
-  //           <Skeleton className="h-12 w-12 rounded-full mb-4" />
-  //           <Skeleton className="h-4 w-40 rounded" />
-  //         </CardContent>
-  //       </Card>
-  //     </div>
-  //   );
-  // }
+
 if (loading) {
   return (
     <div className="flex flex-col items-center justify-center w-full h-[calc(100vh-64px)]">

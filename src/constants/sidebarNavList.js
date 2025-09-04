@@ -41,7 +41,7 @@ export const fullNav = [
     title: "Dashboard",
     url: "/dashboard",
     icon: "LayoutDashboard",
-    roles: ["cpc", "employee"],
+    roles: ["cpc", "employee(regular)"],
   },
   {
     title: "Client",
@@ -53,19 +53,19 @@ export const fullNav = [
     title: "Project",
     url: "/project",
     icon: "Folder",
-    roles: ["cpc", "employee"],
+    roles: ["cpc", "employee(regular)"],
   },
   {
     title: "Team",
     url: "/team",
     icon: "Users",
-    roles: ["cpc", "employee"],
+    roles: ["cpc", "employee(regular)"],
   },
   {
     title: "Task",
     url: "/task",
     icon: "ListChecks",
-    roles: ["cpc", "employee"],
+    roles: ["cpc", "employee(regular)"],
   },
   {
     title: "Bug",
@@ -77,7 +77,7 @@ export const fullNav = [
     title: "Bug",
     url: "/bug/assigned-bugs",
     icon: "Bug",
-    roles: ["employee"],
+    roles: ["employee(regular)"],
   },
   {
     title: "Contact",
@@ -116,3 +116,4 @@ export const fullNav = [
   },
 ];
 
+// console.log("fullNav",fullNav)

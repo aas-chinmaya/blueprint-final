@@ -28,10 +28,8 @@ import {
   markAsRead,
   markAllAsRead,
 } from "@/features/shared/notificationSlice";
-import { useRouter } from "next/navigation";
 
 export default function NotificationsPopover({ recipientId }) {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const {
@@ -65,6 +63,7 @@ export default function NotificationsPopover({ recipientId }) {
     if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`;
     return `${Math.floor(minutes / 1440)}d ago`;
   };
+// console.log(notifications);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -178,10 +177,7 @@ export default function NotificationsPopover({ recipientId }) {
 
         {notifications.length > 4 && (
           <div className="border-t pt-2 mt-2">
-            <Button variant="ghost" size="sm" className="w-full"  onClick={() => {
-        router.push('/notifications');
-      
-      }}>
+            <Button variant="ghost" size="sm" className="w-full">
               View all notifications
             </Button>
           </div>

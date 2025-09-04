@@ -31,16 +31,16 @@ export const useLoggedinUser = (projectTeamLeadId = null) => {
   };
 
   const isTeamLead = projectTeamLeadId && combinedData.employeeID === projectTeamLeadId || false;
-  const isEmployee = combinedData.role?.toLowerCase() === 'employee';
+  const isEmployee = combinedData.role?.toLowerCase() === 'employee(regular)';
   const isCpc = combinedData.role?.toLowerCase() === 'cpc';
-
+// console.log("is cps",isCpc)
   const currentUser = {
     ...combinedData,
     isTeamLead,
     isEmployee,
     isCpc,
   };
-
+// console.log("Current User in useLoggedinUser:", currentUser);
   return {
     currentUser,
     loading,

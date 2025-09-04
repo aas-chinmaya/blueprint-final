@@ -134,7 +134,7 @@ export const fetchProjectsByEmployeeId = createAsyncThunk(
     try {
       const response = await axiosInstance.get(`/projects/by-person/${employeeId}`);
   
-      return response.data.projects
+      return response.data.projects;
 ;
     } catch (error) {
       console.error('Error fetching projects by employee ID:', error);

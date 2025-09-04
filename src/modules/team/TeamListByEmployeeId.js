@@ -249,13 +249,9 @@ const TeamListByEmployeeId = ({ employeeId }) => {
               <span className="ml-2 text-blue-700">Loading...</span>
             </div>
           )}
-          {error && (
-            <p className="text-red-600 text-sm bg-red-50 p-2 rounded">
-              {error}
-            </p>
-          )}
-          {status === 'succeeded' && filteredTeams.length === 0 && (
-            <p className="text-gray-500 text-center py-4">No teams found for this employee.</p>
+      
+          { filteredTeams.length === 0 && (
+            <p className="text-gray-500 text-center py-4">No teams found .</p>
           )}
 
           {/* Teams Table */}

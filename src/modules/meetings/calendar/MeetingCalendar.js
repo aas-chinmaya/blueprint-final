@@ -271,11 +271,15 @@ export default function MeetingCalendar() {
           </div>
         </CardHeader>
         <CardContent className="p-3 sm:p-4 md:p-6">
-          {loading ? (
-            <div className="text-center text-gray-600 text-sm sm:text-lg font-inter">Loading meetings...</div>
-          ) : error ? (
-            <div className="text-center text-red-600 text-sm sm:text-lg font-inter">Error: {error}</div>
-          ) : currentView === 'day' || currentView === 'week' ? (
+          {
+            loading ? (
+  <div className="text-center text-gray-600 text-sm sm:text-lg font-inter">
+    Loading meetings...
+  </div>
+          ) 
+          
+          
+          : currentView === 'day' || currentView === 'week' ? (
             <FullCalendar
               ref={calendarRef}
               plugins={[timeGridPlugin, interactionPlugin]}
@@ -351,6 +355,9 @@ export default function MeetingCalendar() {
             </div>
           )}
         </CardContent>
+
+
+
       </Card>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

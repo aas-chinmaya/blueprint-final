@@ -16,7 +16,7 @@ export default function AllTaskListByRole() {
 
   return (
     <div className="">
-      {currentUser?.position==="CPC"? (
+      {currentUser?.role==="cpc"? (
         <CpcTaskList  currentUser={currentUser} />
       ) : (
         <EmployeeTaskList  currentUser={currentUser} />

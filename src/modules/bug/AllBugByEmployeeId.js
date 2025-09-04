@@ -103,9 +103,9 @@ export default function AllBugByEmployeeId() {
   useEffect(() => {
     if (employeeId) {
       dispatch(fetchBugByEmployeeId(employeeId)).then((result) => {
-        if (result.error) {
-          toast.error(`Failed to fetch bugs: ${result.error.message}`);
-        }
+        // if (result.error) {
+        //   toast.error(`Failed to fetch bugs: ${result.error.message}`);
+        // }
       });
     }
     return () => {
@@ -272,22 +272,7 @@ export default function AllBugByEmployeeId() {
     );
   }
 
-  // Error state
-  if (error.bugsByEmployeeId) {
-    return (
-      <div className="mt-8 text-center bg-white p-6 rounded-lg shadow-md border border-gray-200">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 text-gray-800 mb-4">
-          <BugIcon className="text-3xl" />
-        </div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">
-          Error loading bugs
-        </h3>
-        <p className="text-gray-600 mb-6 max-w-md mx-auto">
-          {error.bugsByEmployeeId}
-        </p>
-      </div>
-    );
-  }
+
 
   // Empty state
   if (!bugsByEmployeeId || bugsByEmployeeId.length === 0) {

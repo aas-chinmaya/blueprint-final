@@ -27,6 +27,7 @@ import { useEffect, useState } from "react";
 import { fetchUserByEmail } from "@/features/shared/userSlice";
 import { setSidebarByRole } from "@/features/shared/sidebarSlice";
 import { useLoggedinUser } from "@/hooks/useLoggedinUser";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function ProtectedAppShell({ children }) {
   const [showProfile, setShowProfile] = useState(false);
@@ -35,14 +36,17 @@ export default function ProtectedAppShell({ children }) {
   const pathname = usePathname();
 
 const { user, email } = useSelector((state) => state.auth) || {};
-const {currentUser}=useLoggedinUser()
-const recipientId = currentUser?.employeeID; // Fallback to a default ID if employeeData is not available
-const navMainItems = useSelector((state) => state.sidebar.navItems);
+// Fetch user data on component mount
+useEffect(() => {
+  dispatch(fetchUserByEmail());
+}, [dispatch]);
 
-  // Fetch user data on component mount
-  useEffect(() => {
-    dispatch(fetchUserByEmail());
-  }, [dispatch]);
+const {currentUser}=useCurrentUser()
+// console.log("currentUser in app shell4444",currentUser?.role)
+// console.log("currentUser role", currentUser?.role)
+const recipientId = currentUser?.id; // Fallback to a default ID if employeeData is not available
+const navMainItems = useSelector((state) => state.sidebar.navItems);
+// console.log("app shell",currentUser,recipientId)
 
   // Get page title from pathname
   const getPageTitle = () => {
@@ -51,12 +55,11 @@ const navMainItems = useSelector((state) => state.sidebar.navItems);
     return path.charAt(0).toUpperCase() + path.slice(1);
   };
 
-  React.useEffect(() => {
-    if (currentUser?.position) {
-      dispatch(setSidebarByRole(currentUser?.position));
-    }
-  }, [currentUser?.position, dispatch]);
-  
+useEffect(() => {
+  if (currentUser?.role) {
+    dispatch(setSidebarByRole(currentUser?.role.toLowerCase()));
+  }
+}, [currentUser?.role, dispatch]);
 
   return (
     

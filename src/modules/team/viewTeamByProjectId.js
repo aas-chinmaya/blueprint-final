@@ -303,7 +303,10 @@ const ViewTeamByProjectId = ({ projectId, project }) => {
                   >
                     <FiEye className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5 text-blue-600" />
                   </button>
-                  {(useCurrentUser?.role === "CPC" || isTeamLead) && (
+                  {/* {
+                    console.log("Current User in Team:", useCurrentUser?.role, isTeamLead)
+                  } */}
+                  {(useCurrentUser?.role === "cpc" || isTeamLead) && (
                     <>
                       <button
                         onClick={() => handleEditClick(team.teamId)}
